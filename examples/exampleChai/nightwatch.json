@@ -1,6 +1,5 @@
 {
-  "src_folders" : ["./examples/tests"],
-  "output_folder" : "./examples/reports",
+  "src_folders" : ["./examples/exampleChai/tests"],
   "custom_commands_path" : "",
   "page_objects_path" : "",
   "custom_assertions_path" : "",
@@ -90,7 +89,7 @@
         "browserstack.key" : "..."
       }
     },
-    
+
     "testingbot" : {
       "selenium_host" : "hub.testingbot.com",
       "selenium_port" : 80,
@@ -113,5 +112,3 @@
     }
   }
 }
-
-

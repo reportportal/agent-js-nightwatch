@@ -1,10 +1,10 @@
 const expect = require('chai').expect;
 
 module.exports = {
-  'example test2': function (){
-      expect(true).to.be.ok;
+  'test 2_1': function (){
+      expect(false).to.be.ok;
   },
-  'example test2_1': function (){
+  'test 2_2': function (){
       expect(true).to.be.ok;
   }
 };
