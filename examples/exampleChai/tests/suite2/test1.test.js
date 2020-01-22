@@ -1,12 +1,12 @@
-const expect = require('chai').expect;
+const { expect } = require('chai');
 
 module.exports = {
   'test 1': {
-    testSmth: function () {
+    testSmth() {
       expect(false).to.be.ok;
     },
-    testSmth2: function () {
+    testSmth2() {
       expect(true).to.be.ok;
-    }
-  }
+    },
+  },
 };

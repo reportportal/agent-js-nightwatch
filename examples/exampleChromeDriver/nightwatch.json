@@ -10,13 +10,13 @@
       "selenium_port": 9515,
       "selenium_host": "localhost",
       "default_path_prefix" : "",
-
+      "screenshots" : {
+        "enabled" : true,
+        "path" : "screenshots",
+        "on_failure" : true
+      },
       "desiredCapabilities": {
         "browserName": "chrome",
-        "chromeOptions" : {
-          "args" : ["--no-sandbox", "--headless", "--disable-gpu"],
-          "binary" : "/usr/bin/chromium-browser"
-        },
         "acceptSslCerts": true
       }
     }

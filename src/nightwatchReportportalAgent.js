@@ -13,33 +13,34 @@ class NightwatchAgent {
   }
 
   startReporting(results, done) {
-    this.client.checkConnect()
+    this.client
+      .checkConnect()
       .then(() => this.report(results, done))
       .catch((e) => this.finalize(done, { status: statuses.FAILED }, e));
-  };
+  }
 
   report(results, done) {
     const tests = this.collectItems(results);
-    const endTime = _.last(tests).endTime;
+    const { endTime } = _.last(tests);
 
     this.reportItems(tests);
     this.finalize(done, { endTime });
-  };
+  }
 
   reportItems(items) {
-    let startTime = _.first(items).startTime;
+    const { startTime } = _.first(items);
 
     this.launchId = this.client.startLaunch({
       startTime,
       ...this.launchParams,
     }).tempId;
 
-    let stepsTempIds = [this.launchId];
+    const stepsTempIds = [this.launchId];
 
     items.forEach(({ action, ...item } = {}) => {
       switch (action) {
         case actionTypes.START_TEST_ITEM:
-          let stepObj = this.client.startTestItem(item, ...stepsTempIds);
+          const stepObj = this.client.startTestItem(item, ...stepsTempIds);
           stepsTempIds.push(stepObj.tempId);
           break;
         case actionTypes.FINISH_TEST_ITEM:
@@ -49,7 +50,7 @@ class NightwatchAgent {
           this.client.sendLog(_.last(stepsTempIds), item);
       }
     });
-  };
+  }
 
   collectItems(results) {
     const items = [];
@@ -58,7 +59,9 @@ class NightwatchAgent {
     for (const suiteName of suiteNames) {
       const suite = results.modules[suiteName];
       const suiteStartTime = new Date(suite.timestamp);
-      const suiteEndTime = moment(suiteStartTime).add(suite.time, 's').toDate();
+      const suiteEndTime = moment(suiteStartTime)
+        .add(suite.time, 's')
+        .toDate();
 
       items.push({
         action: actionTypes.START_TEST_ITEM,
@@ -100,36 +103,38 @@ class NightwatchAgent {
             action: actionTypes.SEND_LOG,
             level: logLevels.ERROR,
             time: testStartTime,
-            message: test.stackTrace
+            message: test.stackTrace,
           });
         }
 
-        (test.failed || test.errors) && test.assertions.forEach((assertion) => {
-          items.push({
-            action: actionTypes.SEND_LOG,
-            level: logLevels.INFO,
-            time: testStartTime,
-            message: assertion.message
+        (test.failed || test.errors) &&
+          test.assertions.forEach((assertion) => {
+            items.push({
+              action: actionTypes.SEND_LOG,
+              level: logLevels.INFO,
+              time: testStartTime,
+              message: assertion.message,
+            });
+            assertion.failure &&
+              items.push({
+                action: actionTypes.SEND_LOG,
+                level: logLevels.DEBUG,
+                time: testStartTime,
+                message: assertion.failure,
+              });
+            assertion.stackTrace &&
+              items.push({
+                action: actionTypes.SEND_LOG,
+                level: logLevels.ERROR,
+                time: testStartTime,
+                message: assertion.stackTrace,
+              });
           });
-          assertion.failure && items.push({
-            action: actionTypes.SEND_LOG,
-            level: logLevels.DEBUG,
-            time: testStartTime,
-            message: assertion.failure
-          });
-          assertion.stackTrace &&
-          items.push({
-            action: actionTypes.SEND_LOG,
-            level: logLevels.ERROR,
-            time: testStartTime,
-            message: assertion.stackTrace
-          });
-        });
 
         items.push({
           action: actionTypes.FINISH_TEST_ITEM,
           endTime: testStartTime,
-          status
+          status,
         });
       }
 
@@ -140,15 +145,14 @@ class NightwatchAgent {
     }
 
     return items;
-  };
+  }
 
   finalize(done, params, error) {
     if (this.launchId) {
       this.client.finishLaunch(this.launchId, params);
     }
     done(error);
-  };
-
+  }
 }
 
 module.exports = NightwatchAgent;

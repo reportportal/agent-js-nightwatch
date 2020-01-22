@@ -31,8 +31,9 @@
       "silent" : true,
       "disable_colors": false,
       "screenshots" : {
-        "enabled" : false,
-        "path" : ""
+        "enabled" : true,
+        "path" : "screenshots",
+        "on_failure" : true
       },
       "desiredCapabilities" : {
         "browserName" : "firefox",

@@ -1,33 +1,33 @@
 const chromedriver = require('chromedriver');
 
 module.exports = {
-  before: function() {
+  before() {
     chromedriver.start();
   },
 
-  after: function() {
+  after() {
     chromedriver.stop();
   },
 
-  'Demo test beta.demo.reportportal.io': function (browser) {
+  'Demo test beta.demo.reportportal.io': function(browser) {
     browser
       .url('https://beta.demo.reportportal.io/')
       .pause(1000)
-      .end()
+      .end();
   },
 
-  'Demo test ecosia.org': function (browser) {
+  'Demo test ecosia.org': function(browser) {
     browser
       .url('https://www.ecosia.org/')
       .pause(1000)
-      .end()
+      .end();
   },
 
-  'Finished': function(client) {
+  Finished(client) {
     client
       .perform(() => {
-        console.log('[perform]: Finished Test:', client.currentTest.name)
+        console.log('[perform]: Finished Test:', client.currentTest.name);
       })
       .end();
-  }
+  },
 };

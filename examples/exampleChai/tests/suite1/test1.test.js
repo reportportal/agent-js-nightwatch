@@ -1,9 +1,14 @@
-const expect = require('chai').expect;
+const { expect } = require('chai');
 
 module.exports = {
-  'example test': function (step){
+
+  before(step) {
     testAssertion(step, 'bar');
-  }
+  },
+
+  'example test': function(step) {
+    testAssertion(step, 'bar');
+  },
 };
 
 const testAssertion = (step, length) => {
