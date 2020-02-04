@@ -18,7 +18,7 @@
     "test:chromedriver": "nightwatch --config examples/exampleChromeDriver/nightwatch.json --reporter examples/exampleChromeDriver/reporter.js"
   },
   "author": "Yuriy Teslenko",
-  "license": "ISC",
+  "license": "Apache 2.0",
   "repository": {
     "type": "git"
   }
