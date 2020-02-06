@@ -9,7 +9,7 @@ const actionTypes = require('./constants/actionTypes');
 class NightwatchAgent {
   constructor({ agentOptions = {}, ...clientConfig }) {
     this.client = new RPClient(clientConfig);
-    this.launchParams = agentOptions.launchParams;
+    this.launchParams = agentOptions.launchParams || {};
   }
 
   startReporting(results, done) {

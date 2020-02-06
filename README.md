@@ -10,7 +10,7 @@ Agent for integration Nightwatch with ReportPortal.
 will be soon
 ```
 2. Create rp.json file with reportportal configuration:
-```
+```json
 {
     // client settings
     "token": "00000000-0000-0000-0000-000000000000",
@@ -29,11 +29,17 @@ will be soon
                     "value": "YourValue"
                 }
             ],
-            "description": "Your launch description"
+            "description": "Your launch description",
+            "rerun": true,
+            "rerunOf": "00000000-0000-0000-0000-000000000000"
         }
     }
 }
 ```
+Where
+- rerun - to enable rerun
+- rerunOf - UUID of launch you want to rerun. If not specified, report portal will update the latest launch with the same name
+
 3. Create reporter.js file with code like:
 ```javascript
 const NightwatchAgent = require('agent-js-nightwatch');

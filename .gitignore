@@ -3,3 +3,5 @@ package-lock.json
 examples/reports
 examples/rp.json
 .idea/
+*.log
+screenshots/
