@@ -1,3 +1,4 @@
+const fs = require('fs');
 const _ = require('lodash');
 const moment = require('moment');
 const RPClient = require('reportportal-client');
@@ -5,11 +6,36 @@ const statuses = require('./constants/statuses');
 const logLevels = require('./constants/logLevels');
 const testItemTypes = require('./constants/testItemTypes');
 const actionTypes = require('./constants/actionTypes');
+const { getScreenshotPossiblePaths, normalizeFileName } = require('./utils');
 
 class NightwatchAgent {
+
+  static getLogWithAttachment(path, testStartTime, params) {
+    try {
+      const fileObj = {
+        name: params.fileName,
+        type: 'image/png',
+        content: fs.readFileSync(path),
+      };
+
+      return {
+        action: actionTypes.SEND_LOG,
+        level: logLevels.ERROR,
+        time: testStartTime,
+        message: params.message || params.fileName,
+        fileObj,
+      };
+    } catch(error) {
+      throw error;
+    }
+  }
+
   constructor({ agentOptions = {}, ...clientConfig }) {
+    const { launchParams = {}, ...options } = agentOptions;
+
     this.client = new RPClient(clientConfig);
-    this.launchParams = agentOptions.launchParams || {};
+    this.launchParams = launchParams;
+    this.options = options;
   }
 
   startReporting(results, done) {
@@ -37,7 +63,7 @@ class NightwatchAgent {
 
     const stepsTempIds = [this.launchId];
 
-    items.forEach(({ action, ...item } = {}) => {
+    items.forEach(({ action, fileObj, ...item } = {}) => {
       switch (action) {
         case actionTypes.START_TEST_ITEM:
           const stepObj = this.client.startTestItem(item, ...stepsTempIds);
@@ -47,9 +73,33 @@ class NightwatchAgent {
           this.client.finishTestItem(stepsTempIds.pop(), item);
           break;
         case actionTypes.SEND_LOG:
-          this.client.sendLog(_.last(stepsTempIds), item);
+          this.client.sendLog(_.last(stepsTempIds), item, fileObj);
       }
     });
+  }
+
+  getLogWithErrorScreenshot({ testName, suiteName, testStartTime, message }) {
+    const basePath = `${this.options.screenshotsPath}/${suiteName}`;
+    const screenshotPaths = getScreenshotPossiblePaths(testName, basePath, testStartTime);
+    const pathsCount = screenshotPaths.length;
+    const screenshotParams = {
+      fileName: `${suiteName}/${normalizeFileName(testName)}`.replace(/[\/\\]/ig, '-'),
+      message,
+    };
+
+    for (let itemIndex = 0; itemIndex < pathsCount; itemIndex++) {
+      const { path, time } = screenshotPaths[itemIndex];
+
+      try {
+        const logWithAttachment = NightwatchAgent.getLogWithAttachment(path, time, screenshotParams);
+
+        if (logWithAttachment) {
+          return logWithAttachment;
+        }
+      } catch(error) {}
+    }
+
+    return null;
   }
 
   collectItems(results) {
@@ -93,18 +143,33 @@ class NightwatchAgent {
         });
 
         testStartTime = moment(testStartTime).add(test.timeMs, 'ms').toDate();
+
         let status = test.status;
+
         if (!status) {
           status = test.failed ? statuses.FAILED : statuses.PASSED;
         }
 
-        if (test.stackTrace && status === statuses.FAILED) {
-          items.push({
-            action: actionTypes.SEND_LOG,
-            level: logLevels.ERROR,
-            time: testStartTime,
+        if (status === statuses.FAILED) {
+          if (test.stackTrace) {
+            items.push({
+              action: actionTypes.SEND_LOG,
+              level: logLevels.ERROR,
+              time: testStartTime,
+              message: test.stackTrace,
+            });
+          }
+
+          const logWithAttachment = this.getLogWithErrorScreenshot({
+            testName,
+            suiteName,
+            testStartTime,
             message: test.stackTrace,
           });
+
+          if (logWithAttachment) {
+            items.push(logWithAttachment);
+          }
         }
 
         (test.failed || test.errors) &&

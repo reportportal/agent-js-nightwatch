@@ -19,5 +19,15 @@ module.exports = {
       .assert.urlContains('blablabla');
 
     client.end();
+  },
+
+  'Demo test Loogle' : function (client) {
+    client
+      .url('http://google.com')
+      .pause(1000)
+      .waitForElementVisible('body', 1000)
+      .assert.urlContains('blablabla');
+
+    client.end();
   }
 };

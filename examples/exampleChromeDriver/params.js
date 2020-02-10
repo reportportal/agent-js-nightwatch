@@ -5,6 +5,6 @@ module.exports = {
       description: 'This launch contains nightwatch tests results run with chromedriver',
       attributes: [{ key: 'lib', value: 'chromedriver' }],
     },
-    screenshotsPath: 'screenshots',
+    screenshotsPath: './screenshots',
   },
 };
