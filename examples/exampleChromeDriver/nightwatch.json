@@ -1,5 +1,5 @@
 {
-  "src_folders" : ["./examples/exampleChromeDriver/tests"],
+  "src_folders" : ["./tests"],
 
   "selenium": {
     "start_process": false
@@ -10,6 +10,7 @@
       "selenium_port": 9515,
       "selenium_host": "localhost",
       "default_path_prefix" : "",
+      "persist_globals": true,
       "screenshots" : {
         "enabled" : true,
         "path" : "screenshots",

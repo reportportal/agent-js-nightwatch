@@ -1,7 +1,7 @@
 const chromedriver = require('chromedriver');
 
 module.exports = {
-  '@disabled': true,
+  // '@disabled': true,
 
   before() {
     chromedriver.start();
@@ -15,7 +15,8 @@ module.exports = {
     client
       .url('http://google.com')
       .pause(1000)
-      .waitForElementVisible('body', 1000);
+      .waitForElementVisible('body', 1000)
+      .assert.urlContains('blablabla');
 
     client.end();
   }

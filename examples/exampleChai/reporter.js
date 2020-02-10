@@ -1,8 +1,8 @@
 const NightwatchAgent = require('../../src/nightwatchReportportalAgent');
 const config = require('../rp');
-const launchParams = require('./launchParams');
+const params = require('./params');
 
-const agent = new NightwatchAgent({ ...config, ...launchParams });
+const agent = new NightwatchAgent({ ...config, ...params });
 
 module.exports = {
   write: (results, options, done) => {
