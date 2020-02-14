@@ -8,6 +8,10 @@ const normalizeFileName = (name) => {
     .replace(/["']/g, '');
 };
 
+/*
+  This function returns the path to the screenshot according to the getFileName() Nightwatch util function.
+  For more details see the https://github.com/nightwatchjs/nightwatch/blob/master/lib/utils/screenshots.js#L12
+*/
 const getScreenshotPath = (testName, basePath, timestamp) => {
   const filenamePrefix = `${normalizeFileName(testName)}_${statuses.FAILED.toLocaleUpperCase()}`;
   const dateParts = new Date(timestamp).toString().replace(/:/g, '').split(' ');
@@ -19,6 +23,11 @@ const getScreenshotPath = (testName, basePath, timestamp) => {
   return path.resolve(path.join(basePath, `${filenamePrefix}_${dateStamp}.png`));
 };
 
+/*
+  This function returns the possible paths to the auto-generated screenshot for failed test item.
+  Since the screenshot can be saved in the file system before / after writing the test item to the report
+  it is necessary to generate possible paths according to the delay.
+*/
 const getScreenshotPossiblePaths = (testName, basePath, testStartTime) => {
   const possibleTimes = [
     testStartTime,

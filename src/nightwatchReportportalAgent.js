@@ -11,23 +11,19 @@ const { getScreenshotPossiblePaths, normalizeFileName } = require('./utils');
 class NightwatchAgent {
 
   static getLogWithAttachment(path, testStartTime, params) {
-    try {
-      const fileObj = {
-        name: params.fileName,
-        type: 'image/png',
-        content: fs.readFileSync(path),
-      };
+    const fileObj = {
+      name: params.fileName,
+      type: 'image/png',
+      content: fs.readFileSync(path),
+    };
 
-      return {
-        action: actionTypes.SEND_LOG,
-        level: logLevels.ERROR,
-        time: testStartTime,
-        message: params.message || params.fileName,
-        fileObj,
-      };
-    } catch(error) {
-      throw error;
-    }
+    return {
+      action: actionTypes.SEND_LOG,
+      level: logLevels.ERROR,
+      time: testStartTime,
+      message: params.message || params.fileName,
+      fileObj,
+    };
   }
 
   constructor({ agentOptions = {}, ...clientConfig }) {

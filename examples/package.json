@@ -1,0 +1,6 @@
+{
+  "scripts": {
+    "chai": "nightwatch --config ./exampleChai/nightwatch.json --reporter ./exampleChai/reporter.js",
+    "chromeDriver": "nightwatch --config ./exampleChromeDriver/nightwatch.json --reporter ./exampleChromeDriver/reporter.js"
+  }
+}

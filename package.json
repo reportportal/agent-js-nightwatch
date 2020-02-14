@@ -5,7 +5,9 @@
   "main": "./src/nightwatch-reportportal-reporter",
   "scripts": {
     "lint": "eslint \"./**/*.js\"",
-    "format": "npm run lint -- --fix"
+    "format": "npm run lint -- --fix",
+    "example:chai": "cd examples && npm run chai",
+    "example:chromeDriver": "cd examples && npm run chromeDriver"
   },
   "dependencies": {
     "lodash": "^4.17.10",
@@ -13,6 +15,9 @@
     "reportportal-client": "^5.5.0"
   },
   "devDependencies": {
+    "chromedriver": "^79.0.0",
+    "nightwatch": "0.9.21",
+    "chai": "^4.1.2",
     "eslint": "^6.8.0",
     "eslint-config-airbnb-base": "^14.0.0",
     "eslint-config-prettier": "^6.10.0",

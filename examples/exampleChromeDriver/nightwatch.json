@@ -1,5 +1,5 @@
 {
-  "src_folders" : ["./tests"],
+  "src_folders" : ["./exampleChromeDriver/tests"],
 
   "selenium": {
     "start_process": false
@@ -18,6 +18,9 @@
       },
       "desiredCapabilities": {
         "browserName": "chrome",
+        "chromeOptions" : {
+          "args" : ["--headless"]
+        },
         "acceptSslCerts": true
       }
     }

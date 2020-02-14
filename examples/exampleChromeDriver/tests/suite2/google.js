@@ -1,7 +1,6 @@
 const chromedriver = require('chromedriver');
 
 module.exports = {
-  // '@disabled': true,
 
   before() {
     chromedriver.start();
