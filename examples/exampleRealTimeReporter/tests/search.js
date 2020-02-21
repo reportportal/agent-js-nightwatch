@@ -1,4 +1,4 @@
-const { PublicReportingAPI } = require('../../../../src');
+const { PublicReportingAPI } = require('../../../src');
 
 module.exports = {
   before: function (browser, done) {
@@ -7,37 +7,28 @@ module.exports = {
       description: 'Suite search tests',
       attributes: [{ key: 'suite', value: 'search' }],
     };
-    console.log('Start suite');
 
-    PublicReportingAPI.startSuite(item); // TODO: may be change it to common startTestItem and manage item type by browser object inside handler
+    PublicReportingAPI.startSuite(item);
     done();
   },
 
   beforeEach: function (browser, done) {
     const item = {
-      name: 'testtest',
-      description: 'testtest',
+      name: browser.currentTest.name,
+      description: 'Test description',
     };
-    console.log('start item');
+
     PublicReportingAPI.startTestCase(item);
     done();
   },
 
   afterEach: function (browser, done) {
-    console.log(browser.currentTest.results);
-    const varSuccess = browser.currentTest.results.failed === 0;
-
-    const item = {
-      status: varSuccess ? 'passed' : 'failed',
-    };
-    console.log('finish item');
-    PublicReportingAPI.finishTestCase(item);
+    PublicReportingAPI.finishTestCase(browser.currentTest);
     done();
   },
 
   after: function (browser, done) {
     PublicReportingAPI.finishSuite();
-    console.log('Finish suite');
     browser.end();
     done();
   },

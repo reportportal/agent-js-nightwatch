@@ -24,13 +24,11 @@ module.exports = {
           };
 
           reporter.startLaunch(launchParams);
-          console.info('Start launch');
           done();
         },
 
         after: function (done) {
           reporter.finishLaunch();
-          console.info('Finish launch');
           done();
         },
       },

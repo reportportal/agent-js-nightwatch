@@ -1,16 +1,16 @@
-#ide
+# ide
 .idea/
 
-#lib
+# dependencies
 node_modules/
 
-#reports
-examples/reports/
-test_output/
+# reports
+reports/
+tests_output/
 screenshots/
 
-#debug
+# logs
 *.log
 
-#private
-examples/rp.json
+# private
+rp.json
