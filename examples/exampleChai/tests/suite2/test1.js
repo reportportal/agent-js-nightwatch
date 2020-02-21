@@ -1,7 +1,7 @@
 const { expect } = require('chai');
 
 module.exports = {
-  'test 1': {
+  'test': {
     testSmth() {
       expect(false).to.be.ok;
     },

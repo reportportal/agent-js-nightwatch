@@ -36,7 +36,6 @@ class PostFactumReporter {
   }
 
   startReporting(results, done) {
-    console.log(results);
     this.client
       .checkConnect()
       .then(() => this.report(results, done))
