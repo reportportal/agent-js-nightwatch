@@ -2,13 +2,13 @@ const fs = require('fs');
 const _ = require('lodash');
 const moment = require('moment');
 const RPClient = require('reportportal-client');
-const statuses = require('./constants/statuses');
-const logLevels = require('./constants/logLevels');
-const testItemTypes = require('./constants/testItemTypes');
-const actionTypes = require('./constants/actionTypes');
+const statuses = require('../constants/statuses');
+const logLevels = require('../constants/logLevels');
+const testItemTypes = require('../constants/testItemTypes');
+const { START_TEST_ITEM, FINISH_TEST_ITEM, SEND_LOG } = require('../constants/events');
 const { getScreenshotPossiblePaths, normalizeFileName } = require('./utils');
 
-class NightwatchAgent {
+class PostFactumReporter {
 
   static getLogWithAttachment(path, testStartTime, params) {
     const fileObj = {
@@ -18,7 +18,7 @@ class NightwatchAgent {
     };
 
     return {
-      action: actionTypes.SEND_LOG,
+      action: SEND_LOG,
       level: logLevels.ERROR,
       time: testStartTime,
       message: params.message || params.fileName,
@@ -32,9 +32,11 @@ class NightwatchAgent {
     this.client = new RPClient(clientConfig);
     this.launchParams = launchParams;
     this.options = options;
+    this.launchStartTime = Date.now();
   }
 
   startReporting(results, done) {
+    console.log(results);
     this.client
       .checkConnect()
       .then(() => this.report(results, done))
@@ -50,10 +52,8 @@ class NightwatchAgent {
   }
 
   reportItems(items) {
-    const { startTime } = _.first(items);
-
     this.launchId = this.client.startLaunch({
-      startTime,
+      startTime: this.launchStartTime,
       ...this.launchParams,
     }).tempId;
 
@@ -61,14 +61,14 @@ class NightwatchAgent {
 
     items.forEach(({ action, fileObj, ...item } = {}) => {
       switch (action) {
-        case actionTypes.START_TEST_ITEM:
+        case START_TEST_ITEM:
           const stepObj = this.client.startTestItem(item, ...stepsTempIds);
           stepsTempIds.push(stepObj.tempId);
           break;
-        case actionTypes.FINISH_TEST_ITEM:
+        case FINISH_TEST_ITEM:
           this.client.finishTestItem(stepsTempIds.pop(), item);
           break;
-        case actionTypes.SEND_LOG:
+        case SEND_LOG:
           this.client.sendLog(_.last(stepsTempIds), item, fileObj);
       }
     });
@@ -87,7 +87,7 @@ class NightwatchAgent {
       const { path, time } = screenshotPaths[itemIndex];
 
       try {
-        const logWithAttachment = NightwatchAgent.getLogWithAttachment(path, time, screenshotParams);
+        const logWithAttachment = PostFactumReporter.getLogWithAttachment(path, time, screenshotParams);
 
         if (logWithAttachment) {
           return logWithAttachment;
@@ -104,13 +104,13 @@ class NightwatchAgent {
 
     for (const suiteName of suiteNames) {
       const suite = results.modules[suiteName];
-      const suiteStartTime = new Date(suite.timestamp);
+      const suiteStartTime = new Date(this.launchStartTime); // TODO: fix items startTime calculation
       const suiteEndTime = moment(suiteStartTime)
         .add(suite.time, 's')
         .toDate();
 
       items.push({
-        action: actionTypes.START_TEST_ITEM,
+        action: START_TEST_ITEM,
         name: suiteName,
         startTime: suiteStartTime,
         type: testItemTypes.SUITE,
@@ -132,7 +132,7 @@ class NightwatchAgent {
         const test = tests[testName];
 
         items.push({
-          action: actionTypes.START_TEST_ITEM,
+          action: START_TEST_ITEM,
           name: testName,
           startTime: testStartTime,
           type: testItemTypes.STEP,
@@ -149,7 +149,7 @@ class NightwatchAgent {
         if (status === statuses.FAILED) {
           if (test.stackTrace) {
             items.push({
-              action: actionTypes.SEND_LOG,
+              action: SEND_LOG,
               level: logLevels.ERROR,
               time: testStartTime,
               message: test.stackTrace,
@@ -171,21 +171,21 @@ class NightwatchAgent {
         (test.failed || test.errors) &&
           test.assertions.forEach((assertion) => {
             items.push({
-              action: actionTypes.SEND_LOG,
+              action: SEND_LOG,
               level: logLevels.INFO,
               time: testStartTime,
               message: assertion.message,
             });
             assertion.failure &&
               items.push({
-                action: actionTypes.SEND_LOG,
+                action: SEND_LOG,
                 level: logLevels.DEBUG,
                 time: testStartTime,
                 message: assertion.failure,
               });
             assertion.stackTrace &&
               items.push({
-                action: actionTypes.SEND_LOG,
+                action: SEND_LOG,
                 level: logLevels.ERROR,
                 time: testStartTime,
                 message: assertion.stackTrace,
@@ -193,14 +193,14 @@ class NightwatchAgent {
           });
 
         items.push({
-          action: actionTypes.FINISH_TEST_ITEM,
+          action: FINISH_TEST_ITEM,
           endTime: testStartTime,
           status,
         });
       }
 
       items.push({
-        action: actionTypes.FINISH_TEST_ITEM,
+        action: FINISH_TEST_ITEM,
         endTime: suiteEndTime,
       });
     }
@@ -216,4 +216,4 @@ class NightwatchAgent {
   }
 }
 
-module.exports = NightwatchAgent;
+module.exports = PostFactumReporter;

@@ -1,3 +1,8 @@
-const nightwatchReportPortalAgent = require('./nightwatchReportportalAgent');
+const PostFactumReporter = require('./postFactumReporter');
+const { RealTimeReporter, PublicReportingAPI } = require('./realTimeReporter');
 
-module.exports = nightwatchReportPortalAgent;
+module.exports = {
+  PostFactumReporter,
+  RealTimeReporter,
+  PublicReportingAPI,
+};

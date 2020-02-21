@@ -1,6 +1,6 @@
 const path = require('path');
 const moment = require('moment');
-const statuses = require('./constants/statuses');
+const statuses = require('../constants/statuses');
 
 const normalizeFileName = (name) => {
   return name
