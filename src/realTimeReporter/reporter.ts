@@ -1,11 +1,9 @@
-const _ = require('lodash');
-const RPClient = require('reportportal-client');
+import _ from 'lodash';
+import RPClient from 'reportportal-client';
+import { STATUSES, EVENTS } from '../constants';
+import { subscribeToEvent } from './utils';
 
-const EVENTS = require('../constants/events');
-const STATUSES = require('../constants/statuses');
-const { subscribeToEvent } = require('./utils');
-
-class Reporter {
+export default class Reporter {
   constructor({ agentOptions = {}, ...clientConfig }) {
     this.registerEventsListeners();
 
@@ -14,16 +12,16 @@ class Reporter {
     this.itemIds = [];
   }
 
-  registerEventsListeners() {
+  private registerEventsListeners() {
     subscribeToEvent(EVENTS.START_TEST_ITEM, this.startTestItem.bind(this));
     subscribeToEvent(EVENTS.FINISH_TEST_ITEM, this.finishTestItem.bind(this));
   };
 
-  getLastItem() {
+  private getLastItem() {
     return _.last(this.itemIds);
   };
 
-  getItemDataObj(testResult) {
+  private getItemDataObj(testResult) {
     if (!testResult) {
       return {};
     }
@@ -34,25 +32,23 @@ class Reporter {
     };
   };
 
-  startLaunch(launchParams) {
+  public startLaunch(launchParams) {
     this.launchId = this.client.startLaunch(launchParams).tempId;
   };
 
-  finishLaunch(launchFinishObj = {}) {
+  public finishLaunch(launchFinishObj = {}) {
     this.client.finishLaunch(this.launchId, launchFinishObj);
   };
 
-  startTestItem(itemData) {
+  public startTestItem(itemData) {
     const itemObj = this.client.startTestItem(itemData, this.launchId, this.getLastItem());
 
     this.itemIds.push(itemObj.tempId);
   };
 
-  finishTestItem(testResult) { // for now support only sync reporting
+  public finishTestItem(testResult) { // for now support only sync reporting
     const itemData = this.getItemDataObj(testResult);
 
     this.client.finishTestItem(this.itemIds.pop(), itemData);
   };
 }
-
-module.exports = Reporter;

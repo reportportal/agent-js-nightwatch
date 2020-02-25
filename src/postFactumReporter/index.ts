@@ -1,16 +1,14 @@
-const fs = require('fs');
-const _ = require('lodash');
-const moment = require('moment');
-const RPClient = require('reportportal-client');
-const statuses = require('../constants/statuses');
-const logLevels = require('../constants/logLevels');
-const testItemTypes = require('../constants/testItemTypes');
-const { START_TEST_ITEM, FINISH_TEST_ITEM, SEND_LOG } = require('../constants/events');
-const { getScreenshotPossiblePaths, normalizeFileName } = require('./utils');
+import fs from 'fs';
+import _ from 'lodash';
+import moment from 'moment';
+// @ts-ignore
+import RPClient from 'reportportal-client';
+import { STATUSES, LOG_LEVELS, TEST_ITEM_TYPES, EVENTS } from "../constants";
+import { getScreenshotPossiblePaths, normalizeFileName } from './utils';
 
-class PostFactumReporter {
+export default class PostFactumReporter {
 
-  static getLogWithAttachment(path, testStartTime, params) {
+  private static getLogWithAttachment(path, testStartTime, params) {
     const fileObj = {
       name: params.fileName,
       type: 'image/png',
@@ -18,8 +16,8 @@ class PostFactumReporter {
     };
 
     return {
-      action: SEND_LOG,
-      level: logLevels.ERROR,
+      action: EVENTS.SEND_LOG,
+      level: LOG_LEVELS.ERROR,
       time: testStartTime,
       message: params.message || params.fileName,
       fileObj,
@@ -35,14 +33,14 @@ class PostFactumReporter {
     this.launchStartTime = Date.now();
   }
 
-  startReporting(results, done) {
+  private startReporting(results, done) {
     this.client
       .checkConnect()
       .then(() => this.report(results, done))
-      .catch((e) => this.finalize(done, { status: statuses.FAILED }, e));
+      .catch((e) => this.finalize(done, { status: STATUSES.FAILED }, e));
   }
 
-  report(results, done) {
+  private report(results, done) {
     const tests = this.collectItems(results);
     const { endTime } = _.last(tests);
 
@@ -50,7 +48,7 @@ class PostFactumReporter {
     this.finalize(done, { endTime });
   }
 
-  reportItems(items) {
+  private reportItems(items) {
     this.launchId = this.client.startLaunch({
       startTime: this.launchStartTime,
       ...this.launchParams,
@@ -60,20 +58,20 @@ class PostFactumReporter {
 
     items.forEach(({ action, fileObj, ...item } = {}) => {
       switch (action) {
-        case START_TEST_ITEM:
+        case EVENTS.START_TEST_ITEM:
           const stepObj = this.client.startTestItem(item, ...stepsTempIds);
           stepsTempIds.push(stepObj.tempId);
           break;
-        case FINISH_TEST_ITEM:
+        case EVENTS.FINISH_TEST_ITEM:
           this.client.finishTestItem(stepsTempIds.pop(), item);
           break;
-        case SEND_LOG:
+        case EVENTS.SEND_LOG:
           this.client.sendLog(_.last(stepsTempIds), item, fileObj);
       }
     });
   }
 
-  getLogWithErrorScreenshot({ testName, suiteName, testStartTime, message }) {
+  private getLogWithErrorScreenshot({ testName, suiteName, testStartTime, message }) {
     const basePath = `${this.options.screenshotsPath}/${suiteName}`;
     const screenshotPaths = getScreenshotPossiblePaths(testName, basePath, testStartTime);
     const pathsCount = screenshotPaths.length;
@@ -97,7 +95,7 @@ class PostFactumReporter {
     return null;
   }
 
-  collectItems(results) {
+  private collectItems(results) {
     const items = [];
     const suiteNames = Object.keys(results.modules);
 
@@ -109,10 +107,10 @@ class PostFactumReporter {
         .toDate();
 
       items.push({
-        action: START_TEST_ITEM,
+        action: EVENTS.START_TEST_ITEM,
         name: suiteName,
         startTime: suiteStartTime,
-        type: testItemTypes.SUITE,
+        type: TEST_ITEM_TYPES.SUITE,
       });
 
       const tests = { ...suite.completed };
@@ -120,7 +118,7 @@ class PostFactumReporter {
         suite.skipped.forEach((itemName) => {
           tests[itemName] = {
             name: itemName,
-            status: statuses.SKIPPED,
+            status: STATUSES.SKIPPED,
           };
         });
       }
@@ -131,10 +129,10 @@ class PostFactumReporter {
         const test = tests[testName];
 
         items.push({
-          action: START_TEST_ITEM,
+          action: EVENTS.START_TEST_ITEM,
           name: testName,
           startTime: testStartTime,
-          type: testItemTypes.STEP,
+          type: TEST_ITEM_TYPES.STEP,
         });
 
         testStartTime = moment(testStartTime).add(test.timeMs, 'ms').toDate();
@@ -142,14 +140,14 @@ class PostFactumReporter {
         let status = test.status;
 
         if (!status) {
-          status = test.failed ? statuses.FAILED : statuses.PASSED;
+          status = test.failed ? STATUSES.FAILED : STATUSES.PASSED;
         }
 
-        if (status === statuses.FAILED) {
+        if (status === STATUSES.FAILED) {
           if (test.stackTrace) {
             items.push({
-              action: SEND_LOG,
-              level: logLevels.ERROR,
+              action: EVENTS.SEND_LOG,
+              level: LOG_LEVELS.ERROR,
               time: testStartTime,
               message: test.stackTrace,
             });
@@ -170,36 +168,36 @@ class PostFactumReporter {
         (test.failed || test.errors) &&
           test.assertions.forEach((assertion) => {
             items.push({
-              action: SEND_LOG,
-              level: logLevels.INFO,
+              action: EVENTS.SEND_LOG,
+              level: LOG_LEVELS.INFO,
               time: testStartTime,
               message: assertion.message,
             });
             assertion.failure &&
               items.push({
-                action: SEND_LOG,
-                level: logLevels.DEBUG,
+                action: EVENTS.SEND_LOG,
+                level: LOG_LEVELS.DEBUG,
                 time: testStartTime,
                 message: assertion.failure,
               });
             assertion.stackTrace &&
               items.push({
-                action: SEND_LOG,
-                level: logLevels.ERROR,
+                action: EVENTS.SEND_LOG,
+                level: LOG_LEVELS.ERROR,
                 time: testStartTime,
                 message: assertion.stackTrace,
               });
           });
 
         items.push({
-          action: FINISH_TEST_ITEM,
+          action: EVENTS.FINISH_TEST_ITEM,
           endTime: testStartTime,
           status,
         });
       }
 
       items.push({
-        action: FINISH_TEST_ITEM,
+        action: EVENTS.FINISH_TEST_ITEM,
         endTime: suiteEndTime,
       });
     }
@@ -207,12 +205,10 @@ class PostFactumReporter {
     return items;
   }
 
-  finalize(done, params, error) {
+  private finalize(done, params, error) {
     if (this.launchId) {
       this.client.finishLaunch(this.launchId, params);
     }
     done(error);
   }
 }
-
-module.exports = PostFactumReporter;

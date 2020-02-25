@@ -1,6 +1,6 @@
-const path = require('path');
-const moment = require('moment');
-const statuses = require('../constants/statuses');
+import path from 'path';
+import moment from 'moment';
+import { STATUSES } from '../constants';
 
 const normalizeFileName = (name) => {
   return name
@@ -13,7 +13,7 @@ const normalizeFileName = (name) => {
   For more details see the https://github.com/nightwatchjs/nightwatch/blob/master/lib/utils/screenshots.js#L12
 */
 const getScreenshotPath = (testName, basePath, timestamp) => {
-  const filenamePrefix = `${normalizeFileName(testName)}_${statuses.FAILED.toLocaleUpperCase()}`;
+  const filenamePrefix = `${normalizeFileName(testName)}_${STATUSES.FAILED.toLocaleUpperCase()}`;
   const dateParts = new Date(timestamp).toString().replace(/:/g, '').split(' ');
   dateParts.shift();
   dateParts.pop();
@@ -40,7 +40,7 @@ const getScreenshotPossiblePaths = (testName, basePath, testStartTime) => {
   );
 };
 
-module.exports = {
+export {
   normalizeFileName,
   getScreenshotPath,
   getScreenshotPossiblePaths,
