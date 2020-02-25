@@ -2,7 +2,7 @@ import path from 'path';
 import moment from 'moment';
 import { STATUSES } from '../constants';
 
-const normalizeFileName = (name) => {
+const normalizeFileName = (name: string): string => {
   return name
     .replace(/\s/g, '-')
     .replace(/["']/g, '');
@@ -12,7 +12,7 @@ const normalizeFileName = (name) => {
   This function returns the path to the screenshot according to the getFileName() Nightwatch util function.
   For more details see the https://github.com/nightwatchjs/nightwatch/blob/master/lib/utils/screenshots.js#L12
 */
-const getScreenshotPath = (testName, basePath, timestamp) => {
+const getScreenshotPath = (testName: string, basePath: string, timestamp: number | Date): string => {
   const filenamePrefix = `${normalizeFileName(testName)}_${STATUSES.FAILED.toLocaleUpperCase()}`;
   const dateParts = new Date(timestamp).toString().replace(/:/g, '').split(' ');
   dateParts.shift();
@@ -28,7 +28,7 @@ const getScreenshotPath = (testName, basePath, timestamp) => {
   Since the screenshot can be saved in the file system before / after writing the test item to the report
   it is necessary to generate possible paths according to the delay.
 */
-const getScreenshotPossiblePaths = (testName, basePath, testStartTime) => {
+const getScreenshotPossiblePaths = (testName: string, basePath: string, testStartTime: number | Date): Array<Object> => {
   const possibleTimes = [
     testStartTime,
     moment(testStartTime).add(1, 's').toDate(),

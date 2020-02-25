@@ -2,9 +2,15 @@ import _ from 'lodash';
 import RPClient from 'reportportal-client';
 import { STATUSES, EVENTS } from '../constants';
 import { subscribeToEvent } from './utils';
+import { StartLaunchRQ, FinishTestItemRQ, AgentOptions, ReportPortalConfig, StartTestItemRQ } from '../models';
 
 export default class Reporter {
-  constructor({ agentOptions = {}, ...clientConfig }) {
+  private client: RPClient;
+  private readonly options: AgentOptions;
+  private launchId: string;
+  private itemIds: Array<string>;
+
+  constructor(clientConfig: ReportPortalConfig, agentOptions: AgentOptions) {
     this.registerEventsListeners();
 
     this.client = new RPClient(clientConfig);
@@ -12,18 +18,20 @@ export default class Reporter {
     this.itemIds = [];
   }
 
-  private registerEventsListeners() {
+  private registerEventsListeners(): void {
     subscribeToEvent(EVENTS.START_TEST_ITEM, this.startTestItem.bind(this));
     subscribeToEvent(EVENTS.FINISH_TEST_ITEM, this.finishTestItem.bind(this));
   };
 
-  private getLastItem() {
+  private getLastItem(): string {
     return _.last(this.itemIds);
   };
 
-  private getItemDataObj(testResult) {
+  private getItemDataObj(testResult: any): FinishTestItemRQ {
     if (!testResult) {
-      return {};
+      return {
+        status: STATUSES.PASSED,
+      };
     }
     const varSuccess = testResult.results.failed === 0;
 
@@ -32,23 +40,23 @@ export default class Reporter {
     };
   };
 
-  public startLaunch(launchParams) {
-    this.launchId = this.client.startLaunch(launchParams).tempId;
+  public startLaunch(startLaunchObj: StartLaunchRQ): void {
+    this.launchId = this.client.startLaunch(startLaunchObj).tempId;
   };
 
-  public finishLaunch(launchFinishObj = {}) {
+  public finishLaunch(launchFinishObj = {}): void {
     this.client.finishLaunch(this.launchId, launchFinishObj);
   };
 
-  public startTestItem(itemData) {
-    const itemObj = this.client.startTestItem(itemData, this.launchId, this.getLastItem());
+  public startTestItem(startTestItemObj: StartTestItemRQ): void {
+    const itemObj = this.client.startTestItem(startTestItemObj, this.launchId, this.getLastItem());
 
     this.itemIds.push(itemObj.tempId);
   };
 
-  public finishTestItem(testResult) { // for now support only sync reporting
-    const itemData = this.getItemDataObj(testResult);
+  public finishTestItem(testResult: any): void { // for now support only sync reporting
+    const finishTestItemObj = this.getItemDataObj(testResult);
 
-    this.client.finishTestItem(this.itemIds.pop(), itemData);
+    this.client.finishTestItem(this.itemIds.pop(), finishTestItemObj);
   };
 }

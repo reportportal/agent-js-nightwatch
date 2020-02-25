@@ -1,6 +1,14 @@
-const publishEvent = (event, msg) => process.emit(event, msg);
+import { EVENTS } from '../constants';
 
-const subscribeToEvent = (event, callback) => process.on(event, callback);
+const publishEvent = (event: EVENTS, msg: any): void => {
+  // @ts-ignore
+  process.emit(event, msg);
+};
+
+const subscribeToEvent = (event: EVENTS, callback: (params: any) => void): void => {
+  // @ts-ignore
+  process.on(event, callback);
+};
 
 export {
   publishEvent,

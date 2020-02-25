@@ -1,14 +1,20 @@
 import fs from 'fs';
 import _ from 'lodash';
 import moment from 'moment';
-// @ts-ignore
 import RPClient from 'reportportal-client';
-import { STATUSES, LOG_LEVELS, TEST_ITEM_TYPES, EVENTS } from "../constants";
+import { AgentOptions } from '../models';
+import { STATUSES, LOG_LEVELS, TEST_ITEM_TYPES, EVENTS } from '../constants';
 import { getScreenshotPossiblePaths, normalizeFileName } from './utils';
 
 export default class PostFactumReporter {
 
-  private static getLogWithAttachment(path, testStartTime, params) {
+  private client: RPClient;
+  private readonly options: AgentOptions;
+  private launchId: string;
+  private launchStartTime: number | Date;
+  private launchParams: any;
+
+  private static getLogWithAttachment(path: string, testStartTime: number | Date, params: any) {
     const fileObj = {
       name: params.fileName,
       type: 'image/png',
@@ -24,7 +30,7 @@ export default class PostFactumReporter {
     };
   }
 
-  constructor({ agentOptions = {}, ...clientConfig }) {
+  constructor({ agentOptions = { launchParams: {} }, ...clientConfig }) {
     const { launchParams = {}, ...options } = agentOptions;
 
     this.client = new RPClient(clientConfig);
@@ -33,32 +39,33 @@ export default class PostFactumReporter {
     this.launchStartTime = Date.now();
   }
 
-  private startReporting(results, done) {
+  public startReporting(results: any, done: (param: any) => void): void {
     this.client
       .checkConnect()
       .then(() => this.report(results, done))
-      .catch((e) => this.finalize(done, { status: STATUSES.FAILED }, e));
+      .catch((e: any) => this.finalize(done, { status: STATUSES.FAILED }, e));
   }
 
-  private report(results, done) {
+  private report(results: any, done: (param: any) => void) {
     const tests = this.collectItems(results);
-    const { endTime } = _.last(tests);
+    const { endTime }: any = _.last(tests);
 
     this.reportItems(tests);
     this.finalize(done, { endTime });
   }
 
-  private reportItems(items) {
+  private reportItems(items: Array<any>) {
     this.launchId = this.client.startLaunch({
       startTime: this.launchStartTime,
       ...this.launchParams,
     }).tempId;
 
-    const stepsTempIds = [this.launchId];
+    const stepsTempIds: Array<string> = [this.launchId];
 
     items.forEach(({ action, fileObj, ...item } = {}) => {
       switch (action) {
         case EVENTS.START_TEST_ITEM:
+          // @ts-ignore
           const stepObj = this.client.startTestItem(item, ...stepsTempIds);
           stepsTempIds.push(stepObj.tempId);
           break;
@@ -71,7 +78,17 @@ export default class PostFactumReporter {
     });
   }
 
-  private getLogWithErrorScreenshot({ testName, suiteName, testStartTime, message }) {
+  private getLogWithErrorScreenshot({
+    testName,
+    suiteName,
+    testStartTime,
+    message
+  }: {
+    testName: string,
+    suiteName: string,
+    testStartTime: number | Date,
+    message: string,
+  }) {
     const basePath = `${this.options.screenshotsPath}/${suiteName}`;
     const screenshotPaths = getScreenshotPossiblePaths(testName, basePath, testStartTime);
     const pathsCount = screenshotPaths.length;
@@ -81,7 +98,7 @@ export default class PostFactumReporter {
     };
 
     for (let itemIndex = 0; itemIndex < pathsCount; itemIndex++) {
-      const { path, time } = screenshotPaths[itemIndex];
+      const { path, time }: any = screenshotPaths[itemIndex];
 
       try {
         const logWithAttachment = PostFactumReporter.getLogWithAttachment(path, time, screenshotParams);
@@ -95,7 +112,7 @@ export default class PostFactumReporter {
     return null;
   }
 
-  private collectItems(results) {
+  private collectItems(results: any) {
     const items = [];
     const suiteNames = Object.keys(results.modules);
 
@@ -115,7 +132,7 @@ export default class PostFactumReporter {
 
       const tests = { ...suite.completed };
       if (suite.skipped.length) {
-        suite.skipped.forEach((itemName) => {
+        suite.skipped.forEach((itemName: string) => {
           tests[itemName] = {
             name: itemName,
             status: STATUSES.SKIPPED,
@@ -166,7 +183,7 @@ export default class PostFactumReporter {
         }
 
         (test.failed || test.errors) &&
-          test.assertions.forEach((assertion) => {
+          test.assertions.forEach((assertion: any) => {
             items.push({
               action: EVENTS.SEND_LOG,
               level: LOG_LEVELS.INFO,
@@ -205,7 +222,7 @@ export default class PostFactumReporter {
     return items;
   }
 
-  private finalize(done, params, error) {
+  private finalize(done: (param: any) => void, params: any, error?: any) {
     if (this.launchId) {
       this.client.finishLaunch(this.launchId, params);
     }
