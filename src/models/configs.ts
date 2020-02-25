@@ -11,5 +11,5 @@ export interface ReportPortalConfig {
 export interface AgentOptions {
     reportItemsWithLaunchAttributes?: boolean;
     reportItemsWithLaunchDescription?: boolean;
-    screenshotsPath?: boolean;
+    screenshotsPath?: string;
 }

@@ -1,7 +1,7 @@
 import PostFactumReporter from './postFactumReporter';
 import { RealTimeReporter, PublicReportingAPI } from './realTimeReporter';
 
-module.exports = {
+export {
   PostFactumReporter,
   RealTimeReporter,
   PublicReportingAPI,

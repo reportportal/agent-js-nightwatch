@@ -3,7 +3,7 @@ import _ from 'lodash';
 import moment from 'moment';
 import RPClient from 'reportportal-client';
 import { AgentOptions } from '../models';
-import { STATUSES, LOG_LEVELS, TEST_ITEM_TYPES, EVENTS } from '../constants';
+import { STATUSES, LOG_LEVELS, TEST_ITEM_TYPES, EVENTS, FILE_TYPES } from '../constants';
 import { getScreenshotPossiblePaths, normalizeFileName } from './utils';
 
 export default class PostFactumReporter {
@@ -17,7 +17,7 @@ export default class PostFactumReporter {
   private static getLogWithAttachment(path: string, testStartTime: number | Date, params: any) {
     const fileObj = {
       name: params.fileName,
-      type: 'image/png',
+      type: FILE_TYPES.PNG,
       content: fs.readFileSync(path),
     };
 

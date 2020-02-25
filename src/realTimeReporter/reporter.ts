@@ -2,7 +2,13 @@ import _ from 'lodash';
 import RPClient from 'reportportal-client';
 import { STATUSES, EVENTS } from '../constants';
 import { subscribeToEvent } from './utils';
-import { StartLaunchRQ, FinishTestItemRQ, AgentOptions, ReportPortalConfig, StartTestItemRQ } from '../models';
+import {
+  StartLaunchRQ,
+  FinishTestItemRQ,
+  AgentOptions,
+  ReportPortalConfig,
+  StartTestItemRQ,
+} from '../models';
 
 export default class Reporter {
   private client: RPClient;
