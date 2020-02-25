@@ -1,4 +1,4 @@
-const { PostFactumReporter } = require('../../src');
+const { PostFactumReporter } = require('../../build');
 const config = require('../rp');
 const params = require('./params');
 

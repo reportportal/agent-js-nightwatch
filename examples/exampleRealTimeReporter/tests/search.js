@@ -1,4 +1,4 @@
-const { PublicReportingAPI } = require('../../../src');
+const { PublicReportingAPI } = require('../../../build');
 
 module.exports = {
   before: function (browser, done) {

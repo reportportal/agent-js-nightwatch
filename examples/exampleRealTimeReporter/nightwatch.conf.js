@@ -1,6 +1,6 @@
 const chromedriver = require('chromedriver');
 
-const { RealTimeReporter } = require('../../src');
+const { RealTimeReporter } = require('../../build');
 const config = require('../rp');
 
 const reporter = new RealTimeReporter({ ...config, launch: 'REAL_TIME_REPORTER_LAUNCH' });
