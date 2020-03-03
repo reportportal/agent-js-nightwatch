@@ -1,8 +1,8 @@
 import fs from 'fs';
-import _ from 'lodash';
 import moment from 'moment';
 import RPClient from 'reportportal-client';
-import { AgentOptions } from '../models';
+import { AgentOptions, ReportPortalConfig } from '../models';
+import { getLastItem } from '../utils';
 import { STATUSES, LOG_LEVELS, TEST_ITEM_TYPES, EVENTS, FILE_TYPES } from '../constants';
 import { getScreenshotPossiblePaths, normalizeFileName } from './utils';
 
@@ -30,12 +30,12 @@ export default class PostFactumReporter {
     };
   }
 
-  constructor({ agentOptions = { launchParams: {} }, ...clientConfig }) {
-    const { launchParams = {}, ...options } = agentOptions;
+  constructor(config: ReportPortalConfig & AgentOptions) {
+    const { attributes, description, screenshotsPath, ...clientConfig } = config;
 
     this.client = new RPClient(clientConfig);
-    this.launchParams = launchParams;
-    this.options = options;
+    this.launchParams = { attributes, description };
+    this.options = { screenshotsPath };
     this.launchStartTime = Date.now();
   }
 
@@ -48,7 +48,7 @@ export default class PostFactumReporter {
 
   private report(results: any, done: (param: any) => void) {
     const tests = this.collectItems(results);
-    const { endTime }: any = _.last(tests);
+    const { endTime }: any = getLastItem(tests);
 
     this.reportItems(tests);
     this.finalize(done, { endTime });
@@ -73,7 +73,7 @@ export default class PostFactumReporter {
           this.client.finishTestItem(stepsTempIds.pop(), item);
           break;
         case EVENTS.SEND_LOG:
-          this.client.sendLog(_.last(stepsTempIds), item, fileObj);
+          this.client.sendLog(getLastItem(stepsTempIds), item, fileObj);
       }
     });
   }

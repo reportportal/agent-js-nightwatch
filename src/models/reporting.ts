@@ -1,5 +1,5 @@
-import { TEST_ITEM_TYPES, FILE_TYPES } from '../constants';
-import { RPItemStartRQ, RPItemFinishRQ, Parameter, Issue, LAUNCH_MODES, RPLogRQ } from './common';
+import { TEST_ITEM_TYPES, FILE_TYPES, LAUNCH_MODES } from '../constants';
+import { RPItemStartRQ, RPItemFinishRQ, Parameter, Issue, RPLogRQ } from './common';
 
 export interface StartTestItemRQ extends RPItemStartRQ {
     name: string;
@@ -35,6 +35,6 @@ export interface AttachmentRQ extends RPLogRQ {
     attachment: {
         name: string,
         type: FILE_TYPES,
-        content: any,
+        content: string | Buffer,
     }
 }

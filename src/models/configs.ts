@@ -1,3 +1,5 @@
+import { Attribute } from "./common";
+
 export interface ReportPortalConfig {
     token: string;
     project: string;
@@ -5,11 +7,11 @@ export interface ReportPortalConfig {
     launch: string;
 
     debug?: boolean;
+    attributes?: Array<Attribute>;
+    description?: string;
     isLaunchMergeRequired?: boolean;
 }
 
 export interface AgentOptions {
-    reportItemsWithLaunchAttributes?: boolean;
-    reportItemsWithLaunchDescription?: boolean;
     screenshotsPath?: string;
 }

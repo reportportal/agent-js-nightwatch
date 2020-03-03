@@ -12,28 +12,23 @@ Agent for integration NightwatchJS with ReportPortal.
 2. Create rp.json file with reportportal configuration:
     ```json
     {
-        // client settings
         "token": "00000000-0000-0000-0000-000000000000",
         "endpoint": "https://your.reportportal.server/api/v1",
         "project": "YourReportPortalProjectName",
         "launch": "YourLauncherName",
-        // agent settings
-        "agentOptions": {
-            "launchParams": {
-                "attributes": [
-                    {
-                        "key": "YourKey",
-                        "value": "YourValue"
-                    },
-                    {
-                        "value": "YourValue"
-                    }
-                ],
-                "description": "Your launch description",
-                "rerun": true,
-                "rerunOf": "00000000-0000-0000-0000-000000000000"
+        "attributes": [
+            {
+                "key": "YourKey",
+                "value": "YourValue"
+            },
+            {
+                "value": "YourValue"
             }
-        }
+        ],
+        "description": "Your launch description",
+        "rerun": true,
+        "rerunOf": "00000000-0000-0000-0000-000000000000",
+        "screenshotsPath": "path" // used only for PostFactumReporter
     }
     ```
     Where

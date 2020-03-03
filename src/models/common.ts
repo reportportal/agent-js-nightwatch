@@ -1,10 +1,5 @@
 import { STATUSES, LOG_LEVELS } from '../constants';
 
-export enum LAUNCH_MODES {
-    DEFAULT = 'DEFAULT',
-    DEBUG = 'DEBUG',
-}
-
 export interface Attribute {
     value: string;
     key?: string;

@@ -1,26 +1,23 @@
-import _ from 'lodash';
 import RPClient from 'reportportal-client';
+import { getLastItem } from '../utils';
 import { STATUSES, EVENTS } from '../constants';
 import { subscribeToEvent } from './utils';
 import {
   StartLaunchRQ,
   FinishTestItemRQ,
-  AgentOptions,
   ReportPortalConfig,
   StartTestItemRQ,
 } from '../models';
 
 export default class Reporter {
   private client: RPClient;
-  private readonly options: AgentOptions;
   private launchId: string;
   private itemIds: Array<string>;
 
-  constructor(clientConfig: ReportPortalConfig, agentOptions: AgentOptions) {
+  constructor(config: ReportPortalConfig) {
     this.registerEventsListeners();
 
-    this.client = new RPClient(clientConfig);
-    this.options = agentOptions;
+    this.client = new RPClient(config);
     this.itemIds = [];
   }
 
@@ -30,7 +27,7 @@ export default class Reporter {
   };
 
   private getLastItem(): string {
-    return _.last(this.itemIds);
+    return getLastItem(this.itemIds);
   };
 
   private getItemDataObj(testResult: any): FinishTestItemRQ {

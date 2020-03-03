@@ -1,4 +1,11 @@
-import { StartTestItemRQ, FinishTestItemRQ, StartLaunchRQ, FinishLaunchRQ, LogRQ, AttachmentRQ } from './reporting';
+import {
+    StartTestItemRQ,
+    FinishTestItemRQ,
+    StartLaunchRQ,
+    FinishLaunchRQ,
+    LogRQ,
+    AttachmentRQ,
+} from './reporting';
 import { AgentOptions, ReportPortalConfig } from './configs';
 import { Parameter, Attribute, Issue } from './common';
 
