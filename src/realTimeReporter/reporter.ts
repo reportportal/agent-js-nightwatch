@@ -7,27 +7,36 @@ import {
   FinishTestItemRQ,
   ReportPortalConfig,
   StartTestItemRQ,
+  Attribute,
+  Parameter,
 } from '../models';
+
+interface TestItem {
+  id: string;
+  attributes?: Array<Attribute>;
+  parameters?: Array<Parameter>;
+}
 
 export default class Reporter {
   private client: RPClient;
   private launchId: string;
-  private itemIds: Array<string>;
+  private testItems: Array<TestItem>;
 
   constructor(config: ReportPortalConfig) {
     this.registerEventsListeners();
 
     this.client = new RPClient(config);
-    this.itemIds = [];
+    this.testItems = [];
   }
 
   private registerEventsListeners(): void {
     subscribeToEvent(EVENTS.START_TEST_ITEM, this.startTestItem.bind(this));
     subscribeToEvent(EVENTS.FINISH_TEST_ITEM, this.finishTestItem.bind(this));
+    subscribeToEvent(EVENTS.SET_ATTRIBUTE, this.setItemAttribute.bind(this));
   };
 
-  private getLastItem(): string {
-    return getLastItem(this.itemIds);
+  private getLastItem(): TestItem {
+    return getLastItem(this.testItems);
   };
 
   private getItemDataObj(testResult: any): FinishTestItemRQ {
@@ -64,14 +73,29 @@ export default class Reporter {
   };
 
   public startTestItem(startTestItemObj: StartTestItemRQ): void {
-    const itemObj = this.client.startTestItem(startTestItemObj, this.launchId, this.getLastItem());
+    const parentItem = this.getLastItem();
+    const itemObj = this.client.startTestItem(startTestItemObj, this.launchId, parentItem ? parentItem.id : undefined);
 
-    this.itemIds.push(itemObj.tempId);
+    this.testItems.push({ id: itemObj.tempId, attributes: [], parameters: [] });
   };
 
   public finishTestItem(testResult: any): void { // for now support only sync reporting
     const finishTestItemObj = this.getItemDataObj(testResult);
+    const { id, ...data } = this.testItems.pop();
+    const finishItemObj = { ...data, ...finishTestItemObj };
 
-    this.client.finishTestItem(this.itemIds.pop(), finishTestItemObj);
+    this.client.finishTestItem(id, finishItemObj);
+  };
+
+  public setItemAttribute(attribute: Attribute | Array<Attribute>): void {
+    const currentItem = this.getLastItem();
+
+    if (Array.isArray(attribute)) {
+      currentItem.attributes = currentItem.attributes.concat(attribute);
+    } else {
+      currentItem.attributes.push(attribute);
+    }
+
+    this.testItems.map((item) => item.id === currentItem.id ? currentItem : item);
   };
 }
