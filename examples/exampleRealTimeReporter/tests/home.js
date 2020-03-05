@@ -50,6 +50,8 @@ describe('Home', function() {
       .click('button[type=submit]')
       .assert.containsText('.mainline-results', 'Nightwatch.js')
       .end();
+
+      PublicReportingAPI.setAttribute({ key: 'check', value: 'success' });
   });
 
   test('beta test', function(browser) {
