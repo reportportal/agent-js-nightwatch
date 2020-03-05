@@ -36,10 +36,22 @@ export default class Reporter {
         status: STATUSES.PASSED,
       };
     }
-    const varSuccess = testResult.results.failed === 0;
+    const currentTestItemName = testResult.name;
+    const currentTestItem = testResult.results.testcases
+        ? testResult.results.testcases[currentTestItemName]
+        : testResult.results;
+
+    let status;
+    if (currentTestItem.skipped !== 0) {
+      status = STATUSES.SKIPPED;
+    } else if (currentTestItem.failed !== 0) {
+      status = STATUSES.FAILED;
+    } else {
+      status = STATUSES.PASSED;
+    }
 
     return {
-      status: varSuccess ? STATUSES.PASSED : STATUSES.FAILED,
+      status,
     };
   };
 
