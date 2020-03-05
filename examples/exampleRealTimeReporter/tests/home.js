@@ -5,11 +5,15 @@ describe('Home', function() {
   before((browser, done) => {
     const item = {
       name: 'Home',
-      description: 'Suite search tests',
-      attributes: [{ key: 'suite', value: 'search' }],
+      description: 'Suite home tests',
+      attributes: [{ key: 'suite', value: 'home' }],
     };
-
     PublicReportingAPI.startSuite(item);
+
+    PublicReportingAPI.startBeforeSuite();
+    // beforeSuite related actions
+    PublicReportingAPI.finishBeforeSuite();
+
     done();
   });
 
@@ -31,6 +35,11 @@ describe('Home', function() {
 
   afterEach((browser, done) => {
     PublicReportingAPI.finishTestCase(browser.currentTest);
+
+    PublicReportingAPI.startAfterTestCase();
+    // afterEach related actions
+    PublicReportingAPI.finishAfterTestCase();
+
     done();
   });
 

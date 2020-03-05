@@ -20,6 +20,7 @@ export const hooksReporting: HooksReportingInterface = {
     startBeforeSuite(data: StartTestItemRQ): void {
         const suiteObj = {
             type: TEST_ITEM_TYPES.BEFORE_SUITE,
+            name: 'Before suite',
             ...data,
         };
 
@@ -33,6 +34,7 @@ export const hooksReporting: HooksReportingInterface = {
     startAfterSuite(data: StartTestItemRQ): void {
         const suiteObj = {
             type: TEST_ITEM_TYPES.AFTER_SUITE,
+            name: 'After suite',
             ...data,
         };
 
@@ -46,6 +48,7 @@ export const hooksReporting: HooksReportingInterface = {
     startBeforeTestCase(data: StartTestItemRQ): void {
         const suiteObj = {
             type: TEST_ITEM_TYPES.BEFORE_TEST,
+            name: 'Before test',
             ...data,
         };
 
@@ -59,6 +62,7 @@ export const hooksReporting: HooksReportingInterface = {
     startAfterTestCase(data: StartTestItemRQ): void {
         const suiteObj = {
             type: TEST_ITEM_TYPES.AFTER_TEST,
+            name: 'After test',
             ...data,
         };
 
