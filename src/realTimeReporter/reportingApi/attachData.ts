@@ -5,8 +5,8 @@ import { AttachmentRQ, Attribute, LogRQ } from '../../models';
 export interface AttachDataInterface {
     addAttributes(attributes: Array<Attribute>): void;
     addDescription(text: string): void;
-    addLog(message: LogRQ['message'], level: LogRQ['level']): void;
-    addAttachment(message: LogRQ['message'], file: AttachmentRQ['file'], level: LogRQ['level']): void;
+    addLog(level: Pick<LogRQ, 'level'>, message: Pick<LogRQ, 'message'>): void;
+    addAttachment(level: Pick<LogRQ, 'level'>, file: Pick<AttachmentRQ, 'file'>, message: Pick<LogRQ, 'message'>): void;
 }
 
 export const attachData: AttachDataInterface = {
