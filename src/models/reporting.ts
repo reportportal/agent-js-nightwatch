@@ -32,7 +32,7 @@ export interface FinishLaunchRQ extends RPItemFinishRQ {}
 export interface LogRQ extends RPLogRQ {}
 
 export interface AttachmentRQ extends RPLogRQ {
-    attachment: {
+    file: {
         name: string,
         type: FILE_TYPES,
         content: string | Buffer,

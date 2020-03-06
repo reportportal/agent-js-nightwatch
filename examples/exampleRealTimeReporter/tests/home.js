@@ -1,12 +1,14 @@
 const { PublicReportingAPI } = require('../../../build');
 
-describe('Home', function() {
+const suiteName = 'Home';
+
+describe(suiteName, function() {
 
   before((browser, done) => {
     const item = {
-      name: 'Home',
-      description: 'Suite home tests',
+      name: suiteName,
       attributes: [{ key: 'suite', value: 'home' }],
+      description: 'Common suite description',
     };
     PublicReportingAPI.startSuite(item);
 
@@ -26,7 +28,6 @@ describe('Home', function() {
   beforeEach((browser, done) => {
     const item = {
       name: browser.currentTest.name,
-      description: 'Test description',
     };
 
     PublicReportingAPI.startTestCase(item);
@@ -44,6 +45,8 @@ describe('Home', function() {
   });
 
   test('demo test', function(browser) {
+    PublicReportingAPI.addDescription('Demo test for ecosia.org');
+
     browser
       .url('https://www.ecosia.org/')
       .setValue('input[type=search]', 'nightwatch')
@@ -51,10 +54,13 @@ describe('Home', function() {
       .assert.containsText('.mainline-results', 'Nightwatch.js')
       .end();
 
-      PublicReportingAPI.setAttribute({ key: 'check', value: 'success' });
+    PublicReportingAPI.addAttributes([{ key: 'check', value: 'success' }]);
+    PublicReportingAPI.addDescription('Attributes added to the test item');
   });
 
   test('beta test', function(browser) {
+    PublicReportingAPI.addDescription('Demo test for ecosia.org #2');
+
     browser
       .url('https://www.ecosia.org/')
       .setValue('input[type=search]', 'nightwatch')

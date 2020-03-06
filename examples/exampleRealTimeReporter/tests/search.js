@@ -4,7 +4,7 @@ module.exports = {
   before: function (browser, done) {
     const item = {
       name: 'Search',
-      description: 'Suite search tests',
+      description: 'Suite description',
       attributes: [{ key: 'suite', value: 'search' }],
     };
 
@@ -15,7 +15,7 @@ module.exports = {
   beforeEach: function (browser, done) {
     const item = {
       name: browser.currentTest.name,
-      description: 'Test description',
+      attributes: [{ key: 'test', value: 'before' }],
     };
 
     PublicReportingAPI.startTestCase(item);
@@ -37,6 +37,8 @@ module.exports = {
     client
       .url('https://google.com')
       .waitForElementPresent('body', 1000);
+
+    PublicReportingAPI.addDescription('Demo test for google.com');
   },
 
   'part two' : function(client) {

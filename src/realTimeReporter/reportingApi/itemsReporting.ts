@@ -24,12 +24,12 @@ export const itemsReporting: ItemsReportingInterface = {
     },
 
     startTestCase(data: StartTestItemRQ): void {
-        const suiteObj = {
+        const testObj = {
             type: TEST_ITEM_TYPES.STEP,
             ...data,
         };
 
-        publishEvent(EVENTS.START_TEST_ITEM, suiteObj);
+        publishEvent(EVENTS.START_TEST_ITEM, testObj);
     },
 
     finishTestCase(data: FinishTestItemRQ): void {

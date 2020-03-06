@@ -1,4 +1,6 @@
 import RPClient from 'reportportal-client';
+// @ts-ignore
+import { EVENTS as CLIENT_EVENTS } from 'reportportal-client/lib/events';
 import { getLastItem } from '../utils';
 import { STATUSES, EVENTS } from '../constants';
 import { subscribeToEvent } from './utils';
@@ -8,19 +10,18 @@ import {
   ReportPortalConfig,
   StartTestItemRQ,
   Attribute,
-  Parameter,
 } from '../models';
 
 interface TestItem {
   id: string;
   attributes?: Array<Attribute>;
-  parameters?: Array<Parameter>;
+  description?: string;
 }
 
 export default class Reporter {
   private client: RPClient;
   private launchId: string;
-  private testItems: Array<TestItem>;
+  private testItems: Array<TestItem>; // TODO: move it to the store in the future
 
   constructor(config: ReportPortalConfig) {
     this.registerEventsListeners();
@@ -32,7 +33,9 @@ export default class Reporter {
   private registerEventsListeners(): void {
     subscribeToEvent(EVENTS.START_TEST_ITEM, this.startTestItem.bind(this));
     subscribeToEvent(EVENTS.FINISH_TEST_ITEM, this.finishTestItem.bind(this));
-    subscribeToEvent(EVENTS.SET_ATTRIBUTE, this.setItemAttribute.bind(this));
+
+    subscribeToEvent(CLIENT_EVENTS.ADD_ATTRIBUTES, this.setItemAttributes.bind(this));
+    subscribeToEvent(CLIENT_EVENTS.ADD_DESCRIPTION, this.addItemDescription.bind(this));
   };
 
   private getLastItem(): TestItem {
@@ -45,9 +48,8 @@ export default class Reporter {
         status: STATUSES.PASSED,
       };
     }
-    const currentTestItemName = testResult.name;
     const currentTestItem = testResult.results.testcases
-        ? testResult.results.testcases[currentTestItemName]
+        ? testResult.results.testcases[testResult.name]
         : testResult.results;
 
     let status;
@@ -76,7 +78,13 @@ export default class Reporter {
     const parentItem = this.getLastItem();
     const itemObj = this.client.startTestItem(startTestItemObj, this.launchId, parentItem ? parentItem.id : undefined);
 
-    this.testItems.push({ id: itemObj.tempId, attributes: [], parameters: [] });
+    const testItem: TestItem = {
+      id: itemObj.tempId,
+      attributes: [],
+      description: startTestItemObj.description || '',
+    };
+
+    this.testItems.push(testItem);
   };
 
   public finishTestItem(testResult: any): void { // for now support only sync reporting
@@ -87,15 +95,16 @@ export default class Reporter {
     this.client.finishTestItem(id, finishItemObj);
   };
 
-  public setItemAttribute(attribute: Attribute | Array<Attribute>): void {
+  public setItemAttributes(data: { attributes: Array<Attribute> }): void {
     const currentItem = this.getLastItem();
 
-    if (Array.isArray(attribute)) {
-      currentItem.attributes = currentItem.attributes.concat(attribute);
-    } else {
-      currentItem.attributes.push(attribute);
-    }
+    currentItem.attributes = currentItem.attributes.concat(data.attributes);
+  };
 
-    this.testItems.map((item) => item.id === currentItem.id ? currentItem : item);
+  public addItemDescription(data: { text: string }): void {
+    const currentItem = this.getLastItem();
+
+    currentItem.description = `${currentItem.description}
+${data.text}`;
   };
 }
