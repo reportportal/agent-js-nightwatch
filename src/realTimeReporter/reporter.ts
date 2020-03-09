@@ -59,10 +59,12 @@ export default class Reporter {
       status = STATUSES.SKIPPED;
     } else if (currentTestItemResults.failed !== 0) {
       status = STATUSES.FAILED;
+      const assertionsResult = currentTestItemResults.assertions[0];
 
       const itemLog: LogRQ = {
         level: LOG_LEVELS.ERROR,
-        message: currentTestItemResults.assertions[0].stacktrace,
+        message: `${assertionsResult.fullMsg}
+${assertionsResult.stackTrace}`,
       };
 
       this.client.sendLog(id, itemLog);
