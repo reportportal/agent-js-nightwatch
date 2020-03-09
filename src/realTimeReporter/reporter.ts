@@ -36,6 +36,7 @@ export default class Reporter {
     subscribeToEvent(EVENTS.FINISH_TEST_ITEM, this.finishTestItem.bind(this));
 
     subscribeToEvent(CLIENT_EVENTS.ADD_LOG, this.sendLogToItem.bind(this));
+    subscribeToEvent(CLIENT_EVENTS.ADD_LAUNCH_LOG, this.sendLogToLaunch.bind(this));
     subscribeToEvent(CLIENT_EVENTS.ADD_ATTRIBUTES, this.setItemAttributes.bind(this));
     subscribeToEvent(CLIENT_EVENTS.ADD_DESCRIPTION, this.addItemDescription.bind(this));
   };
@@ -108,6 +109,10 @@ export default class Reporter {
 
     this.client.sendLog(currentItem.id, data);
   };
+
+  private sendLogToLaunch(data: LogRQ): void {
+    this.client.sendLog(this.launchId, data);
+  }
 
   private setItemAttributes(data: { attributes: Array<Attribute> }): void {
     const currentItem = this.getLastItem();

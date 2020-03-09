@@ -38,7 +38,9 @@ module.exports = {
       .url('https://google.com')
       .waitForElementPresent('body', 1000);
 
-    PublicReportingAPI.logInfo('Info log for demo test item');
+    PublicReportingAPI.sendLog.info('Info log for demo test item');
+
+    PublicReportingAPI.sendLaunchLog.info('Info log for launch');
 
     PublicReportingAPI.addDescription('Demo test for google.com');
   },
