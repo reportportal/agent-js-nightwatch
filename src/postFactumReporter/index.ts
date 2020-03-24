@@ -47,7 +47,6 @@ export default class PostFactumReporter {
   }
 
   private report(results: any, done: (param: any) => void) {
-    console.log(results);
     const tests = this.collectItems(results);
     const { endTime }: any = getLastItem(tests);
 
