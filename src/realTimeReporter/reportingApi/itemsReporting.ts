@@ -1,6 +1,6 @@
 import { FinishTestItemRQ, StartTestItemRQ } from '../../models';
 import { EVENTS, TEST_ITEM_TYPES } from '../../constants';
-import { publishEvent } from '../utils';
+import { publishEvent, getCodeRef } from '../utils';
 
 export interface ItemsReportingInterface {
     startSuite(data: StartTestItemRQ): void;
@@ -11,8 +11,10 @@ export interface ItemsReportingInterface {
 
 export const itemsReporting: ItemsReportingInterface = {
     startSuite(data: StartTestItemRQ): void {
+        const codeRef = getCodeRef(data.name);
         const suiteObj = {
             type: TEST_ITEM_TYPES.SUITE,
+            codeRef,
             ...data,
         };
 
@@ -24,8 +26,10 @@ export const itemsReporting: ItemsReportingInterface = {
     },
 
     startTestCase(data: StartTestItemRQ): void {
+        const codeRef = getCodeRef(data.name);
         const testObj = {
             type: TEST_ITEM_TYPES.STEP,
+            codeRef,
             ...data,
         };
 

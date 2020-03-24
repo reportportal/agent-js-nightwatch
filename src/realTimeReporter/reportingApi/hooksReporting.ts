@@ -1,6 +1,6 @@
 import { FinishTestItemRQ, StartTestItemRQ } from '../../models';
 import { EVENTS, TEST_ITEM_TYPES } from '../../constants';
-import { publishEvent } from '../utils';
+import { publishEvent, getCodeRef } from '../utils';
 
 export interface HooksReportingInterface {
     startBeforeSuite(data: StartTestItemRQ): void;
@@ -18,9 +18,13 @@ export interface HooksReportingInterface {
 
 export const hooksReporting: HooksReportingInterface = {
     startBeforeSuite(data: StartTestItemRQ): void {
+        const hookName = 'Before suite';
+        const codeRef = getCodeRef(hookName);
+
         const suiteObj = {
             type: TEST_ITEM_TYPES.BEFORE_SUITE,
-            name: 'Before suite',
+            name: hookName,
+            codeRef,
             ...data,
         };
 
@@ -32,9 +36,13 @@ export const hooksReporting: HooksReportingInterface = {
     },
 
     startAfterSuite(data: StartTestItemRQ): void {
+        const hookName = 'After suite';
+        const codeRef = getCodeRef(hookName);
+
         const suiteObj = {
             type: TEST_ITEM_TYPES.AFTER_SUITE,
-            name: 'After suite',
+            name: hookName,
+            codeRef,
             ...data,
         };
 
@@ -46,9 +54,13 @@ export const hooksReporting: HooksReportingInterface = {
     },
 
     startBeforeTestCase(data: StartTestItemRQ): void {
+        const hookName = 'Before test';
+        const codeRef = getCodeRef(hookName);
+
         const suiteObj = {
             type: TEST_ITEM_TYPES.BEFORE_TEST,
-            name: 'Before test',
+            name: hookName,
+            codeRef,
             ...data,
         };
 
@@ -60,9 +72,13 @@ export const hooksReporting: HooksReportingInterface = {
     },
 
     startAfterTestCase(data: StartTestItemRQ): void {
+        const hookName = 'After test';
+        const codeRef = getCodeRef(hookName);
+
         const suiteObj = {
             type: TEST_ITEM_TYPES.AFTER_TEST,
-            name: 'After test',
+            name: hookName,
+            codeRef,
             ...data,
         };
 
