@@ -1,3 +1,4 @@
+import path from 'path';
 import { EVENTS } from '../constants';
 
 export const publishEvent = (event: EVENTS, msg: any): void => {
@@ -16,8 +17,8 @@ export const getCodeRef = (itemName: string): string => {
   const workingDir = process.cwd();
 
   const codeRef = testPath
-      .replace(`${workingDir}\\`, '')
-      .replace(/\\/g, '.')
+      .replace(`${workingDir}${path.sep}`, '')
+      .replace(/[\\/]/g, '.')
       .replace(/\.[^/.]+$/gi, '');
 
   return `${codeRef}.${itemName}`;
