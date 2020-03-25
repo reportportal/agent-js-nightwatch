@@ -5,7 +5,7 @@ import { Attribute, LogRQ } from '../../models';
 
 type LogMessage = Pick<LogRQ, 'message'>;
 
-interface SendLogInterface {
+interface LogInterface {
     info(message: LogMessage): void;
     debug(message: LogMessage): void;
     warn(message: LogMessage): void;
@@ -18,15 +18,15 @@ export interface AttachDataInterface {
     addAttributes(attributes: Array<Attribute>): void;
     addDescription(text: string): void;
 
-    sendLog: SendLogInterface;
-    sendLaunchLog: SendLogInterface;
+    log: LogInterface;
+    launchLog: LogInterface;
 }
 
 export const attachData: AttachDataInterface = {
     addAttributes: PublicReportingAPI.addAttributes,
     addDescription: PublicReportingAPI.addDescription,
 
-    sendLog: {
+    log: {
         info: (message) => {
             PublicReportingAPI.addLog({ level: LOG_LEVELS.INFO, message });
         },
@@ -47,7 +47,7 @@ export const attachData: AttachDataInterface = {
         },
     },
 
-    sendLaunchLog: {
+    launchLog: {
         info: (message) => {
             PublicReportingAPI.addLaunchLog({ level: LOG_LEVELS.INFO, message });
         },
