@@ -2,8 +2,8 @@ import RPClient from 'reportportal-client';
 // @ts-ignore
 import { EVENTS as CLIENT_EVENTS } from 'reportportal-client/lib/events';
 import { getLastItem } from '../utils';
-import {STATUSES, EVENTS, LOG_LEVELS} from '../constants';
-import { subscribeToEvent } from './utils';
+import { STATUSES, EVENTS, LOG_LEVELS } from '../constants';
+import { subscribeToEvent, ejectFileFromLog } from './utils';
 import {
   StartLaunchRQ,
   FinishTestItemRQ,
@@ -108,12 +108,15 @@ ${assertionsResult.stackTrace}`,
 
   private sendLogToItem(data: LogRQ): void {
     const currentItem = this.getLastItem();
+    const { log, file } = ejectFileFromLog(data);
 
-    this.client.sendLog(currentItem.id, data);
+    this.client.sendLog(currentItem.id, log, file);
   };
 
   private sendLogToLaunch(data: LogRQ): void {
-    this.client.sendLog(this.launchId, data);
+    const { log, file } = ejectFileFromLog(data);
+
+    this.client.sendLog(this.launchId, log, file);
   }
 
   private setItemAttributes(data: { attributes: Array<Attribute> }): void {

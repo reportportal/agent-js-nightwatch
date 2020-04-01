@@ -1,5 +1,6 @@
 import path from 'path';
-import { EVENTS } from '../constants';
+import { EVENTS, FILE_TYPES } from '../constants';
+import { LogRQ, Attachment } from '../models';
 
 export const publishEvent = (event: EVENTS, msg: any): void => {
   // @ts-ignore
@@ -9,6 +10,15 @@ export const publishEvent = (event: EVENTS, msg: any): void => {
 export const subscribeToEvent = (event: EVENTS, callback: (params: any) => void): void => {
   // @ts-ignore
   process.on(event, callback);
+};
+
+export const ejectFileFromLog = (logData: LogRQ): { log: LogRQ, file?: Attachment } => {
+  const { file, ...log } = logData;
+
+  return {
+    log,
+    file: file ? { type: FILE_TYPES.JPG, ...file } : undefined,
+  }
 };
 
 export const getCodeRef = (itemName: string): string => {

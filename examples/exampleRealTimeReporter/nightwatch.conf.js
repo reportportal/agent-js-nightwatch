@@ -7,6 +7,7 @@ const reporter = new RealTimeReporter({ ...config, launch: 'REAL_TIME_REPORTER_L
 
 module.exports = {
   src_folders : ['./exampleRealTimeReporter/tests'],
+  custom_commands_path: '../build/commands',
 
   test_settings: {
     default: {

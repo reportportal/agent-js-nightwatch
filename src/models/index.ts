@@ -4,7 +4,7 @@ import {
     StartLaunchRQ,
     FinishLaunchRQ,
     LogRQ,
-    AttachmentRQ,
+    Attachment,
 } from './reporting';
 import { AgentOptions, ReportPortalConfig } from './configs';
 import { Parameter, Attribute, Issue } from './common';
@@ -15,7 +15,7 @@ export {
     FinishTestItemRQ,
     StartTestItemRQ,
     LogRQ,
-    AttachmentRQ,
+    Attachment,
     AgentOptions,
     ReportPortalConfig,
     Parameter,

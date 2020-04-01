@@ -1,4 +1,6 @@
-const { PublicReportingAPI } = require('../../../build');
+const fs = require('fs');
+const path = require('path');
+const { PublicReportingAPI, FILE_TYPES } = require('../../../build');
 
 module.exports = {
   before: function (browser, done) {
@@ -15,7 +17,6 @@ module.exports = {
   beforeEach: function (browser, done) {
     const item = {
       name: browser.currentTest.name,
-      attributes: [{ key: 'test', value: 'before' }],
     };
 
     PublicReportingAPI.startTestCase(item);
@@ -38,10 +39,8 @@ module.exports = {
       .url('https://google.com')
       .waitForElementPresent('body', 1000);
 
-    PublicReportingAPI.log.info('Info log for demo test item');
-
-    PublicReportingAPI.launchLog.info('Info log for launch');
-
+    PublicReportingAPI.logInfo('Info log for demo test item');
+    PublicReportingAPI.launchLogDebug('Debug log for launch');
     PublicReportingAPI.addDescription('Demo test for google.com');
   },
 
@@ -52,5 +51,13 @@ module.exports = {
       .assert.urlContains('search?')
       .assert.urlContains('nightwatch')
       .end();
+
+    const attachment = {
+      name: 'Cities',
+      type: FILE_TYPES.JSON,
+      content: fs.readFileSync(path.resolve(__dirname, '../data', 'cities.json')),
+    };
+
+    PublicReportingAPI.launchLogInfo('Log with attachment for launch', attachment);
   }
 };

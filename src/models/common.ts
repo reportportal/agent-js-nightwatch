@@ -1,4 +1,4 @@
-import { STATUSES, LOG_LEVELS } from '../constants';
+import { STATUSES } from '../constants';
 
 export interface Attribute {
     value: string;
@@ -41,10 +41,4 @@ export interface RPItemStartRQ extends RPItem {
 export interface RPItemFinishRQ extends RPItem {
     status: STATUSES;
     endTime?: Date;
-}
-
-export interface RPLogRQ {
-    level?: LOG_LEVELS;
-    message?: string;
-    time?: number;
 }

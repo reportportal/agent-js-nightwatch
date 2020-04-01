@@ -50,6 +50,13 @@ describe(suiteName, function() {
     browser
       .url('https://www.ecosia.org/')
       .setValue('input[type=search]', 'nightwatch')
+      .saveScreenshot('testScreen.jpg', (data) => {
+        PublicReportingAPI.logInfo('This is a log with screenshot attachment', {
+          name: 'testScreen',
+          content: data.value,
+        });
+      })
+      .log('Screenshot attached successfully')
       .click('button[type=submit]')
       .assert.containsText('.mainline-results', 'Nightwatch.js')
       .end();
