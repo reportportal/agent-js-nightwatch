@@ -31,7 +31,7 @@ export interface FinishLaunchRQ extends RPItemFinishRQ {}
 
 export interface Attachment {
     name: string,
-    type: FILE_TYPES,
+    type: FILE_TYPES | string,
     content: string | Buffer,
 }
 

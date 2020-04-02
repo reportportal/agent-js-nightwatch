@@ -9,3 +9,5 @@ export enum FILE_TYPES {
     PNG = 'image/png',
     JPG = 'image/jpg',
 }
+
+export const DEFAULT_FILE_TYPE = FILE_TYPES.JPG;

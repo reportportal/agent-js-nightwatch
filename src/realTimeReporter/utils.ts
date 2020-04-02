@@ -1,5 +1,5 @@
 import path from 'path';
-import { EVENTS, FILE_TYPES } from '../constants';
+import { EVENTS, DEFAULT_FILE_TYPE } from '../constants';
 import { LogRQ, Attachment } from '../models';
 
 export const publishEvent = (event: EVENTS, msg: any): void => {
@@ -17,7 +17,7 @@ export const ejectFileFromLog = (logData: LogRQ): { log: LogRQ, file?: Attachmen
 
   return {
     log,
-    file: file ? { type: FILE_TYPES.JPG, ...file } : undefined,
+    file: file ? { type: DEFAULT_FILE_TYPE, ...file } : undefined,
   }
 };
 
