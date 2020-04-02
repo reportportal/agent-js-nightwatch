@@ -2,14 +2,14 @@ import { FILE_TYPES, DEFAULT_FILE_TYPE } from './constants';
 
 export const getLastItem = (items: any[]): any => items[items.length - 1];
 
-export const extractFileExtension = (fileName: string): string => {
+export const getFileType = (fileName: string): string => {
     const matches = fileName.match(/\.([^.]*)$/);
-    let extension;
+    let type;
 
     if (matches) {
         // @ts-ignore
-        extension = FILE_TYPES[matches[1].toUpperCase()];
+        type = FILE_TYPES[matches[1].toUpperCase()];
     }
 
-    return extension || DEFAULT_FILE_TYPE;
+    return type || DEFAULT_FILE_TYPE;
 };
