@@ -12,14 +12,8 @@ export const subscribeToEvent = (event: EVENTS, callback: (params: any) => void)
   process.on(event, callback);
 };
 
-export const ejectFileFromLog = (logData: LogRQ): { log: LogRQ, file?: Attachment } => {
-  const { file, ...log } = logData;
-
-  return {
-    log,
-    file: file ? { type: DEFAULT_FILE_TYPE, ...file } : undefined,
-  }
-};
+export const setDefaultFileType = (file: Attachment): Attachment =>
+    file ? { type: DEFAULT_FILE_TYPE, ...file } : undefined;
 
 export const getCodeRef = (itemName: string): string => {
   const caller = getCaller();

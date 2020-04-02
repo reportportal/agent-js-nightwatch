@@ -3,7 +3,7 @@ import RPClient from 'reportportal-client';
 import { EVENTS as CLIENT_EVENTS } from 'reportportal-client/lib/events';
 import { getLastItem } from '../utils';
 import { STATUSES, EVENTS, LOG_LEVELS } from '../constants';
-import { subscribeToEvent, ejectFileFromLog } from './utils';
+import { subscribeToEvent, setDefaultFileType } from './utils';
 import {
   StartLaunchRQ,
   FinishTestItemRQ,
@@ -108,15 +108,17 @@ ${assertionsResult.stackTrace}`,
 
   private sendLogToItem(data: LogRQ): void {
     const currentItem = this.getLastItem();
-    const { log, file } = ejectFileFromLog(data);
+    const { file, ...log } = data;
+    const fileToSend = setDefaultFileType(file);
 
-    this.client.sendLog(currentItem.id, log, file);
+    this.client.sendLog(currentItem.id, log, fileToSend);
   };
 
   private sendLogToLaunch(data: LogRQ): void {
-    const { log, file } = ejectFileFromLog(data);
+    const { file, ...log } = data;
+    const fileToSend = setDefaultFileType(file);
 
-    this.client.sendLog(this.launchId, log, file);
+    this.client.sendLog(this.launchId, log, fileToSend);
   }
 
   private setItemAttributes(data: { attributes: Array<Attribute> }): void {
