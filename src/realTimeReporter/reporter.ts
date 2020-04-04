@@ -37,8 +37,8 @@ export default class Reporter {
 
     subscribeToEvent(CLIENT_EVENTS.ADD_LOG, this.sendLogToItem.bind(this));
     subscribeToEvent(CLIENT_EVENTS.ADD_LAUNCH_LOG, this.sendLogToLaunch.bind(this));
-    subscribeToEvent(CLIENT_EVENTS.ADD_ATTRIBUTES, this.setItemAttributes.bind(this));
-    subscribeToEvent(CLIENT_EVENTS.ADD_DESCRIPTION, this.addItemDescription.bind(this));
+    subscribeToEvent(CLIENT_EVENTS.ADD_ATTRIBUTES, this.addItemAttributes.bind(this));
+    subscribeToEvent(CLIENT_EVENTS.SET_DESCRIPTION, this.setItemDescription.bind(this));
   };
 
   private getLastItem(): TestItem {
@@ -123,16 +123,15 @@ ${assertionsResult.stackTrace}`,
     this.client.sendLog(this.launchId, log, fileToSend);
   }
 
-  private setItemAttributes(data: { attributes: Array<Attribute> }): void {
+  private addItemAttributes(data: { attributes: Array<Attribute> }): void {
     const currentItem = this.getLastItem();
 
     currentItem.attributes = currentItem.attributes.concat(data.attributes);
   };
 
-  private addItemDescription(data: { text: string }): void {
+  private setItemDescription(data: { text: string }): void {
     const currentItem = this.getLastItem();
 
-    currentItem.description = `${currentItem.description}
-${data.text}`;
+    currentItem.description = data.text;
   };
 }

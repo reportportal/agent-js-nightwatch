@@ -7,7 +7,7 @@ type LogMessage = LogRQ['message'];
 
 export interface AttachDataInterface {
     addAttributes(attributes: Array<Attribute>): void;
-    addDescription(text: string): void;
+    setDescription(text: string): void;
 
     log(level: LOG_LEVELS, message: LogMessage, file?: Attachment): void;
     launchLog(level: LOG_LEVELS, message: LogMessage, file?: Attachment): void;
@@ -29,7 +29,7 @@ export interface AttachDataInterface {
 
 export const attachData: AttachDataInterface = {
     addAttributes: PublicReportingAPI.addAttributes,
-    addDescription: PublicReportingAPI.addDescription,
+    setDescription: PublicReportingAPI.setDescription,
 
     log(level, message = '', file) {
         PublicReportingAPI.addLog({ level, message, file });

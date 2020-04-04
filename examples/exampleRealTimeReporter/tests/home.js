@@ -12,7 +12,6 @@ describe(suiteName, function() {
       attributes: [{ key: 'suite', value: 'home' }],
       description: 'Common suite description',
     };
-    console.log(browser);
     PublicReportingAPI.startSuite(item);
 
     PublicReportingAPI.startBeforeSuite();
@@ -39,7 +38,7 @@ describe(suiteName, function() {
   });
 
   test('demo test', function(browser) {
-    PublicReportingAPI.addDescription('Demo test for ecosia.org');
+    PublicReportingAPI.setDescription('Demo test for ecosia.org');
 
     browser
       .url('https://www.ecosia.org/')
@@ -57,11 +56,11 @@ describe(suiteName, function() {
       .end();
 
     PublicReportingAPI.addAttributes([{ key: 'check', value: 'success' }]);
-    PublicReportingAPI.addDescription('Attributes added to the test item');
+    PublicReportingAPI.setDescription('Attributes added to the test item');
   });
 
   test('beta test', function(browser) {
-    PublicReportingAPI.addDescription('Demo test for ecosia.org #2');
+    PublicReportingAPI.setDescription('Demo test for ecosia.org #2');
 
     browser
       .url('https://www.ecosia.org/')

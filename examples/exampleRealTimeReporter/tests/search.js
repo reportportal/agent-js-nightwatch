@@ -42,7 +42,7 @@ module.exports = {
 
     PublicReportingAPI.logInfo('Info log for demo test item');
     PublicReportingAPI.launchLogDebug('Debug log for launch');
-    PublicReportingAPI.addDescription('Demo test for google.com');
+    PublicReportingAPI.setDescription('Demo test for google.com');
   },
 
   'part two' : function(client) {
