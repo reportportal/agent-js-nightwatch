@@ -3,7 +3,7 @@ import RPClient from 'reportportal-client';
 import { EVENTS as CLIENT_EVENTS } from 'reportportal-client/lib/events';
 import { getLastItem } from '../utils';
 import { STATUSES, EVENTS, LOG_LEVELS } from '../constants';
-import { subscribeToEvent, setDefaultFileType } from './utils';
+import { subscribeToEvent, setDefaultFileType, getStartLaunchObj } from './utils';
 import {
   StartLaunchRQ,
   FinishTestItemRQ,
@@ -77,7 +77,9 @@ ${assertionsResult.stackTrace}`,
     };
   };
 
-  public startLaunch(startLaunchObj: StartLaunchRQ): void {
+  public startLaunch(launchObj: StartLaunchRQ): void {
+    const startLaunchObj: StartLaunchRQ = getStartLaunchObj(launchObj);
+
     this.launchId = this.client.startLaunch(startLaunchObj).tempId;
   };
 

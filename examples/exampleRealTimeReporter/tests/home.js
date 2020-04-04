@@ -12,6 +12,7 @@ describe(suiteName, function() {
       attributes: [{ key: 'suite', value: 'home' }],
       description: 'Common suite description',
     };
+    console.log(browser);
     PublicReportingAPI.startSuite(item);
 
     PublicReportingAPI.startBeforeSuite();

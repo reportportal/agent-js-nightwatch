@@ -1,6 +1,7 @@
 import path from 'path';
 import { EVENTS, DEFAULT_FILE_TYPE } from '../constants';
-import { LogRQ, Attachment } from '../models';
+import { getSystemAttributes } from '../utils';
+import { Attachment, StartLaunchRQ, Attribute } from '../models';
 
 export const publishEvent = (event: EVENTS, msg: any): void => {
   // @ts-ignore
@@ -14,6 +15,15 @@ export const subscribeToEvent = (event: EVENTS, callback: (params: any) => void)
 
 export const setDefaultFileType = (file: Attachment): Attachment =>
     file ? { type: DEFAULT_FILE_TYPE, ...file } : undefined;
+
+export const getStartLaunchObj = (launchObj: StartLaunchRQ): StartLaunchRQ => {
+  const systemAttributes: Array<Attribute> = getSystemAttributes();
+
+  return {
+    ...launchObj,
+    attributes: launchObj.attributes ? launchObj.attributes.concat(systemAttributes) : systemAttributes,
+  }
+};
 
 export const getCodeRef = (itemName: string): string => {
   const caller = getCaller();
