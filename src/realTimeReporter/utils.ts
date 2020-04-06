@@ -32,10 +32,9 @@ export const getCodeRef = (itemName: string): string => {
 
   const codeRef = testPath
       .replace(`${workingDir}${path.sep}`, '')
-      .replace(/[\\/]/g, '.')
-      .replace(/\.[^/.]+$/gi, '');
+      .replace(/[\\/]/g, '/');
 
-  return `${codeRef}.${itemName}`;
+  return `${codeRef}/${itemName}`;
 };
 
 const getCaller = (): NodeJS.CallSite => {
