@@ -1,6 +1,6 @@
 declare module 'reportportal-client' {
     export default class {
-        constructor(config: any);
+        constructor(config: any, agentInfo: any);
 
         public startLaunch(launchObj: any): any;
         public finishLaunch(launchId: string, launchObj: any): any;

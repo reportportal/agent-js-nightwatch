@@ -1,7 +1,7 @@
 import RPClient from 'reportportal-client';
 // @ts-ignore
 import { EVENTS as CLIENT_EVENTS } from 'reportportal-client/lib/events';
-import { getLastItem } from '../utils';
+import { getLastItem, getAgentInfo } from '../utils';
 import { EVENTS, LOG_LEVELS, STATUSES } from '../constants';
 import { getStartLaunchObj, setDefaultFileType, subscribeToEvent } from './utils';
 import {
@@ -28,7 +28,9 @@ export default class Reporter {
   constructor(config: ReportPortalConfig) {
     this.registerEventListeners();
 
-    this.client = new RPClient(config);
+    const agentInfo = getAgentInfo();
+
+    this.client = new RPClient(config, agentInfo);
     this.testItems = [];
   }
 

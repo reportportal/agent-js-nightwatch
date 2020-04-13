@@ -18,6 +18,11 @@ export const getFileType = (fileName: string): string => {
     return type || DEFAULT_FILE_TYPE;
 };
 
+export const getAgentInfo = () => ({
+    version: pjsonVersion,
+    name: pjsonName,
+});
+
 export const getSystemAttributes = (): Array<Attribute> => ([{
     key: 'agent',
     value: `${pjsonName}|${pjsonVersion}`,
