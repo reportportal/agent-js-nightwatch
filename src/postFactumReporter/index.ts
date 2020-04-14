@@ -15,13 +15,11 @@
  *
  */
 
-import fs from 'fs';
 import moment from 'moment';
 import RPClient from 'reportportal-client';
 import { AgentOptions, ReportPortalConfig } from '../models';
 import { buildCodeRef, getSystemAttributes, getLastItem } from '../utils';
 import { STATUSES, LOG_LEVELS, TEST_ITEM_TYPES, EVENTS, FILE_TYPES } from '../constants';
-import { getScreenshotPossiblePaths, normalizeFileName } from './utils';
 
 export default class PostFactumReporter {
 
@@ -30,22 +28,6 @@ export default class PostFactumReporter {
   private launchId: string;
   private launchStartTime: number | Date;
   private launchParams: any;
-
-  private static getLogWithAttachment(path: string, testStartTime: number | Date, params: any) {
-    const fileObj = {
-      name: params.fileName,
-      type: FILE_TYPES.PNG,
-      content: fs.readFileSync(path),
-    };
-
-    return {
-      action: EVENTS.SEND_LOG,
-      level: LOG_LEVELS.ERROR,
-      time: testStartTime,
-      message: params.message || params.fileName,
-      fileObj,
-    };
-  }
 
   constructor(config: ReportPortalConfig & AgentOptions) {
     const {
@@ -100,40 +82,6 @@ export default class PostFactumReporter {
           this.client.sendLog(getLastItem(stepsTempIds), item, fileObj);
       }
     });
-  }
-
-  private getLogWithErrorScreenshot({
-    testName,
-    suiteName,
-    testStartTime,
-    message
-  }: {
-    testName: string,
-    suiteName: string,
-    testStartTime: number | Date,
-    message: string,
-  }) {
-    const basePath = `${this.options.screenshotsPath}/${suiteName}`;
-    const screenshotPaths = getScreenshotPossiblePaths(testName, basePath, testStartTime);
-    const pathsCount = screenshotPaths.length;
-    const screenshotParams = {
-      fileName: `${suiteName}/${normalizeFileName(testName)}`.replace(/[\/\\]/ig, '-'),
-      message,
-    };
-
-    for (let itemIndex = 0; itemIndex < pathsCount; itemIndex++) {
-      const { path, time }: any = screenshotPaths[itemIndex];
-
-      try {
-        const logWithAttachment = PostFactumReporter.getLogWithAttachment(path, time, screenshotParams);
-
-        if (logWithAttachment) {
-          return logWithAttachment;
-        }
-      } catch(error) {}
-    }
-
-    return null;
   }
 
   private collectItems(results: any) {
@@ -201,17 +149,6 @@ export default class PostFactumReporter {
               time: testStartTime,
               message: test.stackTrace,
             });
-          }
-
-          const logWithAttachment = this.getLogWithErrorScreenshot({
-            testName,
-            suiteName,
-            testStartTime,
-            message: test.stackTrace,
-          });
-
-          if (logWithAttachment) {
-            items.push(logWithAttachment);
           }
         }
 

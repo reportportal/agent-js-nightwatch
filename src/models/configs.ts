@@ -30,6 +30,5 @@ export interface ReportPortalConfig {
 }
 
 export interface AgentOptions {
-    screenshotsPath?: string;
     parallelRun?: boolean;
 }
