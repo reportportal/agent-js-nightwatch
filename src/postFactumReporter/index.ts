@@ -33,7 +33,6 @@ export default class PostFactumReporter {
     const {
       attributes = [],
       description,
-      screenshotsPath,
       parallelRun = false,
       ...clientConfig
     } = config;
@@ -41,7 +40,7 @@ export default class PostFactumReporter {
 
     this.client = new RPClient(clientConfig);
     this.launchParams = { attributes: launchAttributes, description };
-    this.options = { screenshotsPath, parallelRun };
+    this.options = { parallelRun };
     this.launchStartTime = Date.now();
   }
 
