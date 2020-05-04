@@ -4,6 +4,7 @@ module.exports = {
   src_folders: ['./exampleRealTimeReporter/tests'],
   custom_commands_path: '../build/commands',
   globals_path: '../globalsModule.js',
+  test_workers: true,
 
   test_settings: {
     default: {

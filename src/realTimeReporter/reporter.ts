@@ -53,7 +53,7 @@ export default class Reporter {
     this.storage = new Storage();
   }
 
-  private registerEventListeners(): void {
+  private registerEventListeners(): void { // TODO: init IPC server here and subscribe to client events
     subscribeToEvent(EVENTS.START_TEST_ITEM, this.startTestItem);
     subscribeToEvent(EVENTS.FINISH_TEST_ITEM, this.finishTestItem);
 
