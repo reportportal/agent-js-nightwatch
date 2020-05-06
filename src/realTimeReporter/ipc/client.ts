@@ -16,18 +16,30 @@
  */
 
 import ipc from 'node-ipc';
+import { EVENTS } from '../../constants';
 
 export const connectIPCClient = () => {
-  ipc.config.id = 'reportPortalReporter'; // TODO: update this id with child process id
+  ipc.config.id = `reportPortalReporter_${process.pid}`;
   ipc.config.retry = 1500;
   ipc.config.silent = true;
 
+  ipc.log('connect to reportportal');
   ipc.connectTo('reportportal', () => {
     ipc.of.reportportal.on('connect', () => {
       ipc.log('***connected to reportportal***');
     });
     ipc.of.reportportal.on('disconnect', () => {
-      ipc.log('disconnected from reportportal');
+      ipc.log('***disconnected from reportportal***');
     });
   });
+};
+
+export const publishIPCEvent = (event: EVENTS | string, msg: any) => {
+  ipc.log('send event to reportportal');
+  ipc.of.reportportal.emit(event, msg);
+};
+
+export const disconnectIPCClient = () => {
+  ipc.log('disconnect from reportportal');
+  ipc.disconnect('reportportal');
 };

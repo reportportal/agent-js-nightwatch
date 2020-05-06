@@ -1,11 +1,12 @@
 const fs = require('fs');
 const path = require('path');
 const { PublicReportingAPI, FILE_TYPES } = require('../../../build');
+PublicReportingAPI.init();
 
 const suiteName = 'Search';
 
 module.exports = {
-  before: function (browser, done) {
+  before: function () {
     const item = {
       name: suiteName,
       description: 'Suite description',
@@ -13,28 +14,25 @@ module.exports = {
     };
 
     PublicReportingAPI.startSuite(item);
-    done();
   },
 
-  beforeEach: function (browser, done) {
+  beforeEach: function (browser) {
     PublicReportingAPI.startTestCase(browser.currentTest, suiteName);
-    done();
   },
 
-  afterEach: function (browser, done) {
+  afterEach: function (browser) {
     PublicReportingAPI.finishTestCase(browser.currentTest);
 
-    PublicReportingAPI.startAfterTestCase();
+    // PublicReportingAPI.startAfterTestCase();
     // afterEach related actions
-    PublicReportingAPI.finishAfterTestCase();
-
-    done();
+    // PublicReportingAPI.finishAfterTestCase();
   },
 
-  after: function (browser, done) {
+  after: function (browser) {
     PublicReportingAPI.finishSuite(suiteName);
-    browser.end();
-    done();
+    browser.end(() => {
+      PublicReportingAPI.destroy();
+    });
   },
 
   'demo test google' : function (client) {
@@ -42,9 +40,9 @@ module.exports = {
       .url('https://google.com')
       .waitForElementPresent('foo', 1000);
 
-    PublicReportingAPI.logInfo('Info log for demo test item');
-    PublicReportingAPI.launchLogDebug('Debug log for launch');
-    PublicReportingAPI.setDescription('Demo test for google.com');
+    // PublicReportingAPI.logInfo('Info log for demo test item');
+    // PublicReportingAPI.launchLogDebug('Debug log for launch');
+    // PublicReportingAPI.setDescription('Demo test for google.com');
   },
 
   'part two' : function(client) {
@@ -55,12 +53,12 @@ module.exports = {
       .assert.urlContains('nightwatch')
       .end();
 
-    const attachment = {
-      name: 'Cities',
-      type: FILE_TYPES.JSON,
-      content: fs.readFileSync(path.resolve(__dirname, '../data', 'cities.json')),
-    };
-
-    PublicReportingAPI.launchLogInfo('Log with attachment for launch', attachment);
+    // const attachment = {
+    //   name: 'Cities',
+    //   type: FILE_TYPES.JSON,
+    //   content: fs.readFileSync(path.resolve(__dirname, '../data', 'cities.json')),
+    // };
+    //
+    // PublicReportingAPI.launchLogInfo('Log with attachment for launch', attachment);
   }
 };

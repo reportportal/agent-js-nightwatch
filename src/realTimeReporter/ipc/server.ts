@@ -40,3 +40,11 @@ export const startIPCServer = (subscribeServerEvents: (server: any) => void) => 
     });
     ipc.server.start();
 };
+
+export const stopIPCServer = () => {
+    if (!ipc.server) {
+        return;
+    }
+
+    ipc.server.stop();
+};

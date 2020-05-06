@@ -21,16 +21,16 @@ import { PublicReportingAPI } from '../realTimeReporter';
 
 // More about custom commands in Nightwatch - https://nightwatchjs.org/guide/extending-nightwatch/#writing-custom-commands
 export const command = function (fileName: string, callback: screenshotCallbackType) {
-    return this.saveScreenshot(fileName, (data: ScreenshotDataInterface) => {
-        const type = getFileMimeType(fileName);
+  return this.saveScreenshot(fileName, (data: ScreenshotDataInterface) => {
+    const type = getFileMimeType(fileName);
 
-        PublicReportingAPI.logInfo(fileName, {
-            name: fileName,
-            type,
-            content: data.value,
-        });
-        if (callback) {
-            callback(data);
-        }
+    PublicReportingAPI.logInfo(fileName, {
+      name: fileName,
+      type,
+      content: data.value,
     });
+    if (callback) {
+      callback(data);
+    }
+  });
 };

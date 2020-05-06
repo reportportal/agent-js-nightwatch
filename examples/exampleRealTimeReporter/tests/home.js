@@ -1,4 +1,5 @@
 const { PublicReportingAPI } = require('../../../build');
+PublicReportingAPI.init();
 
 const suiteName = 'Home';
 
@@ -6,7 +7,7 @@ describe(suiteName, function() {
 
   this.retries(3);
 
-  before((browser, done) => {
+  before(() => {
     const item = {
       name: suiteName,
       attributes: [{ key: 'suite', value: 'home' }],
@@ -14,55 +15,52 @@ describe(suiteName, function() {
     };
     PublicReportingAPI.startSuite(item);
 
-    PublicReportingAPI.startBeforeSuite();
+    // PublicReportingAPI.startBeforeSuite();
     // beforeSuite related actions
-    PublicReportingAPI.finishBeforeSuite();
-
-    done();
+    // PublicReportingAPI.finishBeforeSuite();
   });
 
-  after((browser, done) => {
+  after((browser) => {
     PublicReportingAPI.finishSuite(suiteName);
-    browser.end();
-    done();
+    browser.end(() => {
+      PublicReportingAPI.destroy();
+    });
   });
 
-  beforeEach((browser, done) => {
+  beforeEach((browser) => {
     PublicReportingAPI.startTestCase(browser.currentTest, suiteName);
-    done();
   });
 
-  afterEach((browser, done) => {
+  afterEach((browser) => {
     PublicReportingAPI.finishTestCase(browser.currentTest);
-    done();
   });
 
   test('demo test', function(browser) {
-    PublicReportingAPI.setDescription('Demo test for ecosia.org');
+    // PublicReportingAPI.setDescription('Demo test for ecosia.org');
 
     browser
       .url('https://www.ecosia.org/')
       .setValue('input[type=search]', 'nightwatch')
-      .saveScreenshot('testScreen.png', (data) => {
-        PublicReportingAPI.logInfo('This is a log with screenshot attachment', {
-          name: 'testScreen',
-          content: data.value,
-        });
-      })
-      .rpSaveScreenshot('rpTestScreen.jpg')
-      .rpLog('Screenshot attached successfully')
+      // .saveScreenshot('testScreen.png', (data) => {
+      //   PublicReportingAPI.logInfo('This is a log with screenshot attachment', {
+      //     name: 'testScreen',
+      //     content: data.value,
+      //   });
+      // })
+      // .rpSaveScreenshot('rpTestScreen.jpg')
+      // .rpLog('Screenshot attached successfully')
       .click('button[type=submit]')
       .assert.containsText('.mainline-results', 'Nightwatch.js')
       .end();
 
-    PublicReportingAPI.logInfo('Info log for suite', null, suiteName);
+    // PublicReportingAPI.logInfo('Info log for suite', null, suiteName);
 
-    PublicReportingAPI.addAttributes([{ key: 'check', value: 'success' }]);
-    PublicReportingAPI.setDescription('Attributes added to the test item');
+    // PublicReportingAPI.addAttributes([{ key: 'check', value: 'success' }]);
+    // PublicReportingAPI.setDescription('Attributes added to the test item');
   });
 
   test('beta test', function(browser) {
-    PublicReportingAPI.setDescription('Demo test for ecosia.org #2');
+    // PublicReportingAPI.setDescription('Demo test for ecosia.org #2');
 
     let expectedMainlineText = 'Nightwatch.jsasd';
 

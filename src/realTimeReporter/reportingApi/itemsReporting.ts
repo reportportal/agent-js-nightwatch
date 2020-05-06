@@ -17,7 +17,8 @@
 
 import { StartTestItemRQ } from '../../models';
 import { EVENTS, TEST_ITEM_TYPES } from '../../constants';
-import { publishEvent, getCodeRef } from '../utils';
+import { getCodeRef } from '../utils';
+import { publishIPCEvent as publishEvent } from '../ipc/client';
 
 export interface ItemsReportingInterface {
   startSuite(data: StartTestItemRQ): void;

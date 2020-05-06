@@ -20,7 +20,8 @@ import { PublicReportingAPI } from '../realTimeReporter';
 
 // More about custom commands in Nightwatch - https://nightwatchjs.org/guide/extending-nightwatch/#writing-custom-commands
 export const command = function (message: string, level: LOG_LEVELS = LOG_LEVELS.INFO, suiteName?: string) {
-    return this.perform(function () {
-        PublicReportingAPI.log(level, message, null, suiteName);
-    });
+  return this.perform(function (data: any) {
+    console.log(data);
+    PublicReportingAPI.log(level, message, null, suiteName);
+  });
 };

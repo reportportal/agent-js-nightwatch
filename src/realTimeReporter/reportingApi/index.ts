@@ -18,11 +18,25 @@
 import { itemsReporting, ItemsReportingInterface } from './itemsReporting';
 import { hooksReporting, HooksReportingInterface } from './hooksReporting';
 import { attachData, AttachDataInterface } from './attachData';
+import { connectIPCClient, disconnectIPCClient } from '../ipc/client';
 
-const ReportingApi: ItemsReportingInterface & HooksReportingInterface & AttachDataInterface = {
-    ...itemsReporting,
-    ...hooksReporting,
-    ...attachData,
+interface ApiInterface {
+  init: () => void;
+  destroy: () => void;
+}
+
+type ReportingApiInterface = ItemsReportingInterface & HooksReportingInterface & AttachDataInterface & ApiInterface;
+
+const ReportingApi: ReportingApiInterface = {
+  init: () => {
+    connectIPCClient();
+  },
+  destroy: () => {
+    setImmediate(disconnectIPCClient);
+  },
+  ...itemsReporting,
+  ...hooksReporting,
+  ...attachData,
 };
 
 export default ReportingApi;

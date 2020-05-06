@@ -35,6 +35,7 @@ import {
   subscribeToEvent,
   calculateTestItemStatus,
 } from './utils';
+import { startIPCServer, stopIPCServer } from './ipc/server';
 import { Storage } from './storage';
 
 export default class Reporter {
@@ -44,7 +45,7 @@ export default class Reporter {
   private config: ReportPortalConfig;
 
   constructor(config: ReportPortalConfig) {
-    this.registerEventListeners();
+    this.initReporter();
 
     const agentInfo = getAgentInfo();
 
@@ -53,14 +54,23 @@ export default class Reporter {
     this.storage = new Storage();
   }
 
-  private registerEventListeners(): void { // TODO: init IPC server here and subscribe to client events
-    subscribeToEvent(EVENTS.START_TEST_ITEM, this.startTestItem);
-    subscribeToEvent(EVENTS.FINISH_TEST_ITEM, this.finishTestItem);
+  private initReporter(): void {
+    startIPCServer((server: any) => {
+        server.on(EVENTS.START_TEST_ITEM, this.startTestItem);
+        server.on(EVENTS.FINISH_TEST_ITEM, this.finishTestItem);
 
-    subscribeToEvent(CLIENT_EVENTS.ADD_LOG, this.sendLogToItem);
-    subscribeToEvent(CLIENT_EVENTS.ADD_LAUNCH_LOG, this.sendLogToLaunch);
-    subscribeToEvent(CLIENT_EVENTS.ADD_ATTRIBUTES, this.addItemAttributes);
-    subscribeToEvent(CLIENT_EVENTS.SET_DESCRIPTION, this.setItemDescription);
+        // server.on(CLIENT_EVENTS.ADD_LOG, this.sendLogToItem);
+        // server.on(CLIENT_EVENTS.ADD_LAUNCH_LOG, this.sendLogToLaunch);
+        // server.on(CLIENT_EVENTS.ADD_ATTRIBUTES, this.addItemAttributes);
+        // server.on(CLIENT_EVENTS.SET_DESCRIPTION, this.setItemDescription);
+      }
+    );
+  };
+
+  private stopReporter() {
+    this.launchId = null;
+
+    stopIPCServer();
   };
 
   private getFinishItemObj(testResult: any, storageItem: StorageTestItem): FinishTestItemRQ {
@@ -98,10 +108,12 @@ export default class Reporter {
 
   public finishLaunch(launchFinishObj = {}): void {
     this.client.finishLaunch(this.launchId, launchFinishObj);
+
+    this.stopReporter();
   };
 
   private startTestItem = (startTestItemObj: StartTestItemRQ): void => {
-    const parentItem = this.storage.getCurrentItem(startTestItemObj.parentName);
+    const parentItem = this.storage.getItemByName(startTestItemObj.parentName);
     const parentId = parentItem ? parentItem.id : undefined;
     const itemObj = this.client.startTestItem(startTestItemObj, this.launchId, parentId);
 
@@ -116,7 +128,7 @@ export default class Reporter {
   };
 
   private finishTestItem = (testResult: any): void => {
-    const storageItem = this.storage.getCurrentItem(testResult.name);
+    const storageItem = this.storage.getItemByName(testResult.name);
     const finishTestItemObj = this.getFinishItemObj(testResult, storageItem);
 
     this.client.finishTestItem(storageItem.id, finishTestItemObj);
