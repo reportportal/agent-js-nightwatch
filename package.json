@@ -17,7 +17,8 @@
     "test:coverage": "jest --coverage",
     "example:chai": "npm run build && cd examples && npm run chai",
     "example:chromeDriver": "npm run build && cd examples && npm run chromeDriver",
-    "example:chromeDriver:realTimeReporter": "npm run build && cd examples && npm run chromeDriver:realTimeReporter"
+    "example:chromeDriver:realTimeReporter": "npm run build && cd examples && npm run chromeDriver:realTimeReporter",
+    "example:chromeDriver:realTimeReporter:parallelRun": "npm run build && cd examples && npm run chromeDriver:realTimeReporter:parallelRun"
   },
   "dependencies": {
     "moment": "^2.22.1",

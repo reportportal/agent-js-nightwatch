@@ -2,6 +2,7 @@
   "scripts": {
     "chai": "nightwatch --config ./exampleChai/nightwatch.json --reporter ./exampleChai/reporter.js",
     "chromeDriver": "nightwatch --config ./exampleChromeDriver/nightwatch.conf.js --reporter ./exampleChromeDriver/reporter.js",
-    "chromeDriver:realTimeReporter": "nightwatch --config exampleRealTimeReporter/nightwatch.conf.js"
+    "chromeDriver:realTimeReporter": "nightwatch --config exampleRealTimeReporter/nightwatch.conf.js",
+    "chromeDriver:realTimeReporter:parallelRun": "nightwatch --config exampleParallelRun/nightwatch.conf.js"
   }
 }
