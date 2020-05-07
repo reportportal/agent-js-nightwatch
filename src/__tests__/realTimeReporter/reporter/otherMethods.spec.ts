@@ -57,7 +57,7 @@ describe('otherMethods', function () {
 
   describe('registerEventListeners (called in initReporter constructor)', function () {
     test('invokes server on method the 6 times for necessary events', function () {
-      expect(spyServerOn).toHaveBeenCalledTimes(6);
+      expect(spyServerOn).toHaveBeenCalledTimes(7);
     });
 
     test('invokes server on method for START_TEST_ITEM event', function () {
@@ -105,12 +105,21 @@ describe('otherMethods', function () {
       );
     });
 
-    test('invokes server on method for SET_DESCRIPTION event', function () {
+    test('invokes server on method for ADD_DESCRIPTION event', function () {
       expect(spyServerOn).toHaveBeenNthCalledWith(
         6,
         EVENTS.ADD_DESCRIPTION,
         // @ts-ignore access to the class private property
         reporter.addItemDescription
+      );
+    });
+
+    test('invokes server on method for SET_TEST_CASE_ID event', function () {
+      expect(spyServerOn).toHaveBeenNthCalledWith(
+        7,
+        EVENTS.SET_TEST_CASE_ID,
+        // @ts-ignore access to the class private property
+        reporter.setTestCaseId
       );
     });
   });

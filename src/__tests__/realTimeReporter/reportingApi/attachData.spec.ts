@@ -40,6 +40,12 @@ describe('attachData', function () {
     expect(spyPublishIPCEvent).toHaveBeenCalledWith(EVENTS.ADD_DESCRIPTION, { text: 'description', itemName: 'parentItem' });
   });
 
+  test('setTestCaseId: should call spyPublishIPCEvent with SET_TEST_CASE_ID event', function () {
+    attachData.setTestCaseId('itemTestCaseId', 'parentItem');
+
+    expect(spyPublishIPCEvent).toHaveBeenCalledWith(EVENTS.SET_TEST_CASE_ID, { id: 'itemTestCaseId', itemName: 'parentItem' });
+  });
+
   describe('item log functions', function () {
     describe('log', function () {
       test('should call should call spyPublishIPCEvent with ADD_LOG event', function () {

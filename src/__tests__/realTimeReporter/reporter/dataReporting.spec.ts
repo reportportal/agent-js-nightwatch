@@ -200,4 +200,36 @@ describe('testItemReporting', function () {
       expect(storageItem).toEqual(updatedStorageItem);
     });
   });
+
+  describe('setTestCaseId', function () {
+    const data: { id: string, itemName?: string } = {
+      id: 'itemTestCaseId',
+      itemName: 'itemName',
+    };
+
+    let storageItem: StorageTestItem;
+    let spyGetCurrentItem: jest.SpyInstance;
+
+    beforeEach(() => {
+      storageItem = getStorageTestItemMock('testItem');
+      spyGetCurrentItem = jest.spyOn(storage, 'getCurrentItem').mockReturnValue(storageItem);
+    });
+
+    test('invokes the storage getCurrentItem method with item name to get item from storage', function () {
+      // @ts-ignore access to the class private property
+      reporter.setTestCaseId(data);
+
+      expect(spyGetCurrentItem).toHaveBeenCalledWith(data.itemName);
+    });
+
+    test('should set testCaseId for item in storage', function () {
+      // @ts-ignore access to the class private property
+      reporter.setTestCaseId(data);
+
+      const updatedStorageItem: StorageTestItem = getStorageTestItemMock('testItem');
+      updatedStorageItem.testCaseId = data.id;
+
+      expect(storageItem).toEqual(updatedStorageItem);
+    });
+  });
 });
