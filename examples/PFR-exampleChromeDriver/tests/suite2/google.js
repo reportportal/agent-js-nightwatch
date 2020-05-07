@@ -10,23 +10,23 @@ module.exports = {
     chromedriver.stop();
   },
 
-  'Demo test Google' : function (client) {
-    client
+  'Demo test Google' : function (browser) {
+    browser
       .url('http://google.com')
       .pause(1000)
       .waitForElementVisible('body', 1000)
       .assert.urlContains('blablabla');
 
-    client.end();
+    browser.end();
   },
 
-  'Demo test Loogle' : function (client) {
-    client
+  'Demo test Loogle' : function (browser) {
+    browser
       .url('http://google.com')
       .pause(1000)
       .waitForElementVisible('body', 1000)
       .assert.urlContains('blablabla');
 
-    client.end();
+    browser.end();
   }
 };

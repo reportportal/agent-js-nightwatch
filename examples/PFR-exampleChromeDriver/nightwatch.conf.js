@@ -1,7 +1,7 @@
 const chromedriver = require('chromedriver');
 
 module.exports = {
-  src_folders : ['./exampleChromeDriver/tests'],
+  src_folders : ['./PFR-exampleChromeDriver/tests'],
   test_workers: true,
 
   test_settings: {

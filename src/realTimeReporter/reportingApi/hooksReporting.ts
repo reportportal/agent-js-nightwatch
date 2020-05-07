@@ -21,21 +21,21 @@ import { getCodeRef } from '../utils';
 import { publishIPCEvent as publishEvent } from '../ipc/client';
 
 export interface HooksReportingInterface {
-  startBeforeSuite(data?: StartTestItemRQ): void;
+  startBeforeSuite(parentName: string): void;
   finishBeforeSuite(data?: FinishTestItemRQ): void;
 
-  startAfterSuite(data?: StartTestItemRQ): void;
+  startAfterSuite(parentName: string): void;
   finishAfterSuite(data?: FinishTestItemRQ): void;
 
-  startBeforeTestCase(data?: StartTestItemRQ): void;
+  startBeforeTestCase(parentName: string): void;
   finishBeforeTestCase(data?: FinishTestItemRQ): void;
 
-  startAfterTestCase(data?: StartTestItemRQ): void;
+  startAfterTestCase(parentName: string): void;
   finishAfterTestCase(data?: FinishTestItemRQ): void;
 }
 
 export const hooksReporting: HooksReportingInterface = {
-  startBeforeSuite(data: StartTestItemRQ): void {
+  startBeforeSuite(parentName: string): void {
     const hookName = 'Before suite';
     const codeRef = getCodeRef(hookName);
 
@@ -43,7 +43,7 @@ export const hooksReporting: HooksReportingInterface = {
       type: TEST_ITEM_TYPES.BEFORE_SUITE,
       name: hookName,
       codeRef,
-      ...data,
+      parentName,
     };
 
     publishEvent(EVENTS.START_TEST_ITEM, suiteObj);
@@ -53,7 +53,7 @@ export const hooksReporting: HooksReportingInterface = {
     publishEvent(EVENTS.FINISH_TEST_ITEM, { name: 'Before suite', ...data });
   },
 
-  startAfterSuite(data: StartTestItemRQ): void {
+  startAfterSuite(parentName: string): void {
     const hookName = 'After suite';
     const codeRef = getCodeRef(hookName);
 
@@ -61,7 +61,7 @@ export const hooksReporting: HooksReportingInterface = {
       type: TEST_ITEM_TYPES.AFTER_SUITE,
       name: hookName,
       codeRef,
-      ...data,
+      parentName,
     };
 
     publishEvent(EVENTS.START_TEST_ITEM, suiteObj);
@@ -71,7 +71,7 @@ export const hooksReporting: HooksReportingInterface = {
     publishEvent(EVENTS.FINISH_TEST_ITEM, { name: 'After suite', ...data });
   },
 
-  startBeforeTestCase(data: StartTestItemRQ): void {
+  startBeforeTestCase(parentName: string): void {
     const hookName = 'Before test';
     const codeRef = getCodeRef(hookName);
 
@@ -79,7 +79,7 @@ export const hooksReporting: HooksReportingInterface = {
       type: TEST_ITEM_TYPES.BEFORE_TEST,
       name: hookName,
       codeRef,
-      ...data,
+      parentName,
     };
 
     publishEvent(EVENTS.START_TEST_ITEM, suiteObj);
@@ -89,7 +89,7 @@ export const hooksReporting: HooksReportingInterface = {
     publishEvent(EVENTS.FINISH_TEST_ITEM, { name: 'Before test', ...data });
   },
 
-  startAfterTestCase(data: StartTestItemRQ): void {
+  startAfterTestCase(parentName: string): void {
     const hookName = 'After test';
     const codeRef = getCodeRef(hookName);
 
@@ -97,7 +97,7 @@ export const hooksReporting: HooksReportingInterface = {
       type: TEST_ITEM_TYPES.AFTER_TEST,
       name: hookName,
       codeRef,
-      ...data,
+      parentName,
     };
 
     publishEvent(EVENTS.START_TEST_ITEM, suiteObj);

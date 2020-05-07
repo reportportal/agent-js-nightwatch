@@ -34,6 +34,7 @@ export const itemsReporting: ItemsReportingInterface = {
       type: TEST_ITEM_TYPES.SUITE,
       codeRef,
       ...data,
+      isRootItem: true,
     };
 
     publishEvent(EVENTS.START_TEST_ITEM, suiteObj);

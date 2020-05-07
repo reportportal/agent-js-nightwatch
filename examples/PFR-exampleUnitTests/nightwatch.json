@@ -1,5 +1,5 @@
 {
-  "src_folders" : ["./exampleChai/tests"],
+  "src_folders" : ["./PFR-exampleUnitTests/tests"],
   "custom_commands_path" : "",
   "page_objects_path" : "",
   "custom_assertions_path" : "",

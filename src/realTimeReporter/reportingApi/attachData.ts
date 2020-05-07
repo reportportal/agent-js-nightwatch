@@ -15,85 +15,126 @@
  *
  */
 
-// @ts-ignore
-import PublicReportingAPI from 'reportportal-client/lib/publicReportingAPI';
-import { LOG_LEVELS } from '../../constants';
+import { LOG_LEVELS, EVENTS } from '../../constants';
+import { publishIPCEvent as publishEvent } from '../ipc/client';
 import { Attribute, LogRQ, Attachment } from '../../models';
 
 type LogMessage = LogRQ['message'];
 
 export interface AttachDataInterface {
-    addAttributes(attributes: Array<Attribute>, suite?: string): void;
-    setDescription(text: string, suite?: string): void;
+  addAttributes(attributes: Array<Attribute>, itemName?: string): void;
+  addDescription(text: string, itemName?: string): void;
 
-    log(level: LOG_LEVELS, message: LogMessage, file?: Attachment, suite?: string): void;
-    launchLog(level: LOG_LEVELS, message: LogMessage, file?: Attachment): void;
+  log(level: LOG_LEVELS, message: LogMessage, file?: Attachment, itemName?: string): void;
+  launchLog(level: LOG_LEVELS, message: LogMessage, file?: Attachment): void;
 
-    logInfo(message: LogMessage, file?: Attachment, suite?: string): void;
-    logDebug(message: LogMessage, file?: Attachment, suite?: string): void;
-    logWarn(message: LogMessage, file?: Attachment, suite?: string): void;
-    logError(message: LogMessage, file?: Attachment, suite?: string): void;
-    logTrace(message: LogMessage, file?: Attachment, suite?: string): void;
-    logFatal(message: LogMessage, file?: Attachment, suite?: string): void;
+  logInfo(message: LogMessage, file?: Attachment, itemName?: string): void;
+  logDebug(message: LogMessage, file?: Attachment, itemName?: string): void;
+  logWarn(message: LogMessage, file?: Attachment, itemName?: string): void;
+  logError(message: LogMessage, file?: Attachment, itemName?: string): void;
+  logTrace(message: LogMessage, file?: Attachment, itemName?: string): void;
+  logFatal(message: LogMessage, file?: Attachment, itemName?: string): void;
 
-    launchLogInfo(message: LogMessage, file?: Attachment): void;
-    launchLogDebug(message: LogMessage, file?: Attachment): void;
-    launchLogWarn(message: LogMessage, file?: Attachment): void;
-    launchLogError(message: LogMessage, file?: Attachment): void;
-    launchLogTrace(message: LogMessage, file?: Attachment): void;
-    launchLogFatal(message: LogMessage, file?: Attachment): void;
+  launchLogInfo(message: LogMessage, file?: Attachment): void;
+  launchLogDebug(message: LogMessage, file?: Attachment): void;
+  launchLogWarn(message: LogMessage, file?: Attachment): void;
+  launchLogError(message: LogMessage, file?: Attachment): void;
+  launchLogTrace(message: LogMessage, file?: Attachment): void;
+  launchLogFatal(message: LogMessage, file?: Attachment): void;
 }
 
 export const attachData: AttachDataInterface = {
-    addAttributes(attributes, suite) {
-      PublicReportingAPI.addAttributes(attributes, suite);
-    },
-    setDescription(text: string, suite?: string) {
-      PublicReportingAPI.setDescription(text, suite);
-    },
+  addAttributes(attributes, itemName) {
+    publishEvent(EVENTS.ADD_ATTRIBUTES, { attributes, itemName });
+  },
+  addDescription(text, itemName) {
+    publishEvent(EVENTS.ADD_DESCRIPTION, { text, itemName });
+  },
 
-    log(level, message, file = null, suite) {
-        PublicReportingAPI.addLog({ level, message, file }, suite);
-    },
-    launchLog(level, message, file) {
-        PublicReportingAPI.addLaunchLog({ level, message, file });
-    },
+  log(level, message, file = null, itemName) {
+    const log: LogRQ = {
+      level,
+      message,
+      file,
+    };
 
-    logInfo(message, file = null, suite) {
-        PublicReportingAPI.addLog({ level: LOG_LEVELS.INFO, message, file }, suite);
-    },
-    logDebug(message, file = null, suite) {
-        PublicReportingAPI.addLog({ level: LOG_LEVELS.DEBUG, message, file }, suite);
-    },
-    logWarn(message, file = null, suite) {
-        PublicReportingAPI.addLog({ level: LOG_LEVELS.WARN, message, file }, suite);
-    },
-    logError(message, file = null, suite) {
-        PublicReportingAPI.addLog({ level: LOG_LEVELS.ERROR, message, file }, suite);
-    },
-    logTrace(message, file = null, suite) {
-        PublicReportingAPI.addLog({ level: LOG_LEVELS.TRACE, message, file }, suite);
-    },
-    logFatal(message, file = null, suite) {
-        PublicReportingAPI.addLog({ level: LOG_LEVELS.FATAL, message, file }, suite);
-    },
+    publishEvent(EVENTS.ADD_LOG, { log, itemName });
+  },
+  launchLog(level, message, file = null) {
+    publishEvent(EVENTS.ADD_LAUNCH_LOG, { level, message, file });
+  },
 
-    launchLogInfo(message, file) {
-        PublicReportingAPI.addLaunchLog({ level: LOG_LEVELS.INFO, message, file });
-    },
-    launchLogDebug(message, file) {
-        PublicReportingAPI.addLaunchLog({ level: LOG_LEVELS.DEBUG, message, file });
-    },
-    launchLogWarn(message, file) {
-        PublicReportingAPI.addLaunchLog({ level: LOG_LEVELS.WARN, message, file });
-    },
-    launchLogError(message, file) {
-        PublicReportingAPI.addLaunchLog({ level: LOG_LEVELS.ERROR, message, file });
-    },
-    launchLogTrace(message, file) {
-        PublicReportingAPI.addLaunchLog({ level: LOG_LEVELS.TRACE, message, file });
-    },
-    launchLogFatal(message, file) {
-        PublicReportingAPI.addLaunchLog({ level: LOG_LEVELS.FATAL, message, file });
-    },
+  logInfo(message, file = null, itemName) {
+    const log: LogRQ = {
+      level: LOG_LEVELS.INFO,
+      message,
+      file,
+    };
+
+    publishEvent(EVENTS.ADD_LOG, { log, itemName });
+  },
+  logDebug(message, file = null, itemName) {
+    const log: LogRQ = {
+      level: LOG_LEVELS.DEBUG,
+      message,
+      file,
+    };
+
+    publishEvent(EVENTS.ADD_LOG, { log, itemName });
+  },
+  logWarn(message, file = null, itemName) {
+    const log: LogRQ = {
+      level: LOG_LEVELS.WARN,
+      message,
+      file,
+    };
+
+    publishEvent(EVENTS.ADD_LOG, { log, itemName });
+  },
+  logError(message, file = null, itemName) {
+    const log: LogRQ = {
+      level: LOG_LEVELS.ERROR,
+      message,
+      file,
+    };
+
+    publishEvent(EVENTS.ADD_LOG, { log, itemName });
+  },
+  logTrace(message, file = null, itemName) {
+    const log: LogRQ = {
+      level: LOG_LEVELS.TRACE,
+      message,
+      file,
+    };
+
+    publishEvent(EVENTS.ADD_LOG, { log, itemName });
+  },
+  logFatal(message, file = null, itemName) {
+    const log: LogRQ = {
+      level: LOG_LEVELS.FATAL,
+      message,
+      file,
+    };
+
+    publishEvent(EVENTS.ADD_LOG, { log, itemName });
+  },
+
+  launchLogInfo(message, file = null) {
+    publishEvent(EVENTS.ADD_LAUNCH_LOG, { level: LOG_LEVELS.INFO, message, file });
+  },
+  launchLogDebug(message, file = null) {
+    publishEvent(EVENTS.ADD_LAUNCH_LOG, { level: LOG_LEVELS.DEBUG, message, file });
+  },
+  launchLogWarn(message, file = null) {
+    publishEvent(EVENTS.ADD_LAUNCH_LOG, { level: LOG_LEVELS.WARN, message, file });
+  },
+  launchLogError(message, file = null) {
+    publishEvent(EVENTS.ADD_LAUNCH_LOG, { level: LOG_LEVELS.ERROR, message, file });
+  },
+  launchLogTrace(message, file = null) {
+    publishEvent(EVENTS.ADD_LAUNCH_LOG, { level: LOG_LEVELS.TRACE, message, file });
+  },
+  launchLogFatal(message, file = null) {
+    publishEvent(EVENTS.ADD_LAUNCH_LOG, { level: LOG_LEVELS.FATAL, message, file });
+  },
 };

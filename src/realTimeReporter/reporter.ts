@@ -16,8 +16,6 @@
  */
 
 import RPClient from 'reportportal-client';
-// @ts-ignore
-import { EVENTS as CLIENT_EVENTS } from 'reportportal-client/lib/events';
 import { getAgentInfo } from '../utils';
 import { EVENTS, LOG_LEVELS, STATUSES } from '../constants';
 import {
@@ -46,7 +44,6 @@ export default class Reporter {
 
   constructor(config: ReportPortalConfig) {
     this.initReporter();
-
     const agentInfo = getAgentInfo();
 
     this.config = config;
@@ -59,10 +56,10 @@ export default class Reporter {
         server.on(EVENTS.START_TEST_ITEM, this.startTestItem);
         server.on(EVENTS.FINISH_TEST_ITEM, this.finishTestItem);
 
-        // server.on(CLIENT_EVENTS.ADD_LOG, this.sendLogToItem);
-        // server.on(CLIENT_EVENTS.ADD_LAUNCH_LOG, this.sendLogToLaunch);
-        // server.on(CLIENT_EVENTS.ADD_ATTRIBUTES, this.addItemAttributes);
-        // server.on(CLIENT_EVENTS.SET_DESCRIPTION, this.setItemDescription);
+        server.on(EVENTS.ADD_LOG, this.sendLogToItem);
+        server.on(EVENTS.ADD_LAUNCH_LOG, this.sendLogToLaunch);
+        server.on(EVENTS.ADD_ATTRIBUTES, this.addItemAttributes);
+        server.on(EVENTS.ADD_DESCRIPTION, this.addItemDescription);
       }
     );
   };
@@ -113,9 +110,14 @@ export default class Reporter {
   };
 
   private startTestItem = (startTestItemObj: StartTestItemRQ): void => {
-    const parentItem = this.storage.getItemByName(startTestItemObj.parentName);
-    const parentId = parentItem ? parentItem.id : undefined;
-    const itemObj = this.client.startTestItem(startTestItemObj, this.launchId, parentId);
+    const { isRootItem, ...item } = startTestItemObj;
+    let parentId;
+    if (!isRootItem) {
+      const parentItem = this.storage.getCurrentItem(startTestItemObj.parentName);
+      parentId = parentItem ? parentItem.id : undefined;
+    }
+
+    const itemObj = this.client.startTestItem(item, this.launchId, parentId);
 
     const testItem: StorageTestItem = {
       id: itemObj.tempId,
@@ -136,9 +138,9 @@ export default class Reporter {
     this.storage.removeItemById(storageItem.id);
   };
 
-  private sendLogToItem = (data: { log: LogRQ; suite?: string }): void => {
-    const { log: { file, ...log }, suite: suiteName } = data;
-    const currentItem = this.storage.getCurrentItem(suiteName);
+  private sendLogToItem = (data: { log: LogRQ; itemName?: string }): void => {
+    const { log: { file, ...log }, itemName } = data;
+    const currentItem = this.storage.getCurrentItem(itemName);
     const fileToSend = setDefaultFileType(file);
 
     this.client.sendLog(currentItem.id, log, fileToSend);
@@ -151,15 +153,15 @@ export default class Reporter {
     this.client.sendLog(this.launchId, log, fileToSend);
   };
 
-  private addItemAttributes = (data: { attributes: Array<Attribute>, suite?: string }): void => {
-    const currentItem = this.storage.getCurrentItem(data.suite);
+  private addItemAttributes = (data: { attributes: Array<Attribute>, itemName?: string }): void => {
+    const currentItem = this.storage.getCurrentItem(data.itemName);
 
     currentItem.attributes = currentItem.attributes.concat(data.attributes);
   };
 
-  private setItemDescription = (data: { text: string, suite?: string }): void => {
-    const currentItem = this.storage.getCurrentItem(data.suite);
+  private addItemDescription = (data: { text: string, itemName?: string }): void => {
+    const currentItem = this.storage.getCurrentItem(data.itemName);
 
-    currentItem.description = data.text;
+    currentItem.description = `${currentItem.description}<br/>${data.text}`;
   };
 }

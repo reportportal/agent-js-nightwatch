@@ -18,5 +18,8 @@
 export enum EVENTS {
     START_TEST_ITEM = 'rp:startTestItem',
     FINISH_TEST_ITEM = 'rp:finishTestItem',
-    SEND_LOG = 'rp:sendLog',
+    ADD_LOG = 'rp:addLog',
+    ADD_LAUNCH_LOG = 'rp:addLaunchLog',
+    ADD_ATTRIBUTES = 'rp:addAttributes',
+    ADD_DESCRIPTION = 'rp:addDescription',
 }

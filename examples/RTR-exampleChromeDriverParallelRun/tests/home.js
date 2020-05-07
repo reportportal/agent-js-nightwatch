@@ -32,15 +32,16 @@ describe(suiteName, function() {
     };
     PublicReportingAPI.startSuite(item);
 
-    // PublicReportingAPI.startBeforeSuite();
+    PublicReportingAPI.startBeforeSuite(suiteName);
     // beforeSuite related actions
-    // PublicReportingAPI.finishBeforeSuite();
+    PublicReportingAPI.finishBeforeSuite();
   });
 
-  after((browser) => {
+  after((browser, done) => {
     PublicReportingAPI.finishSuite(suiteName);
     browser.end(() => {
       PublicReportingAPI.destroy();
+      done();
     });
   });
 
@@ -53,31 +54,32 @@ describe(suiteName, function() {
   });
 
   test('demo test', function(browser) {
-    // PublicReportingAPI.setDescription('Demo test for ecosia.org');
+    const itemName = 'demo test';
+    PublicReportingAPI.addDescription('Demo test for ecosia.org', itemName);
 
     browser
       .url('https://www.ecosia.org/')
       .setValue('input[type=search]', 'nightwatch')
-      // .saveScreenshot('testScreen.png', (data) => {
-      //   PublicReportingAPI.logInfo('This is a log with screenshot attachment', {
-      //     name: 'testScreen',
-      //     content: data.value,
-      //   });
-      // })
-      // .rpSaveScreenshot('rpTestScreen.jpg')
-      // .rpLog('Screenshot attached successfully')
+      .saveScreenshot('testScreen.png', (data) => {
+        PublicReportingAPI.logInfo('This is a log with screenshot attachment', {
+          name: 'testScreen',
+          content: data.value,
+        }, itemName);
+      })
+      .rpSaveScreenshot('rpTestScreen.jpg', itemName)
+      .rpLog('Screenshot attached successfully', 'INFO', itemName)
       .click('button[type=submit]')
       .assert.containsText('.mainline-results', 'Nightwatch.js')
       .end();
 
-    // PublicReportingAPI.logInfo('Info log for suite', null, suiteName);
+    PublicReportingAPI.logInfo('Info log for suite', null, suiteName);
 
-    // PublicReportingAPI.addAttributes([{ key: 'check', value: 'success' }]);
-    // PublicReportingAPI.setDescription('Attributes added to the test item');
+    PublicReportingAPI.addAttributes([{ key: 'check', value: 'success' }], itemName);
+    PublicReportingAPI.addDescription('Attributes added to the test item', itemName);
   });
 
   test('beta test', function(browser) {
-    // PublicReportingAPI.setDescription('Demo test for ecosia.org #2');
+    PublicReportingAPI.addDescription('Demo test for ecosia.org #2', 'beta test');
 
     let expectedMainlineText = 'Nightwatch.jsasd';
 

@@ -39,42 +39,43 @@ module.exports = {
   afterEach: function (browser) {
     PublicReportingAPI.finishTestCase(browser.currentTest);
 
-    // PublicReportingAPI.startAfterTestCase();
+    PublicReportingAPI.startAfterTestCase(suiteName);
     // afterEach related actions
-    // PublicReportingAPI.finishAfterTestCase();
+    PublicReportingAPI.finishAfterTestCase();
   },
 
-  after: function (browser) {
+  after: function (browser, done) {
     PublicReportingAPI.finishSuite(suiteName);
     browser.end(() => {
       PublicReportingAPI.destroy();
+      done();
     });
   },
 
-  'demo test google' : function (client) {
-    client
+  'demo test google' : function (browser) {
+    browser
       .url('https://google.com')
-      .waitForElementPresent('foo', 1000);
+      .waitForElementPresent('foos', 1000);
 
-    // PublicReportingAPI.logInfo('Info log for demo test item');
-    // PublicReportingAPI.launchLogDebug('Debug log for launch');
-    // PublicReportingAPI.setDescription('Demo test for google.com');
+    PublicReportingAPI.logInfo('Info log for demo test item', null, browser.currentTest.name);
+    PublicReportingAPI.launchLogDebug('Debug log for launch');
+    PublicReportingAPI.addDescription('Demo test for google.com', browser.currentTest.name);
   },
 
-  'part two' : function(client) {
-    client
-      .setValue('input[type=text]', ['nightwatch', client.Keys.ENTER])
+  'part two' : function(browser) {
+    browser
+      .setValue('input[type=text]', ['nightwatch', browser.Keys.ENTER])
       .pause(1000)
       .assert.urlContains('search?')
       .assert.urlContains('nightwatch')
       .end();
 
-    // const attachment = {
-    //   name: 'Cities',
-    //   type: FILE_TYPES.JSON,
-    //   content: fs.readFileSync(path.resolve(__dirname, '../data', 'cities.json')),
-    // };
-    //
-    // PublicReportingAPI.launchLogInfo('Log with attachment for launch', attachment);
+    const attachment = {
+      name: 'Cities',
+      type: FILE_TYPES.JSON,
+      content: fs.readFileSync(path.resolve(__dirname, '../data', 'cities.json')),
+    };
+
+    PublicReportingAPI.launchLogInfo('Log with attachment for launch', attachment);
   }
 };

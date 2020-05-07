@@ -31,6 +31,7 @@ export interface StartTestItemRQ extends RPItemStartRQ {
     testCaseId?: string;
     uniqueId?: string;
     parentName?: string;
+    isRootItem?: boolean;
 }
 
 export interface FinishTestItemRQ extends RPItemFinishRQ {

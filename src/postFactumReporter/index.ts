@@ -19,7 +19,7 @@ import moment from 'moment';
 import RPClient from 'reportportal-client';
 import { AgentOptions, ReportPortalConfig } from '../models';
 import { buildCodeRef, getSystemAttributes, getLastItem } from '../utils';
-import { STATUSES, LOG_LEVELS, TEST_ITEM_TYPES, EVENTS, FILE_TYPES } from '../constants';
+import { STATUSES, LOG_LEVELS, TEST_ITEM_TYPES, EVENTS } from '../constants';
 
 export default class PostFactumReporter {
 
@@ -77,7 +77,7 @@ export default class PostFactumReporter {
         case EVENTS.FINISH_TEST_ITEM:
           this.client.finishTestItem(stepsTempIds.pop(), item);
           break;
-        case EVENTS.SEND_LOG:
+        case EVENTS.ADD_LOG:
           this.client.sendLog(getLastItem(stepsTempIds), item, fileObj);
       }
     });
@@ -143,7 +143,7 @@ export default class PostFactumReporter {
         if (status === STATUSES.FAILED) {
           if (test.stackTrace) {
             items.push({
-              action: EVENTS.SEND_LOG,
+              action: EVENTS.ADD_LOG,
               level: LOG_LEVELS.ERROR,
               time: testStartTime,
               message: test.stackTrace,
@@ -154,21 +154,21 @@ export default class PostFactumReporter {
         (test.failed || test.errors) &&
           test.assertions.forEach((assertion: any) => {
             items.push({
-              action: EVENTS.SEND_LOG,
+              action: EVENTS.ADD_LOG,
               level: LOG_LEVELS.INFO,
               time: testStartTime,
               message: assertion.message,
             });
             assertion.failure &&
               items.push({
-                action: EVENTS.SEND_LOG,
+                action: EVENTS.ADD_LOG,
                 level: LOG_LEVELS.DEBUG,
                 time: testStartTime,
                 message: assertion.failure,
               });
             assertion.stackTrace &&
               items.push({
-                action: EVENTS.SEND_LOG,
+                action: EVENTS.ADD_LOG,
                 level: LOG_LEVELS.ERROR,
                 time: testStartTime,
                 message: assertion.stackTrace,

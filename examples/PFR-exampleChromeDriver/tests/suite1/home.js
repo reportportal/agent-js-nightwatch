@@ -23,10 +23,10 @@ module.exports = {
       .end();
   },
 
-  Finished(client) {
-    client
+  Finished(browser) {
+    browser
       .perform(() => {
-        console.log('[perform]: Finished Test:', client.currentTest.name);
+        console.log('[perform]: Finished Test:', browser.currentTest.name);
       })
       .end();
   },
