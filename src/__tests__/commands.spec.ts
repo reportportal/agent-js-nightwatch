@@ -18,13 +18,20 @@
 import { command as rpLog } from '../commands/rpLog';
 import { command as rpScreenshot } from '../commands/rpScreenshot';
 import { command as rpSaveScreenshot } from '../commands/rpSaveScreenshot';
-import { screenshotCallbackType, ScreenshotDataInterface } from "../models/nightwatch";
-import * as utils from "../utils";
+import { screenshotCallbackType, ScreenshotDataInterface } from '../models/nightwatch';
+import * as utils from '../utils';
 import { PublicReportingAPI } from '../realTimeReporter';
-import {DEFAULT_FILE_TYPE, LOG_LEVELS} from '../constants';
+import * as IPCClient from '../realTimeReporter/ipc/client';
+import { DEFAULT_FILE_TYPE, LOG_LEVELS } from '../constants';
 
 describe('commands', function () {
+  jest.spyOn(IPCClient, 'publishIPCEvent')
+    .mockImplementation(() => {});
   let commandsExecutionContext: any;
+
+  afterAll(() => {
+    jest.clearAllMocks();
+  });
 
   describe('rpLog', function () {
     beforeAll(() => {
@@ -82,13 +89,13 @@ describe('commands', function () {
     test('should call logInfo method from PublicReportingAPI to send log with screenshot to reporter', function () {
       const spyReportingApiLogInfo = jest.spyOn(PublicReportingAPI, 'logInfo');
 
-      rpScreenshot.call(commandsExecutionContext);
+      rpScreenshot.call(commandsExecutionContext, 'itemName');
 
       expect(spyReportingApiLogInfo).toHaveBeenCalledWith('Screenshot', {
         name: 'testScreen',
         type: DEFAULT_FILE_TYPE,
         content: 'file content',
-      });
+      }, 'itemName');
     });
 
     test('should call additional callback if it exists in parameters', function () {
@@ -98,7 +105,7 @@ describe('commands', function () {
 
       const spyCallback = jest.spyOn(callbacks, 'anyFunction');
 
-      rpScreenshot.call(commandsExecutionContext, false, callbacks.anyFunction);
+      rpScreenshot.call(commandsExecutionContext, 'itemName', callbacks.anyFunction);
 
       expect(spyCallback).toHaveBeenCalledWith(screenshotActionData);
     });
@@ -139,13 +146,13 @@ describe('commands', function () {
     test('should call logInfo method from PublicReportingAPI to send log with screenshot to reporter', function () {
       const spyReportingApiLogInfo = jest.spyOn(PublicReportingAPI, 'logInfo');
 
-      rpSaveScreenshot.call(commandsExecutionContext, 'fileName');
+      rpSaveScreenshot.call(commandsExecutionContext, 'fileName', 'itemName');
 
       expect(spyReportingApiLogInfo).toHaveBeenCalledWith('fileName', {
         name: 'fileName',
         type: DEFAULT_FILE_TYPE,
         content: 'file content',
-      });
+      }, 'itemName');
     });
 
     test('should call additional callback if it exists in parameters', function () {
@@ -155,7 +162,7 @@ describe('commands', function () {
 
       const spyCallback = jest.spyOn(callbacks, 'anyFunction');
 
-      rpSaveScreenshot.call(commandsExecutionContext, 'fileName', callbacks.anyFunction);
+      rpSaveScreenshot.call(commandsExecutionContext, 'fileName', 'itemName', callbacks.anyFunction);
 
       expect(spyCallback).toHaveBeenCalledWith(screenshotActionData);
     });

@@ -27,12 +27,7 @@ import {
   StartTestItemRQ,
   StorageTestItem,
 } from '../models';
-import {
-  getStartLaunchObj,
-  setDefaultFileType,
-  subscribeToEvent,
-  calculateTestItemStatus,
-} from './utils';
+import { getStartLaunchObj, setDefaultFileType, calculateTestItemStatus } from './utils';
 import { startIPCServer, stopIPCServer } from './ipc/server';
 import { Storage } from './storage';
 
@@ -51,17 +46,18 @@ export default class Reporter {
     this.storage = new Storage();
   }
 
-  private initReporter(): void {
-    startIPCServer((server: any) => {
-        server.on(EVENTS.START_TEST_ITEM, this.startTestItem);
-        server.on(EVENTS.FINISH_TEST_ITEM, this.finishTestItem);
+  private registerEventListeners = (server: any): void => {
+    server.on(EVENTS.START_TEST_ITEM, this.startTestItem);
+    server.on(EVENTS.FINISH_TEST_ITEM, this.finishTestItem);
 
-        server.on(EVENTS.ADD_LOG, this.sendLogToItem);
-        server.on(EVENTS.ADD_LAUNCH_LOG, this.sendLogToLaunch);
-        server.on(EVENTS.ADD_ATTRIBUTES, this.addItemAttributes);
-        server.on(EVENTS.ADD_DESCRIPTION, this.addItemDescription);
-      }
-    );
+    server.on(EVENTS.ADD_LOG, this.sendLogToItem);
+    server.on(EVENTS.ADD_LAUNCH_LOG, this.sendLogToLaunch);
+    server.on(EVENTS.ADD_ATTRIBUTES, this.addItemAttributes);
+    server.on(EVENTS.ADD_DESCRIPTION, this.addItemDescription);
+  };
+
+  private initReporter(): void {
+    startIPCServer(this.registerEventListeners);
   };
 
   private stopReporter() {
@@ -110,14 +106,9 @@ export default class Reporter {
   };
 
   private startTestItem = (startTestItemObj: StartTestItemRQ): void => {
-    const { isRootItem, ...item } = startTestItemObj;
-    let parentId;
-    if (!isRootItem) {
-      const parentItem = this.storage.getCurrentItem(startTestItemObj.parentName);
-      parentId = parentItem ? parentItem.id : undefined;
-    }
-
-    const itemObj = this.client.startTestItem(item, this.launchId, parentId);
+    const parentItem = this.storage.getItemByName(startTestItemObj.parentName);
+    const parentId = parentItem ? parentItem.id : undefined;
+    const itemObj = this.client.startTestItem(startTestItemObj, this.launchId, parentId);
 
     const testItem: StorageTestItem = {
       id: itemObj.tempId,

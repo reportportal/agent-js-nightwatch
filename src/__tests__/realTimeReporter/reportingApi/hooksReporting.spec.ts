@@ -16,8 +16,7 @@
  */
 
 import { hooksReporting } from '../../../realTimeReporter/reportingApi/hooksReporting';
-import { StartTestItemRQ } from '../../../models';
-import * as utils  from '../../../realTimeReporter/utils';
+import * as IPCClient from '../../../realTimeReporter/ipc/client';
 import * as commonUtils  from '../../../realTimeReporter/utils';
 import { EVENTS, TEST_ITEM_TYPES } from '../../../constants';
 
@@ -25,7 +24,7 @@ describe('hooksReporting', function () {
   let spyPublishEvent: jest.SpyInstance;
 
   beforeEach(() => {
-    spyPublishEvent = jest.spyOn(utils, 'publishEvent').mockImplementation(() => {});
+    spyPublishEvent = jest.spyOn(IPCClient, 'publishIPCEvent').mockImplementation(() => {});
   });
 
   afterEach(() => {
@@ -41,7 +40,7 @@ describe('hooksReporting', function () {
     });
 
     test('invokes the getCodeRef util to receive test hook code reference', function () {
-      hooksReporting.startBeforeSuite();
+      hooksReporting.startBeforeSuite('suiteName');
 
       expect(spyGetCodeRef).toHaveBeenCalledWith('Before suite');
     });
@@ -51,25 +50,10 @@ describe('hooksReporting', function () {
         name: 'Before suite',
         type: TEST_ITEM_TYPES.BEFORE_SUITE,
         codeRef: itemCodeRef,
+        parentName: 'suiteName',
       };
 
-      hooksReporting.startBeforeSuite();
-
-      expect(spyPublishEvent).toHaveBeenCalledWith(EVENTS.START_TEST_ITEM, resultHookRQ);
-    });
-
-    test('should overwrite default hook name if the other one exists in parameters', function () {
-      // @ts-ignore required type property
-      const hookRQ: StartTestItemRQ = {
-        name: 'Not before suite',
-      };
-      const resultHookRQ: StartTestItemRQ = {
-        name: 'Not before suite',
-        type: TEST_ITEM_TYPES.BEFORE_SUITE,
-        codeRef: itemCodeRef,
-      };
-
-      hooksReporting.startBeforeSuite(hookRQ);
+      hooksReporting.startBeforeSuite('suiteName');
 
       expect(spyPublishEvent).toHaveBeenCalledWith(EVENTS.START_TEST_ITEM, resultHookRQ);
     });
@@ -102,7 +86,7 @@ describe('hooksReporting', function () {
     });
 
     test('invokes the getCodeRef util to receive test hook code reference', function () {
-      hooksReporting.startAfterSuite();
+      hooksReporting.startAfterSuite('suiteName');
 
       expect(spyGetCodeRef).toHaveBeenCalledWith('After suite');
     });
@@ -112,25 +96,10 @@ describe('hooksReporting', function () {
         name: 'After suite',
         type: TEST_ITEM_TYPES.AFTER_SUITE,
         codeRef: itemCodeRef,
+        parentName: 'suiteName',
       };
 
-      hooksReporting.startAfterSuite();
-
-      expect(spyPublishEvent).toHaveBeenCalledWith(EVENTS.START_TEST_ITEM, resultHookRQ);
-    });
-
-    test('should overwrite default hook name if the other one exists in parameters', function () {
-      // @ts-ignore required type property
-      const hookRQ: StartTestItemRQ = {
-        name: 'Not after suite',
-      };
-      const resultHookRQ: StartTestItemRQ = {
-        name: 'Not after suite',
-        type: TEST_ITEM_TYPES.AFTER_SUITE,
-        codeRef: itemCodeRef,
-      };
-
-      hooksReporting.startAfterSuite(hookRQ);
+      hooksReporting.startAfterSuite('suiteName');
 
       expect(spyPublishEvent).toHaveBeenCalledWith(EVENTS.START_TEST_ITEM, resultHookRQ);
     });
@@ -163,7 +132,7 @@ describe('hooksReporting', function () {
     });
 
     test('invokes the getCodeRef util to receive test hook code reference', function () {
-      hooksReporting.startBeforeTestCase();
+      hooksReporting.startBeforeTestCase('suiteName');
 
       expect(spyGetCodeRef).toHaveBeenCalledWith('Before test');
     });
@@ -173,25 +142,10 @@ describe('hooksReporting', function () {
         name: 'Before test',
         type: TEST_ITEM_TYPES.BEFORE_TEST,
         codeRef: itemCodeRef,
+        parentName: 'suiteName',
       };
 
-      hooksReporting.startBeforeTestCase();
-
-      expect(spyPublishEvent).toHaveBeenCalledWith(EVENTS.START_TEST_ITEM, resultHookRQ);
-    });
-
-    test('should overwrite default hook name if the other one exists in parameters', function () {
-      // @ts-ignore required type property
-      const hookRQ: StartTestItemRQ = {
-        name: 'Not before test',
-      };
-      const resultHookRQ: StartTestItemRQ = {
-        name: 'Not before test',
-        type: TEST_ITEM_TYPES.BEFORE_TEST,
-        codeRef: itemCodeRef,
-      };
-
-      hooksReporting.startBeforeTestCase(hookRQ);
+      hooksReporting.startBeforeTestCase('suiteName');
 
       expect(spyPublishEvent).toHaveBeenCalledWith(EVENTS.START_TEST_ITEM, resultHookRQ);
     });
@@ -224,7 +178,7 @@ describe('hooksReporting', function () {
     });
 
     test('invokes the getCodeRef util to receive test hook code reference', function () {
-      hooksReporting.startAfterTestCase();
+      hooksReporting.startAfterTestCase('suiteName');
 
       expect(spyGetCodeRef).toHaveBeenCalledWith('After test');
     });
@@ -234,25 +188,10 @@ describe('hooksReporting', function () {
         name: 'After test',
         type: TEST_ITEM_TYPES.AFTER_TEST,
         codeRef: itemCodeRef,
+        parentName: 'suiteName',
       };
 
-      hooksReporting.startAfterTestCase();
-
-      expect(spyPublishEvent).toHaveBeenCalledWith(EVENTS.START_TEST_ITEM, resultHookRQ);
-    });
-
-    test('should overwrite default hook name if the other one exists in parameters', function () {
-      // @ts-ignore required type property
-      const hookRQ: StartTestItemRQ = {
-        name: 'Not after test',
-      };
-      const resultHookRQ: StartTestItemRQ = {
-        name: 'Not after test',
-        type: TEST_ITEM_TYPES.AFTER_TEST,
-        codeRef: itemCodeRef,
-      };
-
-      hooksReporting.startAfterTestCase(hookRQ);
+      hooksReporting.startAfterTestCase('suiteName');
 
       expect(spyPublishEvent).toHaveBeenCalledWith(EVENTS.START_TEST_ITEM, resultHookRQ);
     });

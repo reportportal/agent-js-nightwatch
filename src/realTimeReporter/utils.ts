@@ -15,19 +15,9 @@
  *
  */
 
-import { EVENTS, DEFAULT_FILE_TYPE, STATUSES } from '../constants';
+import { DEFAULT_FILE_TYPE, STATUSES } from '../constants';
 import { getSystemAttributes, buildCodeRef } from '../utils';
 import { Attachment, StartLaunchRQ, Attribute } from '../models';
-
-export const publishEvent = (event: EVENTS | string, msg: any): void => {
-  // @ts-ignore
-  process.emit(event, msg);
-};
-
-export const subscribeToEvent = (event: EVENTS | string, callback: (params: any) => void): void => {
-  // @ts-ignore
-  process.on(event, callback);
-};
 
 export const setDefaultFileType = (file: Attachment): Attachment =>
     file ? { type: DEFAULT_FILE_TYPE, ...file } : undefined;

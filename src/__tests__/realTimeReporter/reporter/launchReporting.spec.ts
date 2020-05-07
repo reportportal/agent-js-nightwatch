@@ -18,12 +18,16 @@
 import { StartLaunchRQ } from '../../../models';
 import { RealTimeReporter } from '../../../realTimeReporter';
 import * as reporterUtils from '../../../realTimeReporter/utils';
-import {
-  getDefaultMockConfig,
-  RPClientMock,
-} from '../../mocks';
+import * as IPCServer from '../../../realTimeReporter/ipc/server';
+import { getDefaultMockConfig, RPClientMock } from '../../mocks';
 
 describe('launchReporting', function() {
+  jest.spyOn(IPCServer, 'startIPCServer')
+    .mockImplementation((callback: any) => {
+      callback({
+        on: () => {},
+      });
+    });
   let reporter: RealTimeReporter;
 
   beforeEach(() => {
@@ -72,6 +76,12 @@ describe('launchReporting', function() {
   });
 
   describe('finishLaunch', function () {
+    let spyStopIPCServer: jest.SpyInstance;
+
+    beforeEach(() => {
+      spyStopIPCServer = jest.spyOn(IPCServer, 'stopIPCServer').mockImplementation(() => {});
+    });
+
     beforeEach(() => {
       // @ts-ignore access to the class private property
       reporter.launchId = 'tempLaunchId';
@@ -82,6 +92,12 @@ describe('launchReporting', function() {
 
       // @ts-ignore access to the class private property
       expect(reporter.client.finishLaunch).toHaveBeenCalledWith('tempLaunchId', {});
+    });
+
+    test('should call stopIPCServer function to switch off the ipc server', function () {
+      reporter.finishLaunch();
+
+      expect(spyStopIPCServer).toHaveBeenCalledTimes(1);
     });
 
     test('should finish launch by calling the ReportPortal client finishLaunch method', function () {

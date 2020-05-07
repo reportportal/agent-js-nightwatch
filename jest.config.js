@@ -21,7 +21,12 @@ module.exports = {
     testEnvironment: 'node',
     testRegex: '/__tests__/.*\\.(test|spec)?\\.(ts|js)$',
     moduleFileExtensions: ['ts', 'js'],
-    collectCoverageFrom: ['src/**/*.ts', '!src/**/index.ts', '!src/__tests__/**/*.ts'],
+    collectCoverageFrom: [
+        'src/**/*.ts',
+        '!src/**/index.ts',
+        '!src/__tests__/**/*.ts',
+        '!src/realTimeReporter/ipc/**/*.ts',
+    ],
     coverageThreshold: {
         global: {
             branches: 80,

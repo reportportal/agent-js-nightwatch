@@ -18,8 +18,6 @@
 import {
   setDefaultFileType,
   getStartLaunchObj,
-  publishEvent,
-  subscribeToEvent,
   getStack,
   getCaller,
   getCodeRef,
@@ -86,36 +84,6 @@ describe('getStartLaunchObj', function() {
       ]);
     }
   );
-});
-
-describe('publishEvent', function() {
-  test('should send event with message for current process', function () {
-    const spyProcessEmit = jest.spyOn(process, 'emit')
-      .mockImplementationOnce(function (event, msg) {
-        return {} as NodeJS.Process;
-      }
-    );
-
-    publishEvent('mockEvent', { data: 'mock' });
-
-    expect(spyProcessEmit).toHaveBeenCalledWith('mockEvent', { data: 'mock' });
-  });
-});
-
-
-describe('subscribeToEvent', function() {
-  test('should create listener on provided event for current process', function () {
-    const spyProcessOn = jest.spyOn(process, 'on')
-      .mockImplementationOnce(function (event, msg) {
-          return {} as NodeJS.Process;
-      }
-    );
-    const eventHandler = () => {};
-
-    subscribeToEvent('mockEvent', eventHandler);
-
-    expect(spyProcessOn).toHaveBeenCalledWith('mockEvent', eventHandler);
-  });
 });
 
 describe('getStack', function() {

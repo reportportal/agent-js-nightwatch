@@ -24,6 +24,7 @@ import {
   StorageMock,
 } from '../../mocks';
 import { STATUSES, TEST_ITEM_TYPES } from '../../../constants';
+import * as IPCServer from '../../../realTimeReporter/ipc/server';
 
 const TEST_ITEM_START_RQ_EXAMPLE: StartTestItemRQ = {
   name: 'mock_test_item',
@@ -34,6 +35,12 @@ const TEST_ITEM_START_RQ_EXAMPLE: StartTestItemRQ = {
 };
 
 describe('testItemReporting', function () {
+  jest.spyOn(IPCServer, 'startIPCServer')
+    .mockImplementation((callback: any) => {
+      callback({
+        on: () => {},
+      });
+    });
   let reporter: RealTimeReporter;
   let storage: StorageMock;
 
@@ -56,15 +63,15 @@ describe('testItemReporting', function () {
   });
 
   describe('startTestItem', function () {
-    let spyGetCurrentItem: jest.SpyInstance;
+    let spyGetItemByName: jest.SpyInstance;
     let spyAddTestItem: jest.SpyInstance;
 
     beforeEach(() => {
-      spyGetCurrentItem = jest.spyOn(storage, 'getCurrentItem');
+      spyGetItemByName = jest.spyOn(storage, 'getItemByName');
       spyAddTestItem = jest.spyOn(storage, 'addTestItem');
     });
 
-    test('invokes the storage getCurrentItem method with item parent name to receive parent id', function () {
+    test('invokes the storage getItemByName method with item parent name to receive parent id', function () {
       const itemRQ: StartTestItemRQ = {
         ...TEST_ITEM_START_RQ_EXAMPLE,
         parentName: 'parent_test_item',
@@ -73,13 +80,13 @@ describe('testItemReporting', function () {
       // @ts-ignore access to the class private property
       reporter.startTestItem(itemRQ);
 
-      expect(spyGetCurrentItem).toHaveBeenCalledWith('parent_test_item');
+      expect(spyGetItemByName).toHaveBeenCalledWith('parent_test_item');
     });
 
     test('invokes the storage addTestItem method with item object to save it in storage', function () {
       const itemRQ: StartTestItemRQ = TEST_ITEM_START_RQ_EXAMPLE;
 
-      spyGetCurrentItem.mockReturnValueOnce(null);
+      spyGetItemByName.mockReturnValueOnce(null);
 
       // @ts-ignore access to the class private property
       reporter.startTestItem(itemRQ);
@@ -92,7 +99,7 @@ describe('testItemReporting', function () {
     test('should start test item without parent by calling the ReportPortal client startTestItem method', function () {
       const itemRQ: StartTestItemRQ = TEST_ITEM_START_RQ_EXAMPLE;
 
-      spyGetCurrentItem.mockReturnValueOnce(null);
+      spyGetItemByName.mockReturnValueOnce(null);
 
       // @ts-ignore access to the class private property
       reporter.startTestItem(itemRQ);
@@ -107,7 +114,7 @@ describe('testItemReporting', function () {
         parentName: 'parent_test_item',
       };
 
-      spyGetCurrentItem.mockReturnValueOnce({ id: 'parentItemId' });
+      spyGetItemByName.mockReturnValueOnce({ id: 'parentItemId' });
 
       // @ts-ignore access to the class private property
       reporter.startTestItem(itemRQ);
@@ -123,22 +130,22 @@ describe('testItemReporting', function () {
     };
     const storageItem = getStorageTestItemMock('testItemName');
 
-    let spyGetCurrentItem: jest.SpyInstance;
+    let spyGetItemByName: jest.SpyInstance;
     let spyGetFinishItemObj: jest.SpyInstance;
 
     beforeEach(() => {
-      spyGetCurrentItem = jest.spyOn(storage, 'getCurrentItem').mockReturnValue(storageItem);
+      spyGetItemByName = jest.spyOn(storage, 'getItemByName').mockReturnValue(storageItem);
       // @ts-ignore access to the class private property
       spyGetFinishItemObj = jest.spyOn(reporter, 'getFinishItemObj');
     });
 
-    test('invokes the storage getCurrentItem method with item name to receive item info from storage', function () {
+    test('invokes the storage getItemByName method with item name to receive item info from storage', function () {
       const itemRQ: any = TEST_ITEM_FINISH_RQ_EXAMPLE;
 
       // @ts-ignore access to the class private property
       reporter.finishTestItem(itemRQ);
 
-      expect(spyGetCurrentItem).toHaveBeenCalledWith(itemRQ.name);
+      expect(spyGetItemByName).toHaveBeenCalledWith(itemRQ.name);
     });
 
     test('invokes getFinishItemObj method with itemRQ and storageItem to receive finish object', function () {
@@ -176,5 +183,3 @@ describe('testItemReporting', function () {
     });
   });
 });
-
-

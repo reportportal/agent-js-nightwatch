@@ -15,17 +15,22 @@
  *
  */
 
-// @ts-ignore
-import RPClient from 'reportportal-client';
-// @ts-ignore
-import { EVENTS as CLIENT_EVENTS } from 'reportportal-client/lib/events';
 import { EVENTS, LOG_LEVELS, STATUSES } from '../../../constants';
 import { RealTimeReporter } from '../../../realTimeReporter';
 import * as utils from '../../../realTimeReporter/utils';
+import * as IPCServer from '../../../realTimeReporter/ipc/server';
 import { getDefaultMockConfig, getStorageTestItemMock, RPClientMock } from '../../mocks';
 import { LogRQ, StorageTestItem } from '../../../models';
 
-describe('constructor', function () {
+describe('otherMethods', function () {
+  const serverMock = {
+    on: () => {},
+  };
+  const spyStartIPCServer = jest.spyOn(IPCServer, 'startIPCServer')
+    .mockImplementation((callback: any) => {
+      callback(serverMock);
+    });
+  const spyServerOn = jest.spyOn(serverMock, 'on');
   let reporter: RealTimeReporter;
 
   beforeEach(() => {
@@ -43,16 +48,20 @@ describe('constructor', function () {
     jest.clearAllMocks();
   });
 
-  describe('registerEventListeners (called in reporter constructor)', function () {
-    const spySubscribeToEvent: jest.SpyInstance = jest.spyOn(utils, 'subscribeToEvent')
-      .mockImplementation((event: EVENTS | CLIENT_EVENTS, handler: (params: any) => void) => {});
+  describe('initReporter (called in reporter constructor)', function () {
+    test('invokes startIPCServer to init IPC server', function () {
+      // @ts-ignore access to the class private property
+      expect(spyStartIPCServer).toHaveBeenCalledWith(reporter.registerEventListeners);
+    });
+  });
 
-    test('invokes subscribeToEvent the 6 times for necessary events', function () {
-      expect(spySubscribeToEvent).toHaveBeenCalledTimes(6);
+  describe('registerEventListeners (called in initReporter constructor)', function () {
+    test('invokes server on method the 6 times for necessary events', function () {
+      expect(spyServerOn).toHaveBeenCalledTimes(6);
     });
 
-    test('invokes subscribeToEvent for START_TEST_ITEM event', function () {
-      expect(spySubscribeToEvent).toHaveBeenNthCalledWith(
+    test('invokes server on method for START_TEST_ITEM event', function () {
+      expect(spyServerOn).toHaveBeenNthCalledWith(
         1,
         EVENTS.START_TEST_ITEM,
         // @ts-ignore access to the class private property
@@ -60,8 +69,8 @@ describe('constructor', function () {
       );
     });
 
-    test('invokes subscribeToEvent for FINISH_TEST_ITEM event', function () {
-      expect(spySubscribeToEvent).toHaveBeenNthCalledWith(
+    test('invokes server on method for FINISH_TEST_ITEM event', function () {
+      expect(spyServerOn).toHaveBeenNthCalledWith(
         2,
         EVENTS.FINISH_TEST_ITEM,
         // @ts-ignore access to the class private property
@@ -69,40 +78,65 @@ describe('constructor', function () {
       );
     });
 
-    test('invokes subscribeToEvent for ADD_LOG event from CLIENT_EVENTS', function () {
-      expect(spySubscribeToEvent).toHaveBeenNthCalledWith(
+    test('invokes server on method for ADD_LOG event', function () {
+      expect(spyServerOn).toHaveBeenNthCalledWith(
         3,
-        CLIENT_EVENTS.ADD_LOG,
+        EVENTS.ADD_LOG,
         // @ts-ignore access to the class private property
         reporter.sendLogToItem
       );
     });
 
-    test('invokes subscribeToEvent for ADD_LAUNCH_LOG event from CLIENT_EVENTS', function () {
-      expect(spySubscribeToEvent).toHaveBeenNthCalledWith(
+    test('invokes server on method for ADD_LAUNCH_LOG event', function () {
+      expect(spyServerOn).toHaveBeenNthCalledWith(
         4,
-        CLIENT_EVENTS.ADD_LAUNCH_LOG,
+        EVENTS.ADD_LAUNCH_LOG,
         // @ts-ignore access to the class private property
         reporter.sendLogToLaunch
       );
     });
 
-    test('invokes subscribeToEvent for ADD_ATTRIBUTES event from CLIENT_EVENTS', function () {
-      expect(spySubscribeToEvent).toHaveBeenNthCalledWith(
+    test('invokes server on method for ADD_ATTRIBUTES event', function () {
+      expect(spyServerOn).toHaveBeenNthCalledWith(
         5,
-        CLIENT_EVENTS.ADD_ATTRIBUTES,
+        EVENTS.ADD_ATTRIBUTES,
         // @ts-ignore access to the class private property
         reporter.addItemAttributes
       );
     });
 
-    test('invokes subscribeToEvent for SET_DESCRIPTION event from CLIENT_EVENTS', function () {
-      expect(spySubscribeToEvent).toHaveBeenNthCalledWith(
+    test('invokes server on method for SET_DESCRIPTION event', function () {
+      expect(spyServerOn).toHaveBeenNthCalledWith(
         6,
-        CLIENT_EVENTS.SET_DESCRIPTION,
+        EVENTS.ADD_DESCRIPTION,
         // @ts-ignore access to the class private property
-        reporter.setItemDescription
+        reporter.addItemDescription
       );
+    });
+  });
+
+  describe('stopReporter', function () {
+    const spyStopIPCServer: jest.SpyInstance = jest.spyOn(IPCServer, 'stopIPCServer')
+      .mockImplementation(() => {});
+
+    beforeEach(() => {
+      // @ts-ignore access to the class private property
+      reporter.launchId = 'tempLaunchId';
+    });
+
+    test('should set null to reporter\'s launchId', function () {
+      // @ts-ignore access to the class private property
+      reporter.stopReporter();
+
+      // @ts-ignore access to the class private property
+      expect(reporter.launchId).toBe(null);
+    });
+
+    test('should call stopIPCServer to close IPC server connection', function () {
+      // @ts-ignore access to the class private property
+      reporter.stopReporter();
+
+      expect(spyStopIPCServer).toHaveBeenCalledTimes(1);
     });
   });
 

@@ -18,10 +18,17 @@
 import { Attribute, LogRQ, StorageTestItem } from '../../../models';
 import { RealTimeReporter } from '../../../realTimeReporter';
 import { getDefaultMockConfig, getStorageTestItemMock, RPClientMock, StorageMock } from '../../mocks';
-import * as utils from "../../../realTimeReporter/utils";
+import * as utils from '../../../realTimeReporter/utils';
+import * as IPCServer from '../../../realTimeReporter/ipc/server';
 import { FILE_TYPES, LOG_LEVELS } from '../../../constants';
 
 describe('testItemReporting', function () {
+  jest.spyOn(IPCServer, 'startIPCServer')
+    .mockImplementation((callback: any) => {
+      callback({
+        on: () => {},
+      });
+    });
   let reporter: RealTimeReporter;
   let storage: StorageMock;
 
@@ -44,12 +51,12 @@ describe('testItemReporting', function () {
   });
 
   describe('sendLogToItem', function () {
-    const logItemRQObj: { log: LogRQ; suite?: string } = {
+    const logItemRQObj: { log: LogRQ; itemName?: string } = {
       log: {
         level: LOG_LEVELS.INFO,
         message: 'Log message',
       },
-      suite: 'itemName',
+      itemName: 'itemName',
     };
 
     let spyGetCurrentItem: jest.SpyInstance;
@@ -62,11 +69,11 @@ describe('testItemReporting', function () {
       spySetDefaultFileType = jest.spyOn(utils, 'setDefaultFileType');
     });
 
-    test('invokes the storage getCurrentItem method with item suite name to receive current item id', function () {
+    test('invokes the storage getCurrentItem method with item name to receive current item id', function () {
       // @ts-ignore access to the class private property
       reporter.sendLogToItem(logItemRQObj);
 
-      expect(spyGetCurrentItem).toHaveBeenCalledWith(logItemRQObj.suite);
+      expect(spyGetCurrentItem).toHaveBeenCalledWith(logItemRQObj.itemName);
     });
 
     test('invokes the util setDefaultFileType function to set default type for file', function () {
@@ -127,9 +134,9 @@ describe('testItemReporting', function () {
   });
 
   describe('addItemAttributes', function () {
-    const attributesData: { attributes: Array<Attribute>, suite?: string } = {
+    const attributesData: { attributes: Array<Attribute>, itemName?: string } = {
       attributes: [{ value: 'attributeValue', key: 'attributeKey' }],
-      suite: 'suiteName',
+      itemName: 'itemName',
     };
 
     let storageItem: StorageTestItem;
@@ -140,11 +147,11 @@ describe('testItemReporting', function () {
       spyGetCurrentItem = jest.spyOn(storage, 'getCurrentItem').mockReturnValue(storageItem);
     });
 
-    test('invokes the storage getCurrentItem method with item suite name to get item from storage', function () {
+    test('invokes the storage getCurrentItem method with item name to get item from storage', function () {
       // @ts-ignore access to the class private property
       reporter.addItemAttributes(attributesData);
 
-      expect(spyGetCurrentItem).toHaveBeenCalledWith(attributesData.suite);
+      expect(spyGetCurrentItem).toHaveBeenCalledWith(attributesData.itemName);
     });
 
     test('should update attributes for item in storage', function () {
@@ -161,10 +168,10 @@ describe('testItemReporting', function () {
     });
   });
 
-  describe('setItemDescription', function () {
-    const attributesData: { text: string, suite?: string } = {
+  describe('addItemDescription', function () {
+    const attributesData: { text: string, itemName?: string } = {
       text: 'New item description',
-      suite: 'suiteName',
+      itemName: 'itemName',
     };
 
     let storageItem: StorageTestItem;
@@ -172,22 +179,23 @@ describe('testItemReporting', function () {
 
     beforeEach(() => {
       storageItem = getStorageTestItemMock('testItem');
+      storageItem.description = 'First part of description';
       spyGetCurrentItem = jest.spyOn(storage, 'getCurrentItem').mockReturnValue(storageItem);
     });
 
-    test('invokes the storage getCurrentItem method with item suite name to get item from storage', function () {
+    test('invokes the storage getCurrentItem method with item name to get item from storage', function () {
       // @ts-ignore access to the class private property
-      reporter.setItemDescription(attributesData);
+      reporter.addItemDescription(attributesData);
 
-      expect(spyGetCurrentItem).toHaveBeenCalledWith(attributesData.suite);
+      expect(spyGetCurrentItem).toHaveBeenCalledWith(attributesData.itemName);
     });
 
-    test('should change description for item in storage', function () {
+    test('should concat description with existing for item in storage', function () {
       // @ts-ignore access to the class private property
-      reporter.setItemDescription(attributesData);
+      reporter.addItemDescription(attributesData);
 
       const updatedStorageItem: StorageTestItem = getStorageTestItemMock('testItem');
-      updatedStorageItem.description = 'New item description';
+      updatedStorageItem.description = 'First part of description<br/>New item description';
 
       expect(storageItem).toEqual(updatedStorageItem);
     });

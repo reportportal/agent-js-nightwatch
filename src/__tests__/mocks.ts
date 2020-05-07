@@ -15,11 +15,7 @@
  *
  */
 
-import {
-  ReportPortalConfig,
-  AgentOptions,
-  StorageTestItem,
-} from '../models';
+import { ReportPortalConfig, StorageTestItem } from '../models';
 
 export const getDefaultMockConfig = (): ReportPortalConfig => ({
   token: '00000000-0000-0000-0000-000000000000',

@@ -18,10 +18,17 @@
 // @ts-ignore
 import RPClient from 'reportportal-client';
 import { Storage } from '../../../realTimeReporter/storage';
+import * as IPCServer from '../../../realTimeReporter/ipc/server';
 import { RealTimeReporter } from '../../../realTimeReporter';
 import { getDefaultMockConfig } from '../../mocks';
 
 describe('constructor', function () {
+  jest.spyOn(IPCServer, 'startIPCServer')
+    .mockImplementation((callback: any) => {
+      callback({
+        on: () => {},
+      });
+    });
   test('should create the RP client instance to communicate with ReportPortal', function () {
     const config = getDefaultMockConfig();
     const reporter = new RealTimeReporter(config);

@@ -17,7 +17,7 @@
 
 import { itemsReporting } from '../../../realTimeReporter/reportingApi/itemsReporting';
 import { StartTestItemRQ } from '../../../models';
-import * as utils  from '../../../realTimeReporter/utils';
+import * as IPCClient from '../../../realTimeReporter/ipc/client';
 import * as commonUtils  from '../../../realTimeReporter/utils';
 import { EVENTS, TEST_ITEM_TYPES } from '../../../constants';
 
@@ -25,7 +25,7 @@ describe('itemsReporting', function () {
   let spyPublishEvent: jest.SpyInstance;
 
   beforeEach(() => {
-    spyPublishEvent = jest.spyOn(utils, 'publishEvent').mockImplementation(() => {});
+    spyPublishEvent = jest.spyOn(IPCClient, 'publishIPCEvent').mockImplementation(() => {});
   });
 
   afterEach(() => {
