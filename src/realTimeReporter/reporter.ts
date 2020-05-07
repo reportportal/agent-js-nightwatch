@@ -54,6 +54,7 @@ export default class Reporter {
     server.on(EVENTS.ADD_LAUNCH_LOG, this.sendLogToLaunch);
     server.on(EVENTS.ADD_ATTRIBUTES, this.addItemAttributes);
     server.on(EVENTS.ADD_DESCRIPTION, this.addItemDescription);
+    server.on(EVENTS.SET_TEST_CASE_ID, this.setTestCaseId);
   };
 
   private initReporter(): void {
@@ -154,5 +155,12 @@ export default class Reporter {
     const currentItem = this.storage.getCurrentItem(data.itemName);
 
     currentItem.description = `${currentItem.description}<br/>${data.text}`;
+  };
+
+  private setTestCaseId = (data: { id: string, itemName?: string }): void => {
+    const { id, itemName } = data;
+    const currentItem = this.storage.getCurrentItem(itemName);
+
+    currentItem.testCaseId = id;
   };
 }

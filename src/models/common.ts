@@ -63,4 +63,5 @@ export interface RPItemFinishRQ extends RPItem {
 export interface StorageTestItem extends RPItem {
   id: string;
   name: string;
+  testCaseId?: string;
 }

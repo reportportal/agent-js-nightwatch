@@ -24,6 +24,7 @@ type LogMessage = LogRQ['message'];
 export interface AttachDataInterface {
   addAttributes(attributes: Array<Attribute>, itemName?: string): void;
   addDescription(text: string, itemName?: string): void;
+  setTestCaseId(id: string, itemName?: string): void;
 
   log(level: LOG_LEVELS, message: LogMessage, file?: Attachment, itemName?: string): void;
   launchLog(level: LOG_LEVELS, message: LogMessage, file?: Attachment): void;
@@ -49,6 +50,9 @@ export const attachData: AttachDataInterface = {
   },
   addDescription(text, itemName) {
     publishEvent(EVENTS.ADD_DESCRIPTION, { text, itemName });
+  },
+  setTestCaseId(id, itemName) {
+    publishEvent(EVENTS.SET_TEST_CASE_ID, { id, itemName });
   },
 
   log(level, message, file, itemName) {

@@ -41,6 +41,7 @@ module.exports = {
     PublicReportingAPI.logInfo('Info log for demo test item');
     PublicReportingAPI.launchLogDebug('Debug log for launch');
     PublicReportingAPI.addDescription('Demo test for google.com');
+    PublicReportingAPI.setTestCaseId('itemTestCaseId');
   },
 
   'searching nightwatch' : function(browser) {

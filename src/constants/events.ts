@@ -22,4 +22,5 @@ export enum EVENTS {
     ADD_LAUNCH_LOG = 'rp:addLaunchLog',
     ADD_ATTRIBUTES = 'rp:addAttributes',
     ADD_DESCRIPTION = 'rp:addDescription',
+    SET_TEST_CASE_ID = 'rp:setTestCaseId',
 }
