@@ -19,7 +19,6 @@ import ipc from 'node-ipc';
 
 export const startIPCServer = (subscribeServerEvents: (server: any) => void) => {
     if (ipc.server) {
-        subscribeServerEvents(ipc.server);
         return;
     }
     ipc.config.id = 'reportportal';
