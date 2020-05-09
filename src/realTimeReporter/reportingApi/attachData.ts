@@ -51,7 +51,7 @@ export const attachData: AttachDataInterface = {
     publishEvent(EVENTS.ADD_DESCRIPTION, { text, itemName });
   },
 
-  log(level, message, file = null, itemName) {
+  log(level, message, file, itemName) {
     const log: LogRQ = {
       level,
       message,
@@ -60,11 +60,11 @@ export const attachData: AttachDataInterface = {
 
     publishEvent(EVENTS.ADD_LOG, { log, itemName });
   },
-  launchLog(level, message, file = null) {
+  launchLog(level, message, file) {
     publishEvent(EVENTS.ADD_LAUNCH_LOG, { level, message, file });
   },
 
-  logInfo(message, file = null, itemName) {
+  logInfo(message, file, itemName) {
     const log: LogRQ = {
       level: LOG_LEVELS.INFO,
       message,
@@ -73,7 +73,7 @@ export const attachData: AttachDataInterface = {
 
     publishEvent(EVENTS.ADD_LOG, { log, itemName });
   },
-  logDebug(message, file = null, itemName) {
+  logDebug(message, file, itemName) {
     const log: LogRQ = {
       level: LOG_LEVELS.DEBUG,
       message,
@@ -82,7 +82,7 @@ export const attachData: AttachDataInterface = {
 
     publishEvent(EVENTS.ADD_LOG, { log, itemName });
   },
-  logWarn(message, file = null, itemName) {
+  logWarn(message, file, itemName) {
     const log: LogRQ = {
       level: LOG_LEVELS.WARN,
       message,
@@ -91,7 +91,7 @@ export const attachData: AttachDataInterface = {
 
     publishEvent(EVENTS.ADD_LOG, { log, itemName });
   },
-  logError(message, file = null, itemName) {
+  logError(message, file, itemName) {
     const log: LogRQ = {
       level: LOG_LEVELS.ERROR,
       message,
@@ -100,7 +100,7 @@ export const attachData: AttachDataInterface = {
 
     publishEvent(EVENTS.ADD_LOG, { log, itemName });
   },
-  logTrace(message, file = null, itemName) {
+  logTrace(message, file, itemName) {
     const log: LogRQ = {
       level: LOG_LEVELS.TRACE,
       message,
@@ -109,7 +109,7 @@ export const attachData: AttachDataInterface = {
 
     publishEvent(EVENTS.ADD_LOG, { log, itemName });
   },
-  logFatal(message, file = null, itemName) {
+  logFatal(message, file, itemName) {
     const log: LogRQ = {
       level: LOG_LEVELS.FATAL,
       message,
@@ -119,22 +119,22 @@ export const attachData: AttachDataInterface = {
     publishEvent(EVENTS.ADD_LOG, { log, itemName });
   },
 
-  launchLogInfo(message, file = null) {
+  launchLogInfo(message, file) {
     publishEvent(EVENTS.ADD_LAUNCH_LOG, { level: LOG_LEVELS.INFO, message, file });
   },
-  launchLogDebug(message, file = null) {
+  launchLogDebug(message, file) {
     publishEvent(EVENTS.ADD_LAUNCH_LOG, { level: LOG_LEVELS.DEBUG, message, file });
   },
-  launchLogWarn(message, file = null) {
+  launchLogWarn(message, file) {
     publishEvent(EVENTS.ADD_LAUNCH_LOG, { level: LOG_LEVELS.WARN, message, file });
   },
-  launchLogError(message, file = null) {
+  launchLogError(message, file) {
     publishEvent(EVENTS.ADD_LAUNCH_LOG, { level: LOG_LEVELS.ERROR, message, file });
   },
-  launchLogTrace(message, file = null) {
+  launchLogTrace(message, file) {
     publishEvent(EVENTS.ADD_LAUNCH_LOG, { level: LOG_LEVELS.TRACE, message, file });
   },
-  launchLogFatal(message, file = null) {
+  launchLogFatal(message, file) {
     publishEvent(EVENTS.ADD_LAUNCH_LOG, { level: LOG_LEVELS.FATAL, message, file });
   },
 };
