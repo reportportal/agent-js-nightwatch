@@ -7,16 +7,16 @@ describe(suiteName, function() {
   this.retries(3);
 
   before(() => {
+    PublicReportingAPI.startBeforeSuite();
+    // beforeSuite related actions
+    PublicReportingAPI.finishBeforeSuite();
+
     const item = {
       name: suiteName,
       attributes: [{ key: 'suite', value: 'home.js' }],
       description: 'Suite description',
     };
     PublicReportingAPI.startSuite(item);
-
-    PublicReportingAPI.startBeforeSuite();
-    // beforeSuite related actions
-    PublicReportingAPI.finishBeforeSuite();
   });
 
   after((browser, done) => {
@@ -27,7 +27,7 @@ describe(suiteName, function() {
   });
 
   beforeEach((browser) => {
-    PublicReportingAPI.startTestCase(browser.currentTest);
+    PublicReportingAPI.startTestCase(browser.currentTest, suiteName);
   });
 
   afterEach((browser) => {

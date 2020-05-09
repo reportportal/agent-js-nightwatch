@@ -15,13 +15,13 @@ module.exports = {
   },
 
   beforeEach: function (browser) {
-    PublicReportingAPI.startTestCase(browser.currentTest);
+    PublicReportingAPI.startTestCase(browser.currentTest, suiteName);
   },
 
   afterEach: function (browser) {
     PublicReportingAPI.finishTestCase(browser.currentTest);
 
-    PublicReportingAPI.startAfterTestCase();
+    PublicReportingAPI.startAfterTestCase(suiteName);
     // afterEach related actions
     PublicReportingAPI.finishAfterTestCase();
   },
