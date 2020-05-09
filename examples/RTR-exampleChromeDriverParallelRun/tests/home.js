@@ -25,16 +25,16 @@ describe(suiteName, function() {
   this.retries(3);
 
   before(() => {
+    PublicReportingAPI.startBeforeSuite();
+    // beforeSuite related actions
+    PublicReportingAPI.finishBeforeSuite();
+
     const item = {
       name: suiteName,
       attributes: [{ key: 'suite', value: 'home' }],
       description: 'Common suite description',
     };
     PublicReportingAPI.startSuite(item);
-
-    PublicReportingAPI.startBeforeSuite(suiteName);
-    // beforeSuite related actions
-    PublicReportingAPI.finishBeforeSuite();
   });
 
   after((browser, done) => {
