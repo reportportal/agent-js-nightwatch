@@ -47,186 +47,95 @@ describe('attachData', function () {
   });
 
   describe('item log functions', function () {
-    describe('log', function () {
-      test('should call should call spyPublishIPCEvent with ADD_LOG event', function () {
-        const file = { name: 'fileName', type: FILE_TYPES.TEXT, content: 'empty' };
+    test('log: should call should call spyPublishIPCEvent with ADD_LOG event', function () {
+      const file = { name: 'fileName', type: FILE_TYPES.TEXT, content: 'empty' };
 
-        attachData.log(LOG_LEVELS.INFO, 'log', file, 'parentName');
+      attachData.log(LOG_LEVELS.INFO, 'log', file, 'parentName');
 
-        const expectedObject = {
-          log: { level: LOG_LEVELS.INFO, message: 'log', file },
-          itemName: 'parentName',
-        };
+      const expectedObject = {
+        log: { level: LOG_LEVELS.INFO, message: 'log', file },
+        itemName: 'parentName',
+      };
 
-        expect(spyPublishIPCEvent).toHaveBeenCalledWith(EVENTS.ADD_LOG, expectedObject);
-      });
-
-      test('should set file to null if it not exists', function () {
-        attachData.log(LOG_LEVELS.INFO, 'log');
-
-        const expectedObject: { log: LogRQ, itemName: string } = {
-          log: { level: LOG_LEVELS.INFO, message: 'log', file: null },
-          itemName: undefined,
-        };
-
-        expect(spyPublishIPCEvent).toHaveBeenCalledWith(EVENTS.ADD_LOG, expectedObject);
-      });
+      expect(spyPublishIPCEvent).toHaveBeenCalledWith(EVENTS.ADD_LOG, expectedObject);
     });
 
-    describe('logInfo', function () {
-      test('should call should call spyPublishIPCEvent with ADD_LOG event with INFO log level', function () {
-        const file = { name: 'fileName', type: FILE_TYPES.TEXT, content: 'empty' };
+    test('logInfo: should call should call spyPublishIPCEvent with ADD_LOG event with INFO log level', function () {
+      const file = { name: 'fileName', type: FILE_TYPES.TEXT, content: 'empty' };
 
-        attachData.logInfo('log', file, 'parentName');
+      attachData.logInfo('log', file, 'parentName');
 
-        const expectedObject: { log: LogRQ, itemName: string } = {
-          log: { level: LOG_LEVELS.INFO, message: 'log', file },
-          itemName: 'parentName',
-        };
+      const expectedObject: { log: LogRQ, itemName: string } = {
+        log: { level: LOG_LEVELS.INFO, message: 'log', file },
+        itemName: 'parentName',
+      };
 
-        expect(spyPublishIPCEvent).toHaveBeenCalledWith(EVENTS.ADD_LOG, expectedObject);
-      });
-
-      test('should set file to null if it not exists', function () {
-        attachData.logInfo('log');
-
-        const expectedObject: { log: LogRQ, itemName: string } = {
-          log: { level: LOG_LEVELS.INFO, message: 'log', file: null },
-          itemName: undefined,
-        };
-
-        expect(spyPublishIPCEvent).toHaveBeenCalledWith(EVENTS.ADD_LOG, expectedObject);
-      });
+      expect(spyPublishIPCEvent).toHaveBeenCalledWith(EVENTS.ADD_LOG, expectedObject);
     });
 
-    describe('logDebug', function () {
-      test('should call should call spyPublishIPCEvent with ADD_LOG event with DEBUG log level', function () {
-        const file = { name: 'fileName', type: FILE_TYPES.TEXT, content: 'empty' };
+    test('logDebug: should call should call spyPublishIPCEvent with ADD_LOG event with DEBUG log level', function () {
+      const file = { name: 'fileName', type: FILE_TYPES.TEXT, content: 'empty' };
 
-        attachData.logDebug('log', file, 'parentName');
+      attachData.logDebug('log', file, 'parentName');
 
-        const expectedObject: { log: LogRQ, itemName: string } = {
-          log: { level: LOG_LEVELS.DEBUG, message: 'log', file },
-          itemName: 'parentName',
-        };
+      const expectedObject: { log: LogRQ, itemName: string } = {
+        log: { level: LOG_LEVELS.DEBUG, message: 'log', file },
+        itemName: 'parentName',
+      };
 
-        expect(spyPublishIPCEvent).toHaveBeenCalledWith(EVENTS.ADD_LOG, expectedObject);
-      });
-
-      test('should set file to null if it not exists', function () {
-        attachData.logDebug('log');
-
-        const expectedObject: { log: LogRQ, itemName: string } = {
-          log: { level: LOG_LEVELS.DEBUG, message: 'log', file: null },
-          itemName: undefined,
-        };
-
-        expect(spyPublishIPCEvent).toHaveBeenCalledWith(EVENTS.ADD_LOG, expectedObject);
-      });
+      expect(spyPublishIPCEvent).toHaveBeenCalledWith(EVENTS.ADD_LOG, expectedObject);
     });
 
-    describe('logWarn', function () {
-      test('should call should call spyPublishIPCEvent with ADD_LOG event with WARN log level', function () {
-        const file = { name: 'fileName', type: FILE_TYPES.TEXT, content: 'empty' };
+    test('logWarn: should call should call spyPublishIPCEvent with ADD_LOG event with WARN log level', function () {
+      const file = { name: 'fileName', type: FILE_TYPES.TEXT, content: 'empty' };
 
-        attachData.logWarn('log', file, 'parentName');
+      attachData.logWarn('log', file, 'parentName');
 
-        const expectedObject: { log: LogRQ, itemName: string } = {
-          log: { level: LOG_LEVELS.WARN, message: 'log', file },
-          itemName: 'parentName',
-        };
+      const expectedObject: { log: LogRQ, itemName: string } = {
+        log: { level: LOG_LEVELS.WARN, message: 'log', file },
+        itemName: 'parentName',
+      };
 
-        expect(spyPublishIPCEvent).toHaveBeenCalledWith(EVENTS.ADD_LOG, expectedObject);
-      });
-
-      test('should set file to null if it not exists', function () {
-        attachData.logWarn('log');
-
-        const expectedObject: { log: LogRQ, itemName: string } = {
-          log: { level: LOG_LEVELS.WARN, message: 'log', file: null },
-          itemName: undefined,
-        };
-
-        expect(spyPublishIPCEvent).toHaveBeenCalledWith(EVENTS.ADD_LOG, expectedObject);
-      });
+      expect(spyPublishIPCEvent).toHaveBeenCalledWith(EVENTS.ADD_LOG, expectedObject);
     });
 
-    describe('logError', function () {
-      test('should call should call spyPublishIPCEvent with ADD_LOG event with ERROR log level', function () {
-        const file = { name: 'fileName', type: FILE_TYPES.TEXT, content: 'empty' };
+    test('logError: should call should call spyPublishIPCEvent with ADD_LOG event with ERROR log level', function () {
+      const file = { name: 'fileName', type: FILE_TYPES.TEXT, content: 'empty' };
 
-        attachData.logError('log', file, 'parentName');
+      attachData.logError('log', file, 'parentName');
 
-        const expectedObject: { log: LogRQ, itemName: string } = {
-          log: { level: LOG_LEVELS.ERROR, message: 'log', file },
-          itemName: 'parentName',
-        };
+      const expectedObject: { log: LogRQ, itemName: string } = {
+        log: { level: LOG_LEVELS.ERROR, message: 'log', file },
+        itemName: 'parentName',
+      };
 
-        expect(spyPublishIPCEvent).toHaveBeenCalledWith(EVENTS.ADD_LOG, expectedObject);
-      });
-
-      test('should set file to null if it not exists', function () {
-        attachData.logError('log');
-
-        const expectedObject: { log: LogRQ, itemName: string } = {
-          log: { level: LOG_LEVELS.ERROR, message: 'log', file: null },
-          itemName: undefined,
-        };
-
-        expect(spyPublishIPCEvent).toHaveBeenCalledWith(EVENTS.ADD_LOG, expectedObject);
-      });
+      expect(spyPublishIPCEvent).toHaveBeenCalledWith(EVENTS.ADD_LOG, expectedObject);
     });
 
-    describe('logTrace', function () {
-      test('should call should call spyPublishIPCEvent with ADD_LOG event with TRACE log level', function () {
-        const file = { name: 'fileName', type: FILE_TYPES.TEXT, content: 'empty' };
+    test('logTrace: should call should call spyPublishIPCEvent with ADD_LOG event with TRACE log level', function () {
+      const file = { name: 'fileName', type: FILE_TYPES.TEXT, content: 'empty' };
 
-        attachData.logTrace('log', file, 'parentName');
+      attachData.logTrace('log', file, 'parentName');
 
-        const expectedObject: { log: LogRQ, itemName: string } = {
-          log: { level: LOG_LEVELS.TRACE, message: 'log', file },
-          itemName: 'parentName',
-        };
+      const expectedObject: { log: LogRQ, itemName: string } = {
+        log: { level: LOG_LEVELS.TRACE, message: 'log', file },
+        itemName: 'parentName',
+      };
 
-        expect(spyPublishIPCEvent).toHaveBeenCalledWith(EVENTS.ADD_LOG, expectedObject);
-      });
-
-      test('should set file to null if it not exists', function () {
-        attachData.logTrace('log');
-
-        const expectedObject: { log: LogRQ, itemName: string } = {
-          log: { level: LOG_LEVELS.TRACE, message: 'log', file: null },
-          itemName: undefined,
-        };
-
-        expect(spyPublishIPCEvent).toHaveBeenCalledWith(EVENTS.ADD_LOG, expectedObject);
-      });
+      expect(spyPublishIPCEvent).toHaveBeenCalledWith(EVENTS.ADD_LOG, expectedObject);
     });
 
-    describe('logFatal', function () {
-      test('should call should call spyPublishIPCEvent with ADD_LOG event with FATAL log level', function () {
-        const file = { name: 'fileName', type: FILE_TYPES.TEXT, content: 'empty' };
+    test('logFatal: should call should call spyPublishIPCEvent with ADD_LOG event with FATAL log level', function () {
+      const file = { name: 'fileName', type: FILE_TYPES.TEXT, content: 'empty' };
 
-        attachData.logFatal('log', file, 'parentName');
+      attachData.logFatal('log', file, 'parentName');
 
-        const expectedObject: { log: LogRQ, itemName: string } = {
-          log: { level: LOG_LEVELS.FATAL, message: 'log', file },
-          itemName: 'parentName',
-        };
+      const expectedObject: { log: LogRQ, itemName: string } = {
+        log: { level: LOG_LEVELS.FATAL, message: 'log', file },
+        itemName: 'parentName',
+      };
 
-        expect(spyPublishIPCEvent).toHaveBeenCalledWith(EVENTS.ADD_LOG, expectedObject);
-      });
-
-      test('should set file to null if it not exists', function () {
-        attachData.logFatal('log');
-
-        const expectedObject: { log: LogRQ, itemName: string } = {
-          log: { level: LOG_LEVELS.FATAL, message: 'log', file: null },
-          itemName: undefined,
-        };
-
-        expect(spyPublishIPCEvent).toHaveBeenCalledWith(EVENTS.ADD_LOG, expectedObject);
-      });
+      expect(spyPublishIPCEvent).toHaveBeenCalledWith(EVENTS.ADD_LOG, expectedObject);
     });
   });
 
