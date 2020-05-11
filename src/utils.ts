@@ -28,8 +28,8 @@ export const getFileMimeType = (fileName: string): string => {
   let type;
 
   if (matches) {
-      // @ts-ignore
-      type = FILE_TYPES[matches[1].toUpperCase()];
+    // @ts-ignore
+    type = FILE_TYPES[matches[1].toUpperCase()];
   }
 
   return type || DEFAULT_FILE_TYPE;
@@ -50,8 +50,8 @@ export const buildCodeRef = (testPath: string, itemName: string = ''): string =>
   const workingDir = process.cwd();
 
   const codeRef = testPath
-      .replace(`${workingDir}${path.sep}`, '')
-      .replace(/\\/g, '/');
+    .replace(`${workingDir}${path.sep}`, '')
+    .replace(/\\/g, '/');
 
   return itemName ? `${codeRef}/${itemName}` : codeRef;
 };
