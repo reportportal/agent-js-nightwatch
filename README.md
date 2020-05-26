@@ -75,17 +75,6 @@ This reporter sends results of test executions to Report Portal when **all tests
     nightwatch --config ./nightwatch.conf.js --reporter ./reporter.js
     ```
 
-To run example:
-With unit tests:
-```cmd
-cd @reportportal/agent-js-nightwatch && npm run example:postFactumReporter:unitTests
-```
-
-With chromeDriver:
-```cmd
-cd @reportportal/agent-js-nightwatch && npm run example:postFactumReporter:chromeDriver
-```
-
 ### Real-time reporting
 
 This reporter sends results of test executions to Report Portal **during tests run**.
@@ -139,12 +128,6 @@ Also to use Reporting API it must be initialized in `before` hook and destroyed 
     ```
 4. Now you able to use agent API in tests to report results in real time (see the API reference).<br/>
 No other preparations are required from the test definitions.
-
-  
-To run example:
-```cmd
-cd @reportportal/agent-js-nightwatch && npm run example:realTimeReporter:chromeDriver
-```
 
 #### Parallel run
 
@@ -200,12 +183,7 @@ Also you create `rpReporter` instance inside the `before` hook body, because the
     ```
     
 4. Now you able to use agent API in tests to report results in real time (see the API reference).
-  
-To run example:
-```cmd
-cd @reportportal/agent-js-nightwatch && npm run example:realTimeReporter:chromeDriver:parallelRun
-```
-    
+
 #### Reporting API
 
 ##### Items&hooks reporting
