@@ -5,7 +5,22 @@ on:
     types: [published]
 
 jobs:
+  build:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+    - name: Set up Node.js
+      uses: actions/setup-node@v1
+      with:
+        node-version: 12
+    - name: Clean install of node dependencies
+      run: npm ci
+    - name: Build the source code
+      run: npm run build
+    - name: Run tests
+      run: npm test
+
   publish-to-npm:
+    needs: build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -13,7 +28,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v1
         with:
-          node-version: 10.x
+          node-version: 12
           registry-url: https://registry.npmjs.org/
       - name: Clean install of node dependencies
         run: npm ci
@@ -29,16 +44,16 @@ jobs:
           NODE_AUTH_TOKEN: ${{secrets.NPM_ACCESS_TOKEN}}
 
   publish-to-gpr:
+    needs: build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
       - name: Set up Node.js
         uses: actions/setup-node@v1
-          with:
-          node-version: 10.x
+        with:
+          node-version: 12
           registry-url: https://npm.pkg.github.com/
-          scope: 'reportportal'
       - name: Clean install of node dependencies
         run: npm ci
       - name: Build the source code
