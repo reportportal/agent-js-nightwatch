@@ -4,6 +4,7 @@
   "description": "Agent for integration Nightwatch with ReportPortal.",
   "main": "build/index.js",
   "license": "Apache-2.0",
+  "author": "ReportPortal.io",
   "repository": {
     "type": "git",
     "url": "https://github.com/reportportal/agent-js-nightwatch.git"
