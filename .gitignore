@@ -18,3 +18,5 @@ rp.json
 # compiled
 /build
 /coverage
+
+.npmrc

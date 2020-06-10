@@ -2,22 +2,29 @@ name: publish
 
 on:
   release:
-    types: [published]
+    types:
+      - published
 
 jobs:
   build:
-    - name: Checkout repository
-      uses: actions/checkout@v2
-    - name: Set up Node.js
-      uses: actions/setup-node@v1
-      with:
-        node-version: 12
-    - name: Clean install of node dependencies
-      run: npm ci
-    - name: Build the source code
-      run: npm run build
-    - name: Run tests
-      run: npm test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Set up Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12.x
+      - name: Clean install of node dependencies
+        run: npm ci
+      - name: Build the source code
+        run: npm run build
+      - name: Run lint
+        run: npm run lint
+      - name: Run tests
+        run: npm test
+      - name: Check coverage
+        run: npm run test:coverage
 
   publish-to-npm:
     needs: build
@@ -28,20 +35,16 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v1
         with:
-          node-version: 12
-          registry-url: https://registry.npmjs.org/
+          node-version: 12.x
+          registry-url: 'https://registry.npmjs.org'
       - name: Clean install of node dependencies
         run: npm ci
       - name: Build the source code
         run: npm run build
-      - name: Run tests
-        run: npm test
-      - name: Check coverage
-        run: npm run test:coverage
       - name: Publish package to npm
-        run: npm publish
+        run: npm publish --access public
         env:
-          NODE_AUTH_TOKEN: ${{secrets.NPM_ACCESS_TOKEN}}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_ACCESS_TOKEN }}
 
   publish-to-gpr:
     needs: build
@@ -52,17 +55,14 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v1
         with:
-          node-version: 12
-          registry-url: https://npm.pkg.github.com/
+          node-version: 12.x
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@reportportal'
       - name: Clean install of node dependencies
         run: npm ci
       - name: Build the source code
         run: npm run build
-      - name: Run tests
-        run: npm test
-      - name: Check coverage
-        run: npm run test:coverage
-      - name: Publish package to npm
+      - name: Publish package to github packages
         run: npm publish
         env:
-          NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          NODE_AUTH_TOKEN: ${{ secrets.GH_TOKEN }}
