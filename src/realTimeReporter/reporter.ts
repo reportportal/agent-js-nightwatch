@@ -58,14 +58,26 @@ export default class Reporter {
     server.on(EVENTS.SET_STATUS, this.setStatusToItem);
   };
 
+  private unregisterEventListeners = (server: any): void => {
+    server.off(EVENTS.START_TEST_ITEM, '*');
+    server.off(EVENTS.FINISH_TEST_ITEM, '*');
+
+    server.off(EVENTS.ADD_LOG, '*');
+    server.off(EVENTS.ADD_LAUNCH_LOG, '*');
+    server.off(EVENTS.ADD_ATTRIBUTES, '*');
+    server.off(EVENTS.ADD_DESCRIPTION, '*');
+    server.off(EVENTS.SET_TEST_CASE_ID, '*');
+    server.off(EVENTS.SET_STATUS, '*');
+  };
+
   private initReporter(): void {
-    startIPCServer(this.registerEventListeners);
+    startIPCServer(this.registerEventListeners, this.unregisterEventListeners);
   }
 
   private stopReporter() {
     this.launchId = null;
 
-    stopIPCServer();
+    stopIPCServer(this.unregisterEventListeners);
   }
 
   private getFinishItemObj(testResult: any, storageItem: StorageTestItem): FinishTestItemRQ {

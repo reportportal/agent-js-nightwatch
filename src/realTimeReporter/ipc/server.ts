@@ -17,7 +17,10 @@
 
 import ipc from 'node-ipc';
 
-export const startIPCServer = (subscribeServerEvents: (server: any) => void) => {
+export const startIPCServer = (
+  subscribeServerEvents: (server: any) => void,
+  unsubscribeServerEvents: (server: any) => void
+) => {
   if (ipc.server) {
     return;
   }
@@ -33,17 +36,20 @@ export const startIPCServer = (subscribeServerEvents: (server: any) => void) => 
       ipc.log('server destroyed');
     });
     subscribeServerEvents(ipc.server);
+
     process.on('exit', () => {
+      unsubscribeServerEvents(ipc.server);
       ipc.server.stop();
     });
   });
   ipc.server.start();
 };
 
-export const stopIPCServer = () => {
+export const stopIPCServer = (unsubscribeServerEvents: (server: any) => void) => {
   if (!ipc.server) {
     return;
   }
 
+  unsubscribeServerEvents(ipc.server);
   ipc.server.stop();
 };
