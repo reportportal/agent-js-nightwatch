@@ -20,18 +20,22 @@ import { getSystemAttributes, buildCodeRef } from '../utils';
 import { Attachment, StartLaunchRQ, Attribute } from '../models';
 
 export const setDefaultFileType = (file: Attachment): Attachment =>
-    file ? { type: DEFAULT_FILE_TYPE, ...file } : undefined;
+  file ? { type: DEFAULT_FILE_TYPE, ...file } : undefined;
 
 export const getStartLaunchObj = (launchObj: StartLaunchRQ): StartLaunchRQ => {
   const systemAttributes: Array<Attribute> = getSystemAttributes();
 
   return {
     ...launchObj,
-    attributes: launchObj.attributes ? launchObj.attributes.concat(systemAttributes) : systemAttributes,
-  }
+    attributes: launchObj.attributes
+      ? launchObj.attributes.concat(systemAttributes)
+      : systemAttributes,
+  };
 };
 
-export const calculateTestItemStatus = (testResult: any): { status: STATUSES, assertionsMessage: string } => {
+export const calculateTestItemStatus = (
+  testResult: any,
+): { status: STATUSES; assertionsMessage: string } => {
   const currentTestItemResults = testResult.results.testcases[testResult.name];
   let assertionsMessage = null;
   let status;
@@ -76,7 +80,7 @@ export const getStack = (): Array<NodeJS.CallSite> | Array<any> => {
   const origPrepareStackTrace = Error.prepareStackTrace;
 
   // Override with function that just returns `stack`
-  Error.prepareStackTrace = function (_, stack) {
+  Error.prepareStackTrace = function(_, stack) {
     return stack;
   };
 
@@ -84,15 +88,15 @@ export const getStack = (): Array<NodeJS.CallSite> | Array<any> => {
   const err = new Error();
 
   // Evaluate `err.stack`, which calls our new `Error.prepareStackTrace`
-  const stack = err.stack;
+  const { stack } = err;
 
   // Restore original `Error.prepareStackTrace`
   Error.prepareStackTrace = origPrepareStackTrace;
 
   // Remove superfluous function call on stack
-  //@ts-ignore
+  // @ts-ignore
   stack.shift(); // getStack --> Error
 
-  //@ts-ignore
+  // @ts-ignore
   return stack;
 };

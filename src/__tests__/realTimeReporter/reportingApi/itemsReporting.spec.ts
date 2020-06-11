@@ -18,10 +18,10 @@
 import { itemsReporting } from '../../../realTimeReporter/reportingApi/itemsReporting';
 import { StartTestItemRQ } from '../../../models';
 import * as IPCClient from '../../../realTimeReporter/ipc/client';
-import * as commonUtils  from '../../../realTimeReporter/utils';
+import * as commonUtils from '../../../realTimeReporter/utils';
 import { EVENTS, TEST_ITEM_TYPES } from '../../../constants';
 
-describe('itemsReporting', function () {
+describe('itemsReporting', function() {
   let spyPublishEvent: jest.SpyInstance;
 
   beforeEach(() => {
@@ -32,7 +32,7 @@ describe('itemsReporting', function () {
     jest.clearAllMocks();
   });
 
-  describe('startSuite', function () {
+  describe('startSuite', function() {
     const itemCodeRef = 'tests/items.js/test suite';
     let spyGetCodeRef: jest.SpyInstance;
 
@@ -40,7 +40,7 @@ describe('itemsReporting', function () {
       spyGetCodeRef = jest.spyOn(commonUtils, 'getCodeRef').mockReturnValue(itemCodeRef);
     });
 
-    test('invokes the getCodeRef util to receive test item code reference', function () {
+    test('invokes the getCodeRef util to receive test item code reference', function() {
       // @ts-ignore required type property
       const suiteStartRQ: StartTestItemRQ = {
         name: 'mock_test_item',
@@ -53,7 +53,7 @@ describe('itemsReporting', function () {
       expect(spyGetCodeRef).toHaveBeenCalledWith(suiteStartRQ.name);
     });
 
-    test('should call publishEvent util to send event to reporter with SUITE type', function () {
+    test('should call publishEvent util to send event to reporter with SUITE type', function() {
       // @ts-ignore required type property
       const suiteStartRQ: StartTestItemRQ = {
         name: 'mock_test_item',
@@ -71,7 +71,7 @@ describe('itemsReporting', function () {
       expect(spyPublishEvent).toHaveBeenCalledWith(EVENTS.START_TEST_ITEM, resultSuiteRQ);
     });
 
-    test('should leave test item type if it exists in parameters', function () {
+    test('should leave test item type if it exists in parameters', function() {
       // @ts-ignore required type property
       const suiteStartRQ: StartTestItemRQ = {
         name: 'mock_test_item',
@@ -91,7 +91,7 @@ describe('itemsReporting', function () {
     });
   });
 
-  describe('startTestCase', function () {
+  describe('startTestCase', function() {
     const itemCodeRef = 'tests/items.js/test suite';
     let spyGetCodeRef: jest.SpyInstance;
 
@@ -99,7 +99,7 @@ describe('itemsReporting', function () {
       spyGetCodeRef = jest.spyOn(commonUtils, 'getCodeRef').mockReturnValue(itemCodeRef);
     });
 
-    test('invokes the getCodeRef util to receive test item code reference', function () {
+    test('invokes the getCodeRef util to receive test item code reference', function() {
       const itemStartRQ: any = {
         name: 'mock_test_item',
         results: {
@@ -112,7 +112,7 @@ describe('itemsReporting', function () {
       expect(spyGetCodeRef).toHaveBeenCalledWith(itemStartRQ.name);
     });
 
-    test('should call publishEvent util to send event to reporter with STEP type', function () {
+    test('should call publishEvent util to send event to reporter with STEP type', function() {
       const itemParentName = 'item suite';
       const itemStartRQ: any = {
         name: 'mock_test_item',
@@ -133,7 +133,7 @@ describe('itemsReporting', function () {
       expect(spyPublishEvent).toHaveBeenCalledWith(EVENTS.START_TEST_ITEM, resultSuiteRQ);
     });
 
-    test('should set retry to true if test item have been retried 1 and more times', function () {
+    test('should set retry to true if test item have been retried 1 and more times', function() {
       const itemParentName = 'item suite';
       const itemStartRQ: any = {
         name: 'mock_test_item',
@@ -155,7 +155,7 @@ describe('itemsReporting', function () {
     });
   });
 
-  test('finishSuite: should call publishEvent util to send event to reporter with test result', function () {
+  test('finishSuite: should call publishEvent util to send event to reporter with test result', function() {
     const finishSuiteRQ = { name: 'suiteName' };
 
     itemsReporting.finishSuite('suiteName');
@@ -163,7 +163,7 @@ describe('itemsReporting', function () {
     expect(spyPublishEvent).toHaveBeenCalledWith(EVENTS.FINISH_TEST_ITEM, finishSuiteRQ);
   });
 
-  test('finishTestCase: should call publishEvent util to send event to reporter with test result', function () {
+  test('finishTestCase: should call publishEvent util to send event to reporter with test result', function() {
     const finishItemRQ = { name: 'itemName' };
 
     itemsReporting.finishTestCase(finishItemRQ);

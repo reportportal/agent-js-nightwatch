@@ -36,8 +36,8 @@ describe('Storage', function() {
     jest.clearAllMocks();
   });
 
-  describe('constructor', function () {
-    test('should create the storage with initial items', function () {
+  describe('constructor', function() {
+    test('should create the storage with initial items', function() {
       const storage = new Storage([initialItem]);
 
       const allStorageItems = storage.getAllItems();
@@ -45,49 +45,49 @@ describe('Storage', function() {
       expect(allStorageItems).toEqual([initialItem]);
     });
 
-    test('should create the empty storage in case of empty constructor params', function () {
+    test('should create the empty storage in case of empty constructor params', function() {
       const storage = new Storage();
 
       expect(storage.getAllItems()).toEqual([]);
     });
   });
 
-  test('getAllItems: should return all stored test items', function () {
+  test('getAllItems: should return all stored test items', function() {
     const items = storage.getAllItems();
 
     expect(items).toEqual([initialItem]);
   });
 
-  describe('getItemById', function () {
-    test('should return test item with provided id', function () {
+  describe('getItemById', function() {
+    test('should return test item with provided id', function() {
       const item = storage.getItemById('initialItemId');
 
       expect(item).toEqual(initialItem);
     });
 
-    test('should return null in case of unknown id', function () {
+    test('should return null in case of unknown id', function() {
       const item = storage.getItemById('unknownId');
 
       expect(item).toEqual(null);
     });
   });
 
-  describe('getItemByName', function () {
-    test('should return test item with provided name', function () {
+  describe('getItemByName', function() {
+    test('should return test item with provided name', function() {
       const item = storage.getItemByName('initialItemName');
 
       expect(item).toEqual(initialItem);
     });
 
-    test('should return null in case of unknown name', function () {
+    test('should return null in case of unknown name', function() {
       const item = storage.getItemByName('unknownName');
 
       expect(item).toEqual(null);
     });
   });
 
-  describe('getCurrentItem', function () {
-    test('should call getItemByName method to get test item by provided name', function () {
+  describe('getCurrentItem', function() {
+    test('should call getItemByName method to get test item by provided name', function() {
       const spyGetCurrentItem = jest.spyOn(storage, 'getItemByName');
 
       storage.getCurrentItem('initialItemName');
@@ -95,7 +95,7 @@ describe('Storage', function() {
       expect(spyGetCurrentItem).toHaveBeenCalledWith('initialItemName');
     });
 
-    test('should call getLastItem method in case of unknown provided name', function () {
+    test('should call getLastItem method in case of unknown provided name', function() {
       const spyGetLastItem = jest.spyOn(storage, 'getLastItem');
 
       storage.getCurrentItem('unknownName');
@@ -104,21 +104,21 @@ describe('Storage', function() {
     });
   });
 
-  describe('removeItemById', function () {
-    test('should remove test item according to provided id', function () {
+  describe('removeItemById', function() {
+    test('should remove test item according to provided id', function() {
       storage.removeItemById('initialItemId');
 
       expect(storage.getAllItems()).toEqual([]);
     });
 
-    test('should not change items in case of unknown id', function () {
+    test('should not change items in case of unknown id', function() {
       storage.removeItemById('unknownId');
 
       expect(storage.getAllItems()).toEqual([initialItem]);
     });
   });
 
-  test('addTestItem: should add new test item to the test items collection', function () {
+  test('addTestItem: should add new test item to the test items collection', function() {
     const testItem: StorageTestItem = {
       id: 'itemId',
       name: 'testItem',
@@ -129,7 +129,7 @@ describe('Storage', function() {
     expect(storage.getItemById('itemId')).toEqual(testItem);
   });
 
-  test('getLastItem: should call util function getLastItem', function () {
+  test('getLastItem: should call util function getLastItem', function() {
     const spyGetLastItem = jest.spyOn(utils, 'getLastItem');
 
     storage.getLastItem();

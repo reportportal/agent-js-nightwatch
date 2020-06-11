@@ -18,7 +18,4 @@
 import RealTimeReporter from './reporter';
 import ReportingAPI from './reportingApi';
 
-export {
-  RealTimeReporter,
-  ReportingAPI,
-};
+export { RealTimeReporter, ReportingAPI };

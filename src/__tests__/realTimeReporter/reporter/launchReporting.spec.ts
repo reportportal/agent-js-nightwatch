@@ -22,12 +22,11 @@ import * as IPCServer from '../../../realTimeReporter/ipc/server';
 import { getDefaultMockConfig, RPClientMock } from '../../mocks';
 
 describe('launchReporting', function() {
-  jest.spyOn(IPCServer, 'startIPCServer')
-    .mockImplementation((callback: any) => {
-      callback({
-        on: () => {},
-      });
+  jest.spyOn(IPCServer, 'startIPCServer').mockImplementation((callback: any) => {
+    callback({
+      on: () => {},
     });
+  });
   let reporter: RealTimeReporter;
 
   beforeEach(() => {
@@ -43,14 +42,14 @@ describe('launchReporting', function() {
     jest.clearAllMocks();
   });
 
-  describe('startLaunch', function () {
+  describe('startLaunch', function() {
     let spyGetStartLaunchObj: jest.SpyInstance;
 
     beforeEach(() => {
       spyGetStartLaunchObj = jest.spyOn(reporterUtils, 'getStartLaunchObj');
     });
 
-    test('invokes getStartLaunchObj method to receive object to correctly start launch', function () {
+    test('invokes getStartLaunchObj method to receive object to correctly start launch', function() {
       const launchObj: StartLaunchRQ = {
         description: 'Launch description',
         attributes: [{ key: 'example', value: 'true' }],
@@ -61,7 +60,7 @@ describe('launchReporting', function() {
       expect(spyGetStartLaunchObj).toHaveBeenCalledWith(launchObj);
     });
 
-    test('should start launch by calling the ReportPortal client startLaunch method', function () {
+    test('should start launch by calling the ReportPortal client startLaunch method', function() {
       const launchObj: StartLaunchRQ = {
         description: 'Launch description',
         attributes: [{ key: 'example', value: 'true' }],
@@ -75,7 +74,7 @@ describe('launchReporting', function() {
     });
   });
 
-  describe('finishLaunch', function () {
+  describe('finishLaunch', function() {
     let spyStopIPCServer: jest.SpyInstance;
 
     beforeEach(() => {
@@ -87,20 +86,20 @@ describe('launchReporting', function() {
       reporter.launchId = 'tempLaunchId';
     });
 
-    test('should finish launch with empty finish object in case of empty arguments', function () {
+    test('should finish launch with empty finish object in case of empty arguments', function() {
       reporter.finishLaunch();
 
       // @ts-ignore access to the class private property
       expect(reporter.client.finishLaunch).toHaveBeenCalledWith('tempLaunchId', {});
     });
 
-    test('should call stopIPCServer function to switch off the ipc server', function () {
+    test('should call stopIPCServer function to switch off the ipc server', function() {
       reporter.finishLaunch();
 
       expect(spyStopIPCServer).toHaveBeenCalledTimes(1);
     });
 
-    test('should finish launch by calling the ReportPortal client finishLaunch method', function () {
+    test('should finish launch by calling the ReportPortal client finishLaunch method', function() {
       const launchObj = { attributes: [{ key: 'test' }] };
 
       reporter.finishLaunch(launchObj);

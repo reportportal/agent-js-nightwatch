@@ -16,13 +16,12 @@
  */
 
 import moment from 'moment';
-import RPClient from 'reportportal-client';
+import RPClient from '@reportportal/client-javascript';
 import { AgentOptions, ReportPortalConfig } from '../models';
 import { buildCodeRef, getSystemAttributes, getLastItem } from '../utils';
 import { STATUSES, LOG_LEVELS, TEST_ITEM_TYPES, EVENTS } from '../constants';
 
 export default class PostFactumReporter {
-
   private client: RPClient;
   private readonly options: AgentOptions;
   private launchId: string;
@@ -30,12 +29,7 @@ export default class PostFactumReporter {
   private launchParams: any;
 
   constructor(config: ReportPortalConfig & AgentOptions) {
-    const {
-      attributes = [],
-      description,
-      parallelRun = false,
-      ...clientConfig
-    } = config;
+    const { attributes = [], description, parallelRun = false, ...clientConfig } = config;
     const launchAttributes = attributes.concat(getSystemAttributes());
 
     this.client = new RPClient(clientConfig);
@@ -132,9 +126,11 @@ export default class PostFactumReporter {
           type: TEST_ITEM_TYPES.STEP,
         });
 
-        testStartTime = moment(testStartTime).add(test.timeMs, 'ms').toDate();
+        testStartTime = moment(testStartTime)
+          .add(test.timeMs, 'ms')
+          .toDate();
 
-        let status = test.status;
+        let { status } = test;
 
         if (!status) {
           status = test.failed ? STATUSES.FAILED : STATUSES.PASSED;

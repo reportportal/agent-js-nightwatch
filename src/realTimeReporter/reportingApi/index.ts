@@ -25,7 +25,10 @@ interface ApiInterface {
   destroy: () => void;
 }
 
-type ReportingApiInterface = ItemsReportingInterface & HooksReportingInterface & AttachDataInterface & ApiInterface;
+type ReportingApiInterface = ItemsReportingInterface &
+  HooksReportingInterface &
+  AttachDataInterface &
+  ApiInterface;
 
 const ReportingApi: ReportingApiInterface = {
   init: () => {

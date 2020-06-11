@@ -40,18 +40,18 @@ export const getAgentInfo = () => ({
   name: pjsonName,
 });
 
-export const getSystemAttributes = (): Array<Attribute> => ([{
-  key: 'agent',
-  value: `${pjsonName}|${pjsonVersion}`,
-  system: true,
-}]);
+export const getSystemAttributes = (): Array<Attribute> => [
+  {
+    key: 'agent',
+    value: `${pjsonName}|${pjsonVersion}`,
+    system: true,
+  },
+];
 
-export const buildCodeRef = (testPath: string, itemName: string = ''): string => {
+export const buildCodeRef = (testPath: string, itemName = ''): string => {
   const workingDir = process.cwd();
 
-  const codeRef = testPath
-    .replace(`${workingDir}${path.sep}`, '')
-    .replace(/\\/g, '/');
+  const codeRef = testPath.replace(`${workingDir}${path.sep}`, '').replace(/\\/g, '/');
 
   return itemName ? `${codeRef}/${itemName}` : codeRef;
 };

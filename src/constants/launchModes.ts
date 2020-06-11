@@ -16,6 +16,6 @@
  */
 
 export enum LAUNCH_MODES {
-    DEFAULT = 'DEFAULT',
-    DEBUG = 'DEBUG',
+  DEFAULT = 'DEFAULT',
+  DEBUG = 'DEBUG',
 }

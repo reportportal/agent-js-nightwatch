@@ -17,10 +17,10 @@
 
 import { hooksReporting } from '../../../realTimeReporter/reportingApi/hooksReporting';
 import * as IPCClient from '../../../realTimeReporter/ipc/client';
-import * as commonUtils  from '../../../realTimeReporter/utils';
+import * as commonUtils from '../../../realTimeReporter/utils';
 import { EVENTS, STATUSES, TEST_ITEM_TYPES } from '../../../constants';
 
-describe('hooksReporting', function () {
+describe('hooksReporting', function() {
   let spyPublishEvent: jest.SpyInstance;
 
   beforeEach(() => {
@@ -31,7 +31,7 @@ describe('hooksReporting', function () {
     jest.clearAllMocks();
   });
 
-  describe('startBeforeSuite', function () {
+  describe('startBeforeSuite', function() {
     const itemCodeRef = 'tests/items.js/test hook';
     let spyGetCodeRef: jest.SpyInstance;
 
@@ -39,13 +39,13 @@ describe('hooksReporting', function () {
       spyGetCodeRef = jest.spyOn(commonUtils, 'getCodeRef').mockReturnValue(itemCodeRef);
     });
 
-    test('invokes the getCodeRef util to receive test hook code reference', function () {
+    test('invokes the getCodeRef util to receive test hook code reference', function() {
       hooksReporting.startBeforeSuite('suiteName');
 
       expect(spyGetCodeRef).toHaveBeenCalledWith('Before suite');
     });
 
-    test('should call publishEvent util to send event to reporter with BEFORE_SUITE item type', function () {
+    test('should call publishEvent util to send event to reporter with BEFORE_SUITE item type', function() {
       const resultHookRQ = {
         name: 'Before suite',
         type: TEST_ITEM_TYPES.BEFORE_SUITE,
@@ -59,15 +59,15 @@ describe('hooksReporting', function () {
     });
   });
 
-  describe('finishBeforeSuite', function () {
-    test('should call publishEvent util to send event to reporter with test hook result with default PASSED status', function () {
+  describe('finishBeforeSuite', function() {
+    test('should call publishEvent util to send event to reporter with test hook result with default PASSED status', function() {
       hooksReporting.finishBeforeSuite();
 
       const expectedItemObj = { name: 'Before suite', status: STATUSES.PASSED };
       expect(spyPublishEvent).toHaveBeenCalledWith(EVENTS.FINISH_TEST_ITEM, expectedItemObj);
     });
 
-    test('should overwrite default hook name & status if the other one exists in parameters', function () {
+    test('should overwrite default hook name & status if the other one exists in parameters', function() {
       const finishHookRQ = { name: 'Not before suite', status: STATUSES.SKIPPED };
 
       // @ts-ignore required status property
@@ -77,8 +77,7 @@ describe('hooksReporting', function () {
     });
   });
 
-
-  describe('startAfterSuite', function () {
+  describe('startAfterSuite', function() {
     const itemCodeRef = 'tests/items.js/test hook';
     let spyGetCodeRef: jest.SpyInstance;
 
@@ -86,13 +85,13 @@ describe('hooksReporting', function () {
       spyGetCodeRef = jest.spyOn(commonUtils, 'getCodeRef').mockReturnValue(itemCodeRef);
     });
 
-    test('invokes the getCodeRef util to receive test hook code reference', function () {
+    test('invokes the getCodeRef util to receive test hook code reference', function() {
       hooksReporting.startAfterSuite('suiteName');
 
       expect(spyGetCodeRef).toHaveBeenCalledWith('After suite');
     });
 
-    test('should call publishEvent util to send event to reporter with AFTER_SUITE item type', function () {
+    test('should call publishEvent util to send event to reporter with AFTER_SUITE item type', function() {
       const resultHookRQ = {
         name: 'After suite',
         type: TEST_ITEM_TYPES.AFTER_SUITE,
@@ -106,15 +105,15 @@ describe('hooksReporting', function () {
     });
   });
 
-  describe('finishAfterSuite', function () {
-    test('should call publishEvent util to send event to reporter with test hook result with default PASSED status', function () {
+  describe('finishAfterSuite', function() {
+    test('should call publishEvent util to send event to reporter with test hook result with default PASSED status', function() {
       hooksReporting.finishAfterSuite();
 
       const expectedItemObj = { name: 'After suite', status: STATUSES.PASSED };
       expect(spyPublishEvent).toHaveBeenCalledWith(EVENTS.FINISH_TEST_ITEM, expectedItemObj);
     });
 
-    test('should overwrite default hook name & status if the other one exists in parameters', function () {
+    test('should overwrite default hook name & status if the other one exists in parameters', function() {
       const finishHookRQ = { name: 'Not after suite', status: STATUSES.SKIPPED };
 
       // @ts-ignore required status property
@@ -124,8 +123,7 @@ describe('hooksReporting', function () {
     });
   });
 
-
-  describe('startBeforeTestCase', function () {
+  describe('startBeforeTestCase', function() {
     const itemCodeRef = 'tests/items.js/test hook';
     let spyGetCodeRef: jest.SpyInstance;
 
@@ -133,13 +131,13 @@ describe('hooksReporting', function () {
       spyGetCodeRef = jest.spyOn(commonUtils, 'getCodeRef').mockReturnValue(itemCodeRef);
     });
 
-    test('invokes the getCodeRef util to receive test hook code reference', function () {
+    test('invokes the getCodeRef util to receive test hook code reference', function() {
       hooksReporting.startBeforeTestCase('suiteName');
 
       expect(spyGetCodeRef).toHaveBeenCalledWith('Before test');
     });
 
-    test('should call publishEvent util to send event to reporter with BEFORE_TEST item type', function () {
+    test('should call publishEvent util to send event to reporter with BEFORE_TEST item type', function() {
       const resultHookRQ = {
         name: 'Before test',
         type: TEST_ITEM_TYPES.BEFORE_TEST,
@@ -153,15 +151,15 @@ describe('hooksReporting', function () {
     });
   });
 
-  describe('finishBeforeTestCase', function () {
-    test('should call publishEvent util to send event to reporter with test hook result with default PASSED status', function () {
+  describe('finishBeforeTestCase', function() {
+    test('should call publishEvent util to send event to reporter with test hook result with default PASSED status', function() {
       hooksReporting.finishBeforeTestCase();
 
       const expectedItemObj = { name: 'Before test', status: STATUSES.PASSED };
       expect(spyPublishEvent).toHaveBeenCalledWith(EVENTS.FINISH_TEST_ITEM, expectedItemObj);
     });
 
-    test('should overwrite default hook name & status if the other one exists in parameters', function () {
+    test('should overwrite default hook name & status if the other one exists in parameters', function() {
       const finishHookRQ = { name: 'Not before test', status: STATUSES.SKIPPED };
 
       // @ts-ignore required status property
@@ -171,8 +169,7 @@ describe('hooksReporting', function () {
     });
   });
 
-
-  describe('startAfterTestCase', function () {
+  describe('startAfterTestCase', function() {
     const itemCodeRef = 'tests/items.js/test hook';
     let spyGetCodeRef: jest.SpyInstance;
 
@@ -180,13 +177,13 @@ describe('hooksReporting', function () {
       spyGetCodeRef = jest.spyOn(commonUtils, 'getCodeRef').mockReturnValue(itemCodeRef);
     });
 
-    test('invokes the getCodeRef util to receive test hook code reference', function () {
+    test('invokes the getCodeRef util to receive test hook code reference', function() {
       hooksReporting.startAfterTestCase('suiteName');
 
       expect(spyGetCodeRef).toHaveBeenCalledWith('After test');
     });
 
-    test('should call publishEvent util to send event to reporter with AFTER_TEST item type', function () {
+    test('should call publishEvent util to send event to reporter with AFTER_TEST item type', function() {
       const resultHookRQ = {
         name: 'After test',
         type: TEST_ITEM_TYPES.AFTER_TEST,
@@ -200,15 +197,15 @@ describe('hooksReporting', function () {
     });
   });
 
-  describe('finishAfterTestCase', function () {
-    test('should call publishEvent util to send event to reporter with test hook result with default PASSED status', function () {
+  describe('finishAfterTestCase', function() {
+    test('should call publishEvent util to send event to reporter with test hook result with default PASSED status', function() {
       hooksReporting.finishAfterTestCase();
 
       const expectedItemObj = { name: 'After test', status: STATUSES.PASSED };
       expect(spyPublishEvent).toHaveBeenCalledWith(EVENTS.FINISH_TEST_ITEM, expectedItemObj);
     });
 
-    test('should overwrite default hook name & status if the other one exists in parameters', function () {
+    test('should overwrite default hook name & status if the other one exists in parameters', function() {
       const finishHookRQ = { name: 'Not after test', status: STATUSES.SKIPPED };
 
       // @ts-ignore required status property

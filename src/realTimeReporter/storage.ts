@@ -21,23 +21,23 @@ import { StorageTestItem } from '../models';
 export class Storage {
   private testItems: Array<StorageTestItem>;
 
-  constructor(initialItems:Array<StorageTestItem> = []) {
+  constructor(initialItems: Array<StorageTestItem> = []) {
     this.testItems = initialItems;
   }
 
   public getAllItems(): Array<StorageTestItem> {
     return this.testItems;
-  };
+  }
 
   public getLastItem(): StorageTestItem {
     return getLastItem(this.testItems);
-  };
+  }
 
   public getItemByName(itemName: string): StorageTestItem {
     const testItem = this.testItems.find((item) => item.name === itemName);
 
     return testItem || null;
-  };
+  }
 
   public getItemById(id: string): StorageTestItem {
     const testItem = this.testItems.find((item) => item.id === id);

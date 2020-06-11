@@ -22,11 +22,12 @@ import * as IPCServer from '../../../realTimeReporter/ipc/server';
 import { getDefaultMockConfig, getStorageTestItemMock, RPClientMock } from '../../mocks';
 import { LogRQ, StorageTestItem } from '../../../models';
 
-describe('otherMethods', function () {
+describe('otherMethods', function() {
   const serverMock = {
     on: () => {},
   };
-  const spyStartIPCServer = jest.spyOn(IPCServer, 'startIPCServer')
+  const spyStartIPCServer = jest
+    .spyOn(IPCServer, 'startIPCServer')
     .mockImplementation((callback: any) => {
       callback(serverMock);
     });
@@ -48,93 +49,94 @@ describe('otherMethods', function () {
     jest.clearAllMocks();
   });
 
-  describe('initReporter (called in reporter constructor)', function () {
-    test('invokes startIPCServer to init IPC server', function () {
+  describe('initReporter (called in reporter constructor)', function() {
+    test('invokes startIPCServer to init IPC server', function() {
       // @ts-ignore access to the class private property
       expect(spyStartIPCServer).toHaveBeenCalledWith(reporter.registerEventListeners);
     });
   });
 
-  describe('registerEventListeners (called in initReporter constructor)', function () {
-    test('invokes server on method the 6 times for necessary events', function () {
+  describe('registerEventListeners (called in initReporter constructor)', function() {
+    test('invokes server on method the 6 times for necessary events', function() {
       expect(spyServerOn).toHaveBeenCalledTimes(8);
     });
 
-    test('invokes server on method for START_TEST_ITEM event', function () {
+    test('invokes server on method for START_TEST_ITEM event', function() {
       expect(spyServerOn).toHaveBeenNthCalledWith(
         1,
         EVENTS.START_TEST_ITEM,
         // @ts-ignore access to the class private property
-        reporter.startTestItem
+        reporter.startTestItem,
       );
     });
 
-    test('invokes server on method for FINISH_TEST_ITEM event', function () {
+    test('invokes server on method for FINISH_TEST_ITEM event', function() {
       expect(spyServerOn).toHaveBeenNthCalledWith(
         2,
         EVENTS.FINISH_TEST_ITEM,
         // @ts-ignore access to the class private property
-        reporter.finishTestItem
+        reporter.finishTestItem,
       );
     });
 
-    test('invokes server on method for ADD_LOG event', function () {
+    test('invokes server on method for ADD_LOG event', function() {
       expect(spyServerOn).toHaveBeenNthCalledWith(
         3,
         EVENTS.ADD_LOG,
         // @ts-ignore access to the class private property
-        reporter.sendLogToItem
+        reporter.sendLogToItem,
       );
     });
 
-    test('invokes server on method for ADD_LAUNCH_LOG event', function () {
+    test('invokes server on method for ADD_LAUNCH_LOG event', function() {
       expect(spyServerOn).toHaveBeenNthCalledWith(
         4,
         EVENTS.ADD_LAUNCH_LOG,
         // @ts-ignore access to the class private property
-        reporter.sendLogToLaunch
+        reporter.sendLogToLaunch,
       );
     });
 
-    test('invokes server on method for ADD_ATTRIBUTES event', function () {
+    test('invokes server on method for ADD_ATTRIBUTES event', function() {
       expect(spyServerOn).toHaveBeenNthCalledWith(
         5,
         EVENTS.ADD_ATTRIBUTES,
         // @ts-ignore access to the class private property
-        reporter.addItemAttributes
+        reporter.addItemAttributes,
       );
     });
 
-    test('invokes server on method for ADD_DESCRIPTION event', function () {
+    test('invokes server on method for ADD_DESCRIPTION event', function() {
       expect(spyServerOn).toHaveBeenNthCalledWith(
         6,
         EVENTS.ADD_DESCRIPTION,
         // @ts-ignore access to the class private property
-        reporter.addItemDescription
+        reporter.addItemDescription,
       );
     });
 
-    test('invokes server on method for SET_TEST_CASE_ID event', function () {
+    test('invokes server on method for SET_TEST_CASE_ID event', function() {
       expect(spyServerOn).toHaveBeenNthCalledWith(
         7,
         EVENTS.SET_TEST_CASE_ID,
         // @ts-ignore access to the class private property
-        reporter.setTestCaseId
+        reporter.setTestCaseId,
       );
     });
 
-    test('invokes server on method for SET_STATUS event', function () {
+    test('invokes server on method for SET_STATUS event', function() {
       expect(spyServerOn).toHaveBeenNthCalledWith(
         8,
         EVENTS.SET_STATUS,
         // @ts-ignore access to the class private property
-        reporter.setStatusToItem
+        reporter.setStatusToItem,
       );
     });
   });
 
-  describe('stopReporter', function () {
-    const spyStopIPCServer: jest.SpyInstance = jest.spyOn(IPCServer, 'stopIPCServer')
+  describe('stopReporter', function() {
+    const spyStopIPCServer: jest.SpyInstance = jest
+      .spyOn(IPCServer, 'stopIPCServer')
       .mockImplementation(() => {});
 
     beforeEach(() => {
@@ -142,7 +144,7 @@ describe('otherMethods', function () {
       reporter.launchId = 'tempLaunchId';
     });
 
-    test('should set null to reporter\'s launchId', function () {
+    test("should set null to reporter's launchId", function() {
       // @ts-ignore access to the class private property
       reporter.stopReporter();
 
@@ -150,7 +152,7 @@ describe('otherMethods', function () {
       expect(reporter.launchId).toBe(null);
     });
 
-    test('should call stopIPCServer to close IPC server connection', function () {
+    test('should call stopIPCServer to close IPC server connection', function() {
       // @ts-ignore access to the class private property
       reporter.stopReporter();
 
@@ -158,10 +160,10 @@ describe('otherMethods', function () {
     });
   });
 
-  describe('getFinishItemObj', function () {
+  describe('getFinishItemObj', function() {
     const storageTestItem: StorageTestItem = getStorageTestItemMock('itemName');
 
-    test('should return storage item data with other data from testResult in case of no results in testResult', function () {
+    test('should return storage item data with other data from testResult in case of no results in testResult', function() {
       // @ts-ignore access to the class private property
       const finishItemObj = reporter.getFinishItemObj({ status: STATUSES.PASSED }, storageTestItem);
       const { id, ...data } = storageTestItem;
@@ -169,20 +171,23 @@ describe('otherMethods', function () {
       expect(finishItemObj).toEqual({ ...data, status: STATUSES.PASSED });
     });
 
-    test('invokes calculateTestItemStatus in case of results exists to receive proper item status', function () {
+    test('invokes calculateTestItemStatus in case of results exists to receive proper item status', function() {
       const testResult = {
         name: 'testItem',
         results: {
           testcases: {
-            'testItem': {
+            testItem: {
               passed: 1,
               skipped: 2,
               failed: 1,
-            }
-          }
-        }
+            },
+          },
+        },
       };
-      const spyCalculateTestItemStatus: jest.SpyInstance = jest.spyOn(utils, 'calculateTestItemStatus');
+      const spyCalculateTestItemStatus: jest.SpyInstance = jest.spyOn(
+        utils,
+        'calculateTestItemStatus',
+      );
 
       // @ts-ignore access to the class private property
       reporter.getFinishItemObj(testResult, storageTestItem);
@@ -190,20 +195,21 @@ describe('otherMethods', function () {
       expect(spyCalculateTestItemStatus).toHaveBeenCalledWith(testResult);
     });
 
-    test('should call the client sendLog method in case of FAILED status', function () {
+    test('should call the client sendLog method in case of FAILED status', function() {
       const testResult = {
         name: 'testItem',
         results: {
           testcases: {
-            'testItem': {
+            testItem: {
               passed: 1,
               skipped: 0,
               failed: 1,
-            }
-          }
-        }
+            },
+          },
+        },
       };
-      jest.spyOn(utils, 'calculateTestItemStatus')
+      jest
+        .spyOn(utils, 'calculateTestItemStatus')
         .mockReturnValueOnce({ status: STATUSES.FAILED, assertionsMessage: 'Error' });
       // @ts-ignore access to the class private property
       const spySendLog: jest.SpyInstance = jest.spyOn(reporter.client, 'sendLog');
@@ -219,22 +225,23 @@ describe('otherMethods', function () {
       expect(spySendLog).toHaveBeenCalledWith(storageTestItem.id, itemLog);
     });
 
-    test('should return correct finish item object with status', function () {
+    test('should return correct finish item object with status', function() {
       const testResult = {
         name: 'testItem',
         results: {
           testcases: {
-            'testItem': {
+            testItem: {
               passed: 0,
               skipped: 1,
               failed: 0,
-            }
-          }
-        }
+            },
+          },
+        },
       };
       const { id, ...data } = storageTestItem;
 
-      jest.spyOn(utils, 'calculateTestItemStatus')
+      jest
+        .spyOn(utils, 'calculateTestItemStatus')
         .mockReturnValueOnce({ status: STATUSES.SKIPPED, assertionsMessage: null });
       // @ts-ignore access to the class private property
       const finishItemObj = reporter.getFinishItemObj(testResult, storageTestItem);

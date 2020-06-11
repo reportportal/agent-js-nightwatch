@@ -19,8 +19,12 @@ import { LOG_LEVELS } from '../constants';
 import { ReportingAPI } from '../realTimeReporter';
 
 // More about custom commands in Nightwatch - https://nightwatchjs.org/guide/extending-nightwatch/#writing-custom-commands
-export const command = function (message: string, level: LOG_LEVELS = LOG_LEVELS.INFO, itemName?: string) {
-  return this.perform(function () {
+export const command = function(
+  message: string,
+  level: LOG_LEVELS = LOG_LEVELS.INFO,
+  itemName?: string,
+) {
+  return this.perform(function() {
     ReportingAPI.log(level, message, null, itemName);
   });
 };

@@ -18,32 +18,32 @@
 import ipc from 'node-ipc';
 
 export const startIPCServer = (subscribeServerEvents: (server: any) => void) => {
-    if (ipc.server) {
-        return;
-    }
-    ipc.config.id = 'reportportal';
-    ipc.config.retry = 1500;
-    ipc.config.silent = true;
+  if (ipc.server) {
+    return;
+  }
+  ipc.config.id = 'reportportal';
+  ipc.config.retry = 1500;
+  ipc.config.silent = true;
 
-    ipc.serve(() => {
-        ipc.server.on('socket.disconnected', (socket: any, destroyedSocketID: string) => {
-            ipc.log(`client ${destroyedSocketID} has disconnected!`);
-        });
-        ipc.server.on('destroy', () => {
-            ipc.log('server destroyed');
-        });
-        subscribeServerEvents(ipc.server);
-        process.on('exit', () => {
-            ipc.server.stop();
-        });
+  ipc.serve(() => {
+    ipc.server.on('socket.disconnected', (socket: any, destroyedSocketID: string) => {
+      ipc.log(`client ${destroyedSocketID} has disconnected!`);
     });
-    ipc.server.start();
+    ipc.server.on('destroy', () => {
+      ipc.log('server destroyed');
+    });
+    subscribeServerEvents(ipc.server);
+    process.on('exit', () => {
+      ipc.server.stop();
+    });
+  });
+  ipc.server.start();
 };
 
 export const stopIPCServer = () => {
-    if (!ipc.server) {
-        return;
-    }
+  if (!ipc.server) {
+    return;
+  }
 
-    ipc.server.stop();
+  ipc.server.stop();
 };

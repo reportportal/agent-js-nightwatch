@@ -15,7 +15,7 @@
  *
  */
 
-import RPClient from 'reportportal-client';
+import RPClient from '@reportportal/client-javascript';
 import { getAgentInfo } from '../utils';
 import { EVENTS, LOG_LEVELS, STATUSES } from '../constants';
 import {
@@ -60,13 +60,13 @@ export default class Reporter {
 
   private initReporter(): void {
     startIPCServer(this.registerEventListeners);
-  };
+  }
 
   private stopReporter() {
     this.launchId = null;
 
     stopIPCServer();
-  };
+  }
 
   private getFinishItemObj(testResult: any, storageItem: StorageTestItem): FinishTestItemRQ {
     const { id, ...data } = storageItem;
@@ -94,19 +94,19 @@ export default class Reporter {
       status,
       ...data,
     };
-  };
+  }
 
   public startLaunch(launchObj: StartLaunchRQ): void {
     const startLaunchObj: StartLaunchRQ = getStartLaunchObj(launchObj);
 
     this.launchId = this.client.startLaunch(startLaunchObj).tempId;
-  };
+  }
 
   public finishLaunch(launchFinishObj = {}): void {
     this.client.finishLaunch(this.launchId, launchFinishObj);
 
     this.stopReporter();
-  };
+  }
 
   private startTestItem = (startTestItemObj: StartTestItemRQ): void => {
     const parentItem = this.storage.getItemByName(startTestItemObj.parentName);
@@ -133,7 +133,10 @@ export default class Reporter {
   };
 
   private sendLogToItem = (data: { log: LogRQ; itemName?: string }): void => {
-    const { log: { file, ...log }, itemName } = data;
+    const {
+      log: { file, ...log },
+      itemName,
+    } = data;
     const currentItem = this.storage.getCurrentItem(itemName);
     const fileToSend = setDefaultFileType(file);
 
@@ -147,19 +150,19 @@ export default class Reporter {
     this.client.sendLog(this.launchId, log, fileToSend);
   };
 
-  private addItemAttributes = (data: { attributes: Array<Attribute>, itemName?: string }): void => {
+  private addItemAttributes = (data: { attributes: Array<Attribute>; itemName?: string }): void => {
     const currentItem = this.storage.getCurrentItem(data.itemName);
 
     currentItem.attributes = currentItem.attributes.concat(data.attributes);
   };
 
-  private addItemDescription = (data: { text: string, itemName?: string }): void => {
+  private addItemDescription = (data: { text: string; itemName?: string }): void => {
     const currentItem = this.storage.getCurrentItem(data.itemName);
 
     currentItem.description = `${currentItem.description}<br/>${data.text}`;
   };
 
-  private setTestCaseId = (data: { id: string, itemName?: string }): void => {
+  private setTestCaseId = (data: { id: string; itemName?: string }): void => {
     const { id, itemName } = data;
     const currentItem = this.storage.getCurrentItem(itemName);
 

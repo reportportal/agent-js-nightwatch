@@ -17,18 +17,22 @@
 
 import { Attribute, LogRQ, StorageTestItem } from '../../../models';
 import { RealTimeReporter } from '../../../realTimeReporter';
-import { getDefaultMockConfig, getStorageTestItemMock, RPClientMock, StorageMock } from '../../mocks';
+import {
+  getDefaultMockConfig,
+  getStorageTestItemMock,
+  RPClientMock,
+  StorageMock,
+} from '../../mocks';
 import * as utils from '../../../realTimeReporter/utils';
 import * as IPCServer from '../../../realTimeReporter/ipc/server';
 import { FILE_TYPES, LOG_LEVELS, STATUSES } from '../../../constants';
 
-describe('testItemReporting', function () {
-  jest.spyOn(IPCServer, 'startIPCServer')
-    .mockImplementation((callback: any) => {
-      callback({
-        on: () => {},
-      });
+describe('testItemReporting', function() {
+  jest.spyOn(IPCServer, 'startIPCServer').mockImplementation((callback: any) => {
+    callback({
+      on: () => {},
     });
+  });
   let reporter: RealTimeReporter;
   let storage: StorageMock;
 
@@ -50,7 +54,7 @@ describe('testItemReporting', function () {
     jest.clearAllMocks();
   });
 
-  describe('sendLogToItem', function () {
+  describe('sendLogToItem', function() {
     const logItemRQObj: { log: LogRQ; itemName?: string } = {
       log: {
         level: LOG_LEVELS.INFO,
@@ -64,27 +68,29 @@ describe('testItemReporting', function () {
 
     beforeEach(() => {
       spyGetCurrentItem = jest.spyOn(storage, 'getCurrentItem').mockReturnValue({
-        id: 'testItemId'
+        id: 'testItemId',
       });
       spySetDefaultFileType = jest.spyOn(utils, 'setDefaultFileType');
     });
 
-    test('invokes the storage getCurrentItem method with item name to receive current item id', function () {
+    test('invokes the storage getCurrentItem method with item name to receive current item id', function() {
       // @ts-ignore access to the class private property
       reporter.sendLogToItem(logItemRQObj);
 
       expect(spyGetCurrentItem).toHaveBeenCalledWith(logItemRQObj.itemName);
     });
 
-    test('invokes the util setDefaultFileType function to set default type for file', function () {
+    test('invokes the util setDefaultFileType function to set default type for file', function() {
       // @ts-ignore access to the class private property
       reporter.sendLogToItem(logItemRQObj);
 
       expect(spySetDefaultFileType).toHaveBeenCalledWith(logItemRQObj.log.file);
     });
 
-    test('should call the client sendLog method to send item log to Report Portal', function () {
-      const { log: { file, ...log } } = logItemRQObj;
+    test('should call the client sendLog method to send item log to Report Portal', function() {
+      const {
+        log: { file, ...log },
+      } = logItemRQObj;
 
       spySetDefaultFileType.mockReturnValueOnce(undefined);
 
@@ -96,7 +102,7 @@ describe('testItemReporting', function () {
     });
   });
 
-  describe('sendLogToLaunch', function () {
+  describe('sendLogToLaunch', function() {
     const logItemRQObj: LogRQ = {
       level: LOG_LEVELS.INFO,
       message: 'Log message',
@@ -113,14 +119,14 @@ describe('testItemReporting', function () {
       spySetDefaultFileType = jest.spyOn(utils, 'setDefaultFileType');
     });
 
-    test('invokes the util setDefaultFileType function to set default type for file', function () {
+    test('invokes the util setDefaultFileType function to set default type for file', function() {
       // @ts-ignore access to the class private property
       reporter.sendLogToLaunch(logItemRQObj);
 
       expect(spySetDefaultFileType).toHaveBeenCalledWith(logItemRQObj.file);
     });
 
-    test('should call the client sendLog method to send launch log to Report Portal', function () {
+    test('should call the client sendLog method to send launch log to Report Portal', function() {
       const { file, ...log } = logItemRQObj;
 
       spySetDefaultFileType.mockReturnValueOnce(file);
@@ -133,8 +139,8 @@ describe('testItemReporting', function () {
     });
   });
 
-  describe('addItemAttributes', function () {
-    const attributesData: { attributes: Array<Attribute>, itemName?: string } = {
+  describe('addItemAttributes', function() {
+    const attributesData: { attributes: Array<Attribute>; itemName?: string } = {
       attributes: [{ value: 'attributeValue', key: 'attributeKey' }],
       itemName: 'itemName',
     };
@@ -147,14 +153,14 @@ describe('testItemReporting', function () {
       spyGetCurrentItem = jest.spyOn(storage, 'getCurrentItem').mockReturnValue(storageItem);
     });
 
-    test('invokes the storage getCurrentItem method with item name to get item from storage', function () {
+    test('invokes the storage getCurrentItem method with item name to get item from storage', function() {
       // @ts-ignore access to the class private property
       reporter.addItemAttributes(attributesData);
 
       expect(spyGetCurrentItem).toHaveBeenCalledWith(attributesData.itemName);
     });
 
-    test('should update attributes for item in storage', function () {
+    test('should update attributes for item in storage', function() {
       // @ts-ignore access to the class private property
       reporter.addItemAttributes(attributesData);
 
@@ -168,8 +174,8 @@ describe('testItemReporting', function () {
     });
   });
 
-  describe('addItemDescription', function () {
-    const attributesData: { text: string, itemName?: string } = {
+  describe('addItemDescription', function() {
+    const attributesData: { text: string; itemName?: string } = {
       text: 'New item description',
       itemName: 'itemName',
     };
@@ -183,14 +189,14 @@ describe('testItemReporting', function () {
       spyGetCurrentItem = jest.spyOn(storage, 'getCurrentItem').mockReturnValue(storageItem);
     });
 
-    test('invokes the storage getCurrentItem method with item name to get item from storage', function () {
+    test('invokes the storage getCurrentItem method with item name to get item from storage', function() {
       // @ts-ignore access to the class private property
       reporter.addItemDescription(attributesData);
 
       expect(spyGetCurrentItem).toHaveBeenCalledWith(attributesData.itemName);
     });
 
-    test('should concat description with existing for item in storage', function () {
+    test('should concat description with existing for item in storage', function() {
       // @ts-ignore access to the class private property
       reporter.addItemDescription(attributesData);
 
@@ -201,8 +207,8 @@ describe('testItemReporting', function () {
     });
   });
 
-  describe('setTestCaseId', function () {
-    const data: { id: string, itemName?: string } = {
+  describe('setTestCaseId', function() {
+    const data: { id: string; itemName?: string } = {
       id: 'itemTestCaseId',
       itemName: 'itemName',
     };
@@ -215,14 +221,14 @@ describe('testItemReporting', function () {
       spyGetCurrentItem = jest.spyOn(storage, 'getCurrentItem').mockReturnValue(storageItem);
     });
 
-    test('invokes the storage getCurrentItem method with item name to get item from storage', function () {
+    test('invokes the storage getCurrentItem method with item name to get item from storage', function() {
       // @ts-ignore access to the class private property
       reporter.setTestCaseId(data);
 
       expect(spyGetCurrentItem).toHaveBeenCalledWith(data.itemName);
     });
 
-    test('should set testCaseId for item in storage', function () {
+    test('should set testCaseId for item in storage', function() {
       // @ts-ignore access to the class private property
       reporter.setTestCaseId(data);
 
@@ -233,8 +239,8 @@ describe('testItemReporting', function () {
     });
   });
 
-  describe('setStatusToItem', function () {
-    const data: { status: STATUSES, itemName?: string } = {
+  describe('setStatusToItem', function() {
+    const data: { status: STATUSES; itemName?: string } = {
       status: STATUSES.PASSED,
       itemName: 'itemName',
     };
@@ -247,14 +253,14 @@ describe('testItemReporting', function () {
       spyGetCurrentItem = jest.spyOn(storage, 'getCurrentItem').mockReturnValue(storageItem);
     });
 
-    test('invokes the storage getCurrentItem method with item name to get item from storage', function () {
+    test('invokes the storage getCurrentItem method with item name to get item from storage', function() {
       // @ts-ignore access to the class private property
       reporter.setStatusToItem(data);
 
       expect(spyGetCurrentItem).toHaveBeenCalledWith(data.itemName);
     });
 
-    test('should set status for item in storage', function () {
+    test('should set status for item in storage', function() {
       // @ts-ignore access to the class private property
       reporter.setStatusToItem(data);
 

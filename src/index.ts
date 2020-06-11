@@ -19,10 +19,4 @@ import PostFactumReporter from './postFactumReporter';
 import { RealTimeReporter, ReportingAPI } from './realTimeReporter';
 import { LOG_LEVELS, FILE_TYPES } from './constants';
 
-export {
-  PostFactumReporter,
-  RealTimeReporter,
-  ReportingAPI,
-  LOG_LEVELS,
-  FILE_TYPES,
-};
+export { PostFactumReporter, RealTimeReporter, ReportingAPI, LOG_LEVELS, FILE_TYPES };

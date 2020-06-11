@@ -34,13 +34,12 @@ const TEST_ITEM_START_RQ_EXAMPLE: StartTestItemRQ = {
   attributes: [{ key: 'example', value: 'true' }],
 };
 
-describe('testItemReporting', function () {
-  jest.spyOn(IPCServer, 'startIPCServer')
-    .mockImplementation((callback: any) => {
-      callback({
-        on: () => {},
-      });
+describe('testItemReporting', function() {
+  jest.spyOn(IPCServer, 'startIPCServer').mockImplementation((callback: any) => {
+    callback({
+      on: () => {},
     });
+  });
   let reporter: RealTimeReporter;
   let storage: StorageMock;
 
@@ -62,7 +61,7 @@ describe('testItemReporting', function () {
     jest.clearAllMocks();
   });
 
-  describe('startTestItem', function () {
+  describe('startTestItem', function() {
     let spyGetItemByName: jest.SpyInstance;
     let spyAddTestItem: jest.SpyInstance;
 
@@ -71,7 +70,7 @@ describe('testItemReporting', function () {
       spyAddTestItem = jest.spyOn(storage, 'addTestItem');
     });
 
-    test('invokes the storage getItemByName method with item parent name to receive parent id', function () {
+    test('invokes the storage getItemByName method with item parent name to receive parent id', function() {
       const itemRQ: StartTestItemRQ = {
         ...TEST_ITEM_START_RQ_EXAMPLE,
         parentName: 'parent_test_item',
@@ -83,7 +82,7 @@ describe('testItemReporting', function () {
       expect(spyGetItemByName).toHaveBeenCalledWith('parent_test_item');
     });
 
-    test('invokes the storage addTestItem method with item object to save it in storage', function () {
+    test('invokes the storage addTestItem method with item object to save it in storage', function() {
       const itemRQ: StartTestItemRQ = TEST_ITEM_START_RQ_EXAMPLE;
 
       spyGetItemByName.mockReturnValueOnce(null);
@@ -96,7 +95,7 @@ describe('testItemReporting', function () {
       expect(spyAddTestItem).toHaveBeenCalledWith(storageTestItem);
     });
 
-    test('should start test item without parent by calling the ReportPortal client startTestItem method', function () {
+    test('should start test item without parent by calling the ReportPortal client startTestItem method', function() {
       const itemRQ: StartTestItemRQ = TEST_ITEM_START_RQ_EXAMPLE;
 
       spyGetItemByName.mockReturnValueOnce(null);
@@ -108,7 +107,7 @@ describe('testItemReporting', function () {
       expect(reporter.client.startTestItem).toHaveBeenCalledWith(itemRQ, 'tempLaunchId', undefined);
     });
 
-    test('should start test item with parent by calling the ReportPortal client startTestItem method', function () {
+    test('should start test item with parent by calling the ReportPortal client startTestItem method', function() {
       const itemRQ: StartTestItemRQ = {
         ...TEST_ITEM_START_RQ_EXAMPLE,
         parentName: 'parent_test_item',
@@ -120,11 +119,15 @@ describe('testItemReporting', function () {
       reporter.startTestItem(itemRQ);
 
       // @ts-ignore access to the class private property
-      expect(reporter.client.startTestItem).toHaveBeenCalledWith(itemRQ, 'tempLaunchId', 'parentItemId');
-    })
+      expect(reporter.client.startTestItem).toHaveBeenCalledWith(
+        itemRQ,
+        'tempLaunchId',
+        'parentItemId',
+      );
+    });
   });
 
-  describe('finishTestItem', function () {
+  describe('finishTestItem', function() {
     const TEST_ITEM_FINISH_RQ_EXAMPLE: any = {
       name: 'mock_test_item',
     };
@@ -139,7 +142,7 @@ describe('testItemReporting', function () {
       spyGetFinishItemObj = jest.spyOn(reporter, 'getFinishItemObj');
     });
 
-    test('invokes the storage getItemByName method with item name to receive item info from storage', function () {
+    test('invokes the storage getItemByName method with item name to receive item info from storage', function() {
       const itemRQ: any = TEST_ITEM_FINISH_RQ_EXAMPLE;
 
       // @ts-ignore access to the class private property
@@ -148,7 +151,7 @@ describe('testItemReporting', function () {
       expect(spyGetItemByName).toHaveBeenCalledWith(itemRQ.name);
     });
 
-    test('invokes getFinishItemObj method with itemRQ and storageItem to receive finish object', function () {
+    test('invokes getFinishItemObj method with itemRQ and storageItem to receive finish object', function() {
       const itemRQ: any = TEST_ITEM_FINISH_RQ_EXAMPLE;
 
       // @ts-ignore access to the class private property
@@ -157,7 +160,7 @@ describe('testItemReporting', function () {
       expect(spyGetFinishItemObj).toHaveBeenCalledWith(itemRQ, storageItem);
     });
 
-    test('invokes the storage removeItemById method with item id to remove finished item from storage', function () {
+    test('invokes the storage removeItemById method with item id to remove finished item from storage', function() {
       const itemRQ: any = TEST_ITEM_FINISH_RQ_EXAMPLE;
 
       const spyRemoveItemById = jest.spyOn(storage, 'removeItemById');
@@ -169,7 +172,7 @@ describe('testItemReporting', function () {
       expect(spyRemoveItemById).toHaveBeenCalledWith(storageItem.id);
     });
 
-    test('should finish test item by calling the ReportPortal client finishTestItem method', function () {
+    test('should finish test item by calling the ReportPortal client finishTestItem method', function() {
       const itemRQ: any = TEST_ITEM_FINISH_RQ_EXAMPLE;
       const finishTestItemObj = { ...storageItem, status: STATUSES.PASSED };
 
@@ -179,7 +182,10 @@ describe('testItemReporting', function () {
       reporter.finishTestItem(itemRQ);
 
       // @ts-ignore access to the class private property
-      expect(reporter.client.finishTestItem).toHaveBeenCalledWith(storageItem.id, finishTestItemObj);
+      expect(reporter.client.finishTestItem).toHaveBeenCalledWith(
+        storageItem.id,
+        finishTestItemObj,
+      );
     });
   });
 });
