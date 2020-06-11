@@ -568,3 +568,17 @@ describe('Suite name', function() {
   });
 });
 ```
+
+#### Integration with Sauce Labs
+
+To integrate with Sauce Labs just add attributes: 
+
+```javascript
+[{
+ "key": "SLID",
+ "value": "# of the job in Sauce Labs"
+}, {
+ "key": "SLDC",
+ "value": "EU (your job region in Sauce Labs)"
+}]
+```
