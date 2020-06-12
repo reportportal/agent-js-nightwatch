@@ -51,8 +51,12 @@ describe('otherMethods', function() {
 
   describe('initReporter (called in reporter constructor)', function() {
     test('invokes startIPCServer to init IPC server', function() {
-      // @ts-ignore access to the class private property
-      expect(spyStartIPCServer).toHaveBeenCalledWith(reporter.registerEventListeners, reporter.unregisterEventListeners);
+      expect(spyStartIPCServer).toHaveBeenCalledWith(
+        // @ts-ignore access to the class private property
+        reporter.registerEventListeners,
+        // @ts-ignore access to the class private property
+        reporter.unregisterEventListeners,
+      );
     });
   });
 

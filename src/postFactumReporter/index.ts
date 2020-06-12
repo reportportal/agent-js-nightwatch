@@ -17,7 +17,7 @@
 
 import moment from 'moment';
 import RPClient from '@reportportal/client-javascript';
-import { AgentOptions, ReportPortalConfig } from '../models';
+import { AgentOptions, Attribute, ReportPortalConfig } from '../models';
 import { buildCodeRef, getSystemAttributes, getLastItem } from '../utils';
 import { STATUSES, LOG_LEVELS, TEST_ITEM_TYPES, EVENTS } from '../constants';
 
@@ -26,7 +26,7 @@ export default class PostFactumReporter {
   private readonly options: AgentOptions;
   private launchId: string;
   private launchStartTime: number | Date;
-  private launchParams: any;
+  private launchParams: { attributes: Attribute[]; description: string };
 
   constructor(config: ReportPortalConfig & AgentOptions) {
     const { attributes = [], description, parallelRun = false, ...clientConfig } = config;
@@ -59,31 +59,45 @@ export default class PostFactumReporter {
       ...this.launchParams,
     }).tempId;
 
-    const stepsTempIds: Array<string> = [this.launchId];
+    const stepsTempIds: Array<string> = [];
 
     items.forEach(({ action, fileObj, ...item } = {}) => {
+      let itemObj;
       switch (action) {
         case EVENTS.START_TEST_ITEM:
-          // @ts-ignore
-          const stepObj = this.client.startTestItem(item, ...stepsTempIds);
-          stepsTempIds.push(stepObj.tempId);
+          itemObj = this.client.startTestItem(item, this.launchId, stepsTempIds[0]);
+          stepsTempIds.push(itemObj.tempId);
           break;
         case EVENTS.FINISH_TEST_ITEM:
           this.client.finishTestItem(stepsTempIds.pop(), item);
           break;
         case EVENTS.ADD_LOG:
           this.client.sendLog(getLastItem(stepsTempIds), item, fileObj);
+          break;
+        default:
+          break;
       }
     });
   }
 
   private collectItems(results: any) {
     const { parallelRun } = this.options;
-    const items = [];
+    const items: {
+      action: EVENTS;
+      name?: string;
+      startTime?: Date;
+      endTime?: Date;
+      level?: LOG_LEVELS;
+      codeRef?: string;
+      type?: TEST_ITEM_TYPES;
+      time?: Date;
+      message?: string;
+      status?: STATUSES;
+    }[] = [];
     const suiteNames = Object.keys(results.modules);
     let nextSuiteStartTime = new Date(this.launchStartTime);
 
-    for (const suiteName of suiteNames) {
+    suiteNames.forEach((suiteName) => {
       const suite = results.modules[suiteName];
       const suiteCodeRef = buildCodeRef(suite.modulePath);
       const suiteStartTime = nextSuiteStartTime;
@@ -115,7 +129,7 @@ export default class PostFactumReporter {
       const testNames = Object.keys(tests);
       let testStartTime = suiteStartTime;
 
-      for (const testName of testNames) {
+      testNames.forEach((testName) => {
         const test = tests[testName];
 
         items.push({
@@ -147,7 +161,7 @@ export default class PostFactumReporter {
           }
         }
 
-        (test.failed || test.errors) &&
+        if (test.failed || test.errors) {
           test.assertions.forEach((assertion: any) => {
             items.push({
               action: EVENTS.ADD_LOG,
@@ -155,34 +169,37 @@ export default class PostFactumReporter {
               time: testStartTime,
               message: assertion.message,
             });
-            assertion.failure &&
+            if (assertion.failure) {
               items.push({
                 action: EVENTS.ADD_LOG,
                 level: LOG_LEVELS.DEBUG,
                 time: testStartTime,
                 message: assertion.failure,
               });
-            assertion.stackTrace &&
+            }
+            if (assertion.stackTrace) {
               items.push({
                 action: EVENTS.ADD_LOG,
                 level: LOG_LEVELS.ERROR,
                 time: testStartTime,
                 message: assertion.stackTrace,
               });
+            }
           });
+        }
 
         items.push({
           action: EVENTS.FINISH_TEST_ITEM,
           endTime: testStartTime,
           status,
         });
-      }
+      });
 
       items.push({
         action: EVENTS.FINISH_TEST_ITEM,
         endTime: suiteEndTime,
       });
-    }
+    });
 
     return items;
   }

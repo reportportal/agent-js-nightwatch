@@ -19,7 +19,7 @@ import ipc from 'node-ipc';
 
 export const startIPCServer = (
   subscribeServerEvents: (server: any) => void,
-  unsubscribeServerEvents: (server: any) => void
+  unsubscribeServerEvents: (server: any) => void,
 ) => {
   if (ipc.server) {
     return;

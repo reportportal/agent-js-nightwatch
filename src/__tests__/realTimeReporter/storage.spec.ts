@@ -38,17 +38,17 @@ describe('Storage', function() {
 
   describe('constructor', function() {
     test('should create the storage with initial items', function() {
-      const storage = new Storage([initialItem]);
+      const storageInstance = new Storage([initialItem]);
 
-      const allStorageItems = storage.getAllItems();
+      const allStorageItems = storageInstance.getAllItems();
 
       expect(allStorageItems).toEqual([initialItem]);
     });
 
     test('should create the empty storage in case of empty constructor params', function() {
-      const storage = new Storage();
+      const storageInstance = new Storage();
 
-      expect(storage.getAllItems()).toEqual([]);
+      expect(storageInstance.getAllItems()).toEqual([]);
     });
   });
 

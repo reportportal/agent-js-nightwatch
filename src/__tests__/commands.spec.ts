@@ -85,7 +85,7 @@ describe('commands', function() {
 
     beforeAll(() => {
       commandsExecutionContext = {
-        screenshot: (log_screenshot_data: boolean, action: screenshotCallbackType) => {
+        screenshot: (logScreenshotData: boolean, action: screenshotCallbackType) => {
           action(screenshotActionData);
         },
       };

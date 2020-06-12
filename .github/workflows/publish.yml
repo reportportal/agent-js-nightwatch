@@ -47,7 +47,7 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_ACCESS_TOKEN }}
 
   publish-to-gpr:
-    needs: build
+    needs: publish-to-npm
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository

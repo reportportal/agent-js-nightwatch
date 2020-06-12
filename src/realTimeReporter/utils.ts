@@ -57,24 +57,6 @@ export const calculateTestItemStatus = (
   };
 };
 
-export const getCodeRef = (itemName: string): string => {
-  const caller = getCaller();
-  const testPath = caller.getFileName();
-
-  return buildCodeRef(testPath, itemName);
-};
-
-export const getCaller = (): NodeJS.CallSite | any => {
-  const stack = getStack();
-
-  // Remove superfluous function calls on stack
-  stack.shift(); // getCaller --> getStack
-  stack.shift(); // your function call --> getCaller
-
-  // Return caller's caller
-  return stack[1];
-};
-
 export const getStack = (): Array<NodeJS.CallSite> | Array<any> => {
   // Save original Error.prepareStackTrace
   const origPrepareStackTrace = Error.prepareStackTrace;
@@ -99,4 +81,22 @@ export const getStack = (): Array<NodeJS.CallSite> | Array<any> => {
 
   // @ts-ignore
   return stack;
+};
+
+export const getCaller = (): NodeJS.CallSite | any => {
+  const stack = getStack();
+
+  // Remove superfluous function calls on stack
+  stack.shift(); // getCaller --> getStack
+  stack.shift(); // your function call --> getCaller
+
+  // Return caller's caller
+  return stack[1];
+};
+
+export const getCodeRef = (itemName: string): string => {
+  const caller = getCaller();
+  const testPath = caller.getFileName();
+
+  return buildCodeRef(testPath, itemName);
 };
