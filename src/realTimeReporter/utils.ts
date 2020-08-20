@@ -44,7 +44,8 @@ export const calculateTestItemStatus = (
     status = STATUSES.SKIPPED;
   } else if (currentTestItemResults.failed !== 0) {
     status = STATUSES.FAILED;
-    const assertionsResult = currentTestItemResults.assertions[0];
+    const assertionsResult =
+      currentTestItemResults.assertions[currentTestItemResults.assertions.length - 1];
 
     assertionsMessage = `${assertionsResult.fullMsg}<br/>${assertionsResult.stackTrace}`;
   } else {
