@@ -17,7 +17,7 @@
 
 import moment from 'moment';
 import RPClient from '@reportportal/client-javascript';
-import { AgentOptions, Attribute, ReportPortalConfig } from '../models';
+import {AgentOptions, ReportPortalConfig, StartLaunchRQ} from '../models';
 import { buildCodeRef, getSystemAttributes, getLastItem } from '../utils';
 import { STATUSES, LOG_LEVELS, TEST_ITEM_TYPES, EVENTS } from '../constants';
 
@@ -26,14 +26,14 @@ export default class PostFactumReporter {
   private readonly options: AgentOptions;
   private launchId: string;
   private launchStartTime: number | Date;
-  private launchParams: { attributes: Attribute[]; description: string };
+  private launchParams: StartLaunchRQ;
 
   constructor(config: ReportPortalConfig & AgentOptions) {
-    const { attributes = [], description, parallelRun = false, ...clientConfig } = config;
+    const { attributes = [], description, rerun, rerunOf, mode, parallelRun = false, ...clientConfig } = config;
     const launchAttributes = attributes.concat(getSystemAttributes());
 
     this.client = new RPClient(clientConfig);
-    this.launchParams = { attributes: launchAttributes, description };
+    this.launchParams = { attributes: launchAttributes, description, rerun, rerunOf, mode };
     this.options = { parallelRun };
     this.launchStartTime = Date.now();
   }
