@@ -52,12 +52,12 @@ interface RPItem {
 }
 
 export interface RPItemStartRQ extends RPItem {
-  startTime?: Date;
+  startTime?: Date | number;
 }
 
 export interface RPItemFinishRQ extends RPItem {
   status?: STATUSES;
-  endTime?: Date;
+  endTime?: Date | number;
 }
 
 export interface StorageTestItem extends RPItem {

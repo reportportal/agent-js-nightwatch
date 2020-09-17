@@ -109,7 +109,7 @@ export default class Reporter {
   }
 
   public startLaunch(launchObj: StartLaunchRQ): void {
-    const startLaunchObj: StartLaunchRQ = getStartLaunchObj(launchObj);
+    const startLaunchObj: StartLaunchRQ = getStartLaunchObj(launchObj, this.config);
 
     this.launchId = this.client.startLaunch(startLaunchObj).tempId;
   }

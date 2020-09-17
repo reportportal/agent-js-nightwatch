@@ -17,15 +17,23 @@
 
 import { DEFAULT_FILE_TYPE, STATUSES } from '../constants';
 import { getSystemAttributes, buildCodeRef } from '../utils';
-import { Attachment, StartLaunchRQ, Attribute } from '../models';
+import { Attachment, StartLaunchRQ, Attribute, ReportPortalConfig } from '../models';
 
 export const setDefaultFileType = (file: Attachment): Attachment =>
   file ? { type: DEFAULT_FILE_TYPE, ...file } : undefined;
 
-export const getStartLaunchObj = (launchObj: StartLaunchRQ): StartLaunchRQ => {
+export const getStartLaunchObj = (launchObj: StartLaunchRQ, config: ReportPortalConfig): StartLaunchRQ => {
+  const configLaunchParams = {
+    description: config.description,
+    attributes: config.attributes,
+    rerun: config.rerun,
+    rerunOf: config.rerunOf,
+    mode: config.mode,
+  };
   const systemAttributes: Array<Attribute> = getSystemAttributes();
 
   return {
+    ...configLaunchParams,
     ...launchObj,
     attributes: launchObj.attributes
       ? launchObj.attributes.concat(systemAttributes)
