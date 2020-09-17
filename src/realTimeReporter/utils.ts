@@ -22,7 +22,10 @@ import { Attachment, StartLaunchRQ, Attribute } from '../models';
 export const setDefaultFileType = (file: Attachment): Attachment =>
   file ? { type: DEFAULT_FILE_TYPE, ...file } : undefined;
 
-export const getStartLaunchObj = (launchObj: StartLaunchRQ, config: StartLaunchRQ = {}): StartLaunchRQ => {
+export const getStartLaunchObj = (
+  launchObj: StartLaunchRQ,
+  config: StartLaunchRQ = {},
+): StartLaunchRQ => {
   const systemAttributes: Array<Attribute> = getSystemAttributes();
   const attributes = (launchObj.attributes || config.attributes || []).concat(systemAttributes);
 
