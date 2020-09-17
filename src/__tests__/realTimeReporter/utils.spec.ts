@@ -61,8 +61,26 @@ describe('getStartLaunchObj', function() {
     jest.clearAllMocks();
   });
 
+  test('should return startLaunchObject with updated attributes in case of rp config contains it', function() {
+    const startLaunchObject = getStartLaunchObj({ }, { attributes: [{ value: 'value', key: 'key' }] });
+
+    expect(startLaunchObject.attributes).toEqual([
+      { value: 'value', key: 'key' },
+      { value: 'mockValue', key: 'mockKey' },
+    ]);
+  });
+
   test('should return startLaunchObject with updated attributes in case of launch has it', function() {
     const startLaunchObject = getStartLaunchObj({ attributes: [{ value: 'value', key: 'key' }] });
+
+    expect(startLaunchObject.attributes).toEqual([
+      { value: 'value', key: 'key' },
+      { value: 'mockValue', key: 'mockKey' },
+    ]);
+  });
+
+  test('should return startLaunchObject with updated attributes in case of launch has it in priority of rp config file', function() {
+    const startLaunchObject = getStartLaunchObj({ attributes: [{ value: 'value', key: 'key' }] }, { attributes: [{ value: 'configValue', key: 'configKey' }] });
 
     expect(startLaunchObject.attributes).toEqual([
       { value: 'value', key: 'key' },

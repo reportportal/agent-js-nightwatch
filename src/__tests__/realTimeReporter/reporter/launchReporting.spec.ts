@@ -57,7 +57,7 @@ describe('launchReporting', function() {
 
       reporter.startLaunch(launchObj);
 
-      expect(spyGetStartLaunchObj).toHaveBeenCalledWith(launchObj);
+      expect(spyGetStartLaunchObj).toHaveBeenCalledWith(launchObj, { description: 'Launch description', attributes: [], });
     });
 
     test('should start launch by calling the ReportPortal client startLaunch method', function() {

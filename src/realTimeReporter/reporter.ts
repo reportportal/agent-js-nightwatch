@@ -109,7 +109,8 @@ export default class Reporter {
   }
 
   public startLaunch(launchObj: StartLaunchRQ): void {
-    const startLaunchObj: StartLaunchRQ = getStartLaunchObj(launchObj, this.config);
+    const { token, project, endpoint, launch, ...launchConfig } = this.config;
+    const startLaunchObj: StartLaunchRQ = getStartLaunchObj(launchObj, launchConfig);
 
     this.launchId = this.client.startLaunch(startLaunchObj).tempId;
   }
