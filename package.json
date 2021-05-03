@@ -18,9 +18,9 @@
     "test:coverage": "jest --coverage"
   },
   "dependencies": {
+    "@reportportal/client-javascript": "^5.0.4",
     "moment": "^2.22.1",
-    "node-ipc": "9.1.1",
-    "@reportportal/client-javascript": "^5.0.3"
+    "node-ipc": "9.1.1"
   },
   "devDependencies": {
     "@types/jest": "^25.2.1",
