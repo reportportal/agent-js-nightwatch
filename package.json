@@ -43,6 +43,9 @@
   "directories": {
     "src": "./src"
   },
+  "files": [
+    "/build"
+  ],
   "engines": {
     "node": ">= 8.0.x"
   },
