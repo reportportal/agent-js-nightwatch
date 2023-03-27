@@ -1,6 +1,6 @@
 # agent-js-nightwatch
 
-Agent for integration NightwatchJS with ReportPortal.
+Agent to integrate NightwatchJS with ReportPortal.
 * More about [NightwatchJS](https://nightwatchjs.org/)
 * More about [ReportPortal](http://reportportal.io/)
 
