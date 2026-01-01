@@ -17,6 +17,7 @@
 
 import moment from 'moment';
 import RPClient from '@reportportal/client-javascript';
+import fs from 'fs';
 import { AgentOptions, ReportPortalConfig, StartLaunchRQ } from '../models';
 import { buildCodeRef, getSystemAttributes, getLastItem } from '../utils';
 import { STATUSES, LOG_LEVELS, TEST_ITEM_TYPES, EVENTS } from '../constants';
@@ -101,6 +102,7 @@ export default class PostFactumReporter {
       time?: Date;
       message?: string;
       status?: STATUSES;
+      fileObj?: object;
     }[] = [];
     const suiteNames = Object.keys(results.modules);
     let nextSuiteStartTime = new Date(this.launchStartTime);
@@ -154,7 +156,7 @@ export default class PostFactumReporter {
 
         let { status } = test;
 
-        if (!status) {
+        if (status !== STATUSES.SKIPPED) {
           status = test.failed ? STATUSES.FAILED : STATUSES.PASSED;
         }
 
@@ -171,6 +173,16 @@ export default class PostFactumReporter {
 
         if (test.failed || test.errors) {
           test.assertions.forEach((assertion: any) => {
+            let attachmentObj;
+            if (assertion.screenshots && assertion.screenshots[0]) {
+              const imageFile = fs.readFileSync(assertion.screenshots[0]);
+              const imageFileToBase64 = Buffer.from(imageFile).toString('base64');
+              attachmentObj = {
+                name: assertion.name,
+                type: 'image/png',
+                content: imageFileToBase64,
+              };
+            }
             items.push({
               action: EVENTS.ADD_LOG,
               level: LOG_LEVELS.INFO,
@@ -191,6 +203,7 @@ export default class PostFactumReporter {
                 level: LOG_LEVELS.ERROR,
                 time: testStartTime,
                 message: assertion.stackTrace,
+                fileObj: attachmentObj,
               });
             }
           });
